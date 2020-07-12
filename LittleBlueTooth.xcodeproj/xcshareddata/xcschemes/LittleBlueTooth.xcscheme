@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E12C12E82490B60D00496496"
+               BlueprintIdentifier = "LittleBlueTooth::LittleBlueTooth"
                BuildableName = "LittleBlueTooth.framework"
                BlueprintName = "LittleBlueTooth"
                ReferencedContainer = "container:LittleBlueTooth.xcodeproj">
@@ -45,7 +45,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E12C12F12490B60D00496496"
+               BlueprintIdentifier = "LittleBlueTooth::LittleBlueToothTests"
                BuildableName = "LittleBlueToothTests.xctest"
                BlueprintName = "LittleBlueToothTests"
                ReferencedContainer = "container:LittleBlueTooth.xcodeproj">
@@ -73,7 +73,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E12C12E82490B60D00496496"
+            BlueprintIdentifier = "LittleBlueTooth::LittleBlueTooth"
             BuildableName = "LittleBlueTooth.framework"
             BlueprintName = "LittleBlueTooth"
             ReferencedContainer = "container:LittleBlueTooth.xcodeproj">
