@@ -154,7 +154,6 @@ public class LittleBlueTooth: Identifiable {
     public func connectableListenPublisher<T: Readable>(for characteristic: LittleBlueToothCharacteristic, valueType: T.Type, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
         
            let listen = ensureBluetoothState()
-           .subscribe(on: queue)
            .print("ConnectableListenPublisher")
            .flatMap { [unowned self] _ in
                self.ensurePeripheralConnected()
@@ -192,7 +191,6 @@ public class LittleBlueTooth: Identifiable {
     /// - important: The type of the value must be conform to `Readable`
     public func startListen<T: Readable>(from charact: LittleBlueToothCharacteristic, forType: T.Type, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
         let lis = ensureBluetoothState()
-        .subscribe(on: queue)
         .print("StartListenPublisher")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralConnected()
@@ -238,7 +236,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         self.ensureBluetoothState()
-        .subscribe(on: queue)
         .print("StartListenPublisher no Value")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralConnected()
@@ -270,7 +267,6 @@ public class LittleBlueTooth: Identifiable {
     /// - returns: A publisher with that informs you about the successful or failed task
     public func stopListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> {
         return ensureBluetoothState()
-        .subscribe(on: queue)
         .flatMap { [unowned self] _ in
             self.ensurePeripheralConnected()
         }
@@ -292,7 +288,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
                 
         ensureBluetoothState()
-        .subscribe(on: queue)
         .timeout(RunLoop.SchedulerTimeType.Stride(timeout ?? TimeInterval.infinity), scheduler: RunLoop.current, customError: {.readTimeout})
         .print("ReadPublisher")
         .flatMap { [unowned self] _ in
@@ -347,7 +342,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
 
         ensureBluetoothState()
-        .subscribe(on: queue)
         .timeout(RunLoop.SchedulerTimeType.Stride(timeout ?? TimeInterval.infinity), scheduler: RunLoop.current, customError: {.writeTimeout})
         .print("WritePublisher")
         .flatMap { [unowned self] _ in
@@ -386,7 +380,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         ensureBluetoothState()
-        .subscribe(on: DispatchQueue.main)
         .timeout(RunLoop.SchedulerTimeType.Stride(timeout ?? TimeInterval.infinity), scheduler: RunLoop.current, customError: {.writeAndListenTimeout})
         .print("WriteAndListePublisher")
         .flatMap { [unowned self] _ in
@@ -439,7 +432,6 @@ public class LittleBlueTooth: Identifiable {
         
         scanning =
         ensureBluetoothState()
-        .subscribe(on: queue)
         .timeout(RunLoop.SchedulerTimeType.Stride(timeout ?? TimeInterval.infinity), scheduler: RunLoop.current, customError: {.scanTimeout})
         .print("DiscoverPublisher")
         .flatMap { [unowned self] _  -> Publishers.SetFailureType<PassthroughSubject<PeripheralDiscovery, Never>, LittleBluetoothError> in
@@ -490,7 +482,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         ensureBluetoothState()
-        .subscribe(on: queue)
         .print("ConnectPublisher")
         .timeout(RunLoop.SchedulerTimeType.Stride(timeout ?? TimeInterval.infinity), scheduler: RunLoop.current, customError: {.connectTimeout})
         .tryMap { [unowned self] _ -> Void in
@@ -594,7 +585,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         self.centralProxy.connectionEventPublisher
-        .subscribe(on: queue)
         .print("DisconnectPublisher")
         .filter{ (event) -> Bool in
             if case ConnectionEvent.disconnected(_, error: _) = event {
