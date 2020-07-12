@@ -6,8 +6,8 @@
 # LITTLE BLUETOOTH
 ## INTRODUCTION
 LittleBluetooth is a library that helps you developing applications that need to work with a bluetooth devices.
-It is written using `Swift` and the `Combine` framework thus is only compatible from iOS13 to upper.
-An instance of LittleBluetooth can control only one peripheral, you can use more instances as many peripheral you need, but first read this answer on Apple forums to understand the impact of having more `CBCentralManager` instances.
+It is written using `Swift` and the `Combine` framework thus is only compatible from iOS13 to upper version.
+An instance of LittleBluetooth can control only one peripheral, you can use more instances as many peripheral you need, but first read this [answer](https://developer.apple.com/forums/thread/20810) on Apple forums to understand the impact of having more `CBCentralManager` instances.
 The library is still on development so use at own you risk.
 
 ## INSTALLATION
