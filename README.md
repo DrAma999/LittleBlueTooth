@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img width="252" height="252" src="README/Icon.png">
+  <img width="200" height="200" src="README/Icon.png">
 </p>
 <p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13&color=black"</p><p><img src="https://img.shields.io/static/v1?label=coverage&message=83%&color=yellowgreen"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"</p>
 
@@ -15,7 +15,13 @@ The library is still on development so use at own you risk.
 
 ## INSTALLATION
 ### Carthage
-The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests.
+Add the following to your Cartfile:
+
+```
+github "DrAma999/LittleBlueTooth" ~> 0.1.0
+```
+
+The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your dependencies. Unforutnately at the moment the nordic library supports only SwiftPM and Cocoapods.
 
 ## FEATURES
 * Built on top of combine
