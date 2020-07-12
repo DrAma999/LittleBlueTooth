@@ -39,8 +39,12 @@ class ScanDiscoveryTest: LittleBlueToothTests {
             }) { (discov) in
                 print("Discovery \(discov)")
                 discovery = discov
-                
-                discoveryExpectation.fulfill()
+                self.littleBT.stopDiscovery()
+                .sink(receiveCompletion: {_ in
+                }) { () in
+                    discoveryExpectation.fulfill()
+                }
+                .store(in: &self.disposeBag)
         }
         .store(in: &disposeBag)
         
@@ -72,7 +76,12 @@ class ScanDiscoveryTest: LittleBlueToothTests {
                     if case LittleBluetoothError.bluetoothPoweredOff = error {
                         isPowerOff = true
                     }
-                    discoveryExpectation.fulfill()
+                    self.littleBT.stopDiscovery()
+                    .sink(receiveCompletion: {_ in
+                    }) { () in
+                        discoveryExpectation.fulfill()
+                    }
+                    .store(in: &self.disposeBag)
                 case .finished:
                     break
                 }
@@ -90,7 +99,6 @@ class ScanDiscoveryTest: LittleBlueToothTests {
 
         blinky.simulateProximityChange(.immediate)
         let discoveryExpectation = expectation(description: "Discovery Expectation")
-        
         var isScanning = true
 
         littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
