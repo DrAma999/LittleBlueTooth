@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img width="300" height="300" src="README/Icon.png">
+  <img width="252" height="252" src="README/Icon.png">
 </p>
 
 # LITTLE BLUETOOTH
@@ -33,7 +33,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 You can scan with or without a timeout, after a timeout you receive a .scanTimeout error. Note that each peripheral found is published to the subscribers chain until you stop the scan request or you connect to a device (when you connect scan is automatically suspended.
 _Scan and stop_:
 ```
-/ Remember that the AnyCancellable resulting from the `sink` must have a strong reference
+        // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
         anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
         .filter { (discovery) -> Bool in
@@ -63,7 +63,7 @@ _Scan and stop_:
 _Scan with connection_:
 The scan process is automatically stopped one you start the connection command.
 ```
- // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
+        // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
         anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
         .filter { (discovery) -> Bool in
@@ -90,7 +90,7 @@ The scan process is automatically stopped one you start the connection command.
 ```
 _Scan with peripherals buffer_:
 ```
-// Remember that the AnyCancellable resulting from the `sink` must have a strong reference
+        // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
         anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
         .collect(10)
@@ -116,7 +116,7 @@ _Scan with peripherals buffer_:
 _Connection from discovery_:
 A `PeripheralDiscovery` is a representation of what you usually get from a scan, it has the `UUID` of the peripheral and the advertising info.
 ```
-// Taken a discovery from scan
+        // Taken a discovery from scan
         anycanc = self.littleBT.connect(to: discovery)
         .sink(receiveCompletion: { result in
             print("Result: \(result)")
@@ -193,7 +193,7 @@ struct Acceleration: Readable {
 After that is just a matter of call the read method.
 
 ```
- anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
+        anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
         .filter { (discovery) -> Bool in
             if let name = discovery.advertisement.localName, name == "PunchLX" {
                 return true
