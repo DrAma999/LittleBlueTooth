@@ -1,7 +1,7 @@
 
-
-![](README/Icon.png)
-
+<p align="center">
+  <img width="300" height="300" src="README/Icon.png">
+</p>
 
 # LITTLE BLUETOOTH
 ## INTRODUCTION
