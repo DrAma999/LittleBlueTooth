@@ -50,6 +50,8 @@
 		656A95FB24B45B9B0026C8F4 /* ShareReplay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareReplay.swift; sourceTree = "<group>"; };
 		6572D99624A5C21E002342BB /* ScanDiscoveryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanDiscoveryTest.swift; sourceTree = "<group>"; };
 		657960BC24941A1500D3BC15 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		658A75BA24BB70D800F874EF /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		658A75BC24BB70D800F874EF /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		65BBB11D24A9C4C0008D34C1 /* CoreBluetoothTypeAliases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreBluetoothTypeAliases.swift; sourceTree = "<group>"; };
 		65BBB12124AA052F008D34C1 /* MockPeripherals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPeripherals.swift; sourceTree = "<group>"; };
 		65BBB12424AA450B008D34C1 /* ConnectionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionTest.swift; sourceTree = "<group>"; };
@@ -109,6 +111,30 @@
 			path = ShareAndReplayOperator;
 			sourceTree = "<group>";
 		};
+		658A75B824BB70AB00F874EF /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				E12C12EB2490B60D00496496 /* LittleBlueTooth */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		658A75B924BB70B500F874EF /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				E12C12F62490B60D00496496 /* LittleBlueToothTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		658A75BB24BB70D800F874EF /* README */ = {
+			isa = PBXGroup;
+			children = (
+				658A75BC24BB70D800F874EF /* Icon.png */,
+			);
+			path = README;
+			sourceTree = "<group>";
+		};
 		65BBB11224A9BA16008D34C1 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -160,8 +186,10 @@
 		E12C12DF2490B60D00496496 = {
 			isa = PBXGroup;
 			children = (
-				E12C12EB2490B60D00496496 /* LittleBlueTooth */,
-				E12C12F62490B60D00496496 /* LittleBlueToothTests */,
+				658A75BB24BB70D800F874EF /* README */,
+				658A75BA24BB70D800F874EF /* README.md */,
+				658A75B924BB70B500F874EF /* Tests */,
+				658A75B824BB70AB00F874EF /* Sources */,
 				E12C12EA2490B60D00496496 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -434,7 +462,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = LittleBlueTooth/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/LittleBlueTooth/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -458,7 +486,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3RU2378YA5;
-				INFOPLIST_FILE = LittleBlueToothTests/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Tests/LittleBlueToothTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -603,7 +631,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = LittleBlueTooth/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/LittleBlueTooth/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -631,7 +659,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = LittleBlueTooth/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/LittleBlueTooth/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -654,7 +682,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3RU2378YA5;
-				INFOPLIST_FILE = LittleBlueToothTests/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Tests/LittleBlueToothTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -673,7 +701,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3RU2378YA5;
-				INFOPLIST_FILE = LittleBlueToothTests/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Tests/LittleBlueToothTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -130,38 +130,6 @@
             endingLineNumber = "1104"
             landmarkName = "writeValue(_:for:type:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "AAB92030-DC43-4B07-AF9B-297C16E71278 - ab7f2e7cb7d0882f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "CoreBluetoothMock.CBMPeripheralMock.writeValue(_: Foundation.Data, for: CoreBluetoothMock.CBMCharacteristic, type: __C.CBCharacteristicWriteType) -&gt; ()"
-                  moduleName = "LittleBlueTooth"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/Andrea/Library/Developer/Xcode/DerivedData/LittleBlueTooth-eyihbwnmpowalvabstkhdqljcgdl/SourcePackages/checkouts/IOS-CoreBluetooth-Mock/CoreBluetoothMock/Classes/CBMCentralManagerMock.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1104"
-                  endingLineNumber = "1104"
-                  offsetFromSymbolStart = "3509">
-               </Location>
-               <Location
-                  uuid = "AAB92030-DC43-4B07-AF9B-297C16E71278 - 9c11d34525372c98"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #3 () -&gt; () in CoreBluetoothMock.CBMPeripheralMock.writeValue(_: Foundation.Data, for: CoreBluetoothMock.CBMCharacteristic, type: __C.CBCharacteristicWriteType) -&gt; ()"
-                  moduleName = "LittleBlueTooth"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/Andrea/Library/Developer/Xcode/DerivedData/LittleBlueTooth-eyihbwnmpowalvabstkhdqljcgdl/SourcePackages/checkouts/IOS-CoreBluetooth-Mock/CoreBluetoothMock/Classes/CBMCentralManagerMock.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1104"
-                  endingLineNumber = "1104"
-                  offsetFromSymbolStart = "41">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
