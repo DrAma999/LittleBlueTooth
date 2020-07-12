@@ -16,7 +16,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 
 ## FEATURES
 * Built on top of combine
-* Deploys on **iOS**, **macOS**, **watchOS**, **tvOS**, **iPadOS**
+* Deploys on **iOS**
 * Chainable operations: scan, connect, start listen, stop listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
 * Peripheral state and bluetooth state observation. You can watch the bluetooth state and also the peripheral state for a more fine grained control in the UI. Of course those information are also checked before starting any operation.
 * Single notification channel: you can subscribe to the notification channel to receive all the data of the enabled characteristics. Of course you have also single and connectable publishers.
@@ -31,7 +31,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 ## HOW TO USE IT
 ### Scan
 You can scan with or without a timeout, after a timeout you receive a .scanTimeout error. Note that each peripheral found is published to the subscribers chain until you stop the scan request or you connect to a device (when you connect scan is automatically suspended.
-_Scan and stop_
+_Scan and stop_:
 ```
 / Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
@@ -60,7 +60,7 @@ _Scan and stop_
             print("Discovered Peripheral \(periph)")
         })
 ```
-_Scan with connection_
+_Scan with connection_:
 The scan process is automatically stopped one you start the connection command.
 ```
  // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
@@ -88,7 +88,7 @@ The scan process is automatically stopped one you start the connection command.
             print("Connected Peripheral \(periph)")
         })
 ```
-_Scan with peripheral buffer_
+_Scan with peripherals buffer_:
 ```
 // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
@@ -113,7 +113,7 @@ _Scan with peripheral buffer_
 ```
 
 ### Connect
-_Connection from discovery_
+_Connection from discovery_:
 A `PeripheralDiscovery` is a representation of what you usually get from a scan, it has the `UUID` of the peripheral and the advertising info.
 ```
 // Taken a discovery from scan
@@ -130,7 +130,7 @@ A `PeripheralDiscovery` is a representation of what you usually get from a scan,
             print("Connected Peripheral \(periph)")
         })
 ```
-_Direct connection from peripheral identifier_
+_Direct connection from peripheral identifier_:
  `PeripheralIdentifier` is a wrapper around a `CBPeripheral` identifier, this allows you to connect to a peripheral just knowing the `UUID` of the peripheral.
 ```
 
@@ -149,7 +149,7 @@ _Direct connection from peripheral identifier_
 ```
 
 ### Read
-_Reading from a characteristic_
+_Reading from a characteristic_:
 To read from a characteristic first you have to create an instance of `LittleBluetoothCharacteristic` and define the data you want to read.
 ```
 let littleChar = LittleBlueToothCharacteristic(characteristic: "19B10011-E8F2-537E-4F6C-D104768A1214", for: "19B10010-E8F2-537E-4F6C-D104768A1214")
@@ -221,7 +221,7 @@ After that is just a matter of call the read method.
 ```
 
 ### Write
-_Writing to a characteristic_
+_Writing to a characteristic_:
 To write to a characteristic first you have to create an instance of `LittleBluetoothCharacteristic` and define the data you want to read.
 ```
 let littleChar = LittleBlueToothCharacteristic(characteristic: "19B10011-E8F2-537E-4F6C-D104768A1214", for: "19B10010-E8F2-537E-4F6C-D104768A1214")
@@ -245,7 +245,7 @@ After that is just a matter of call the write method.
 littleBT.write(to: charateristic, value: ledState)
 ```
 
-_WriteAndListen_
+_WriteAndListen_:
 Sometimes you need to write a command to a “Control point” and read the subsequent reply from the BT device.
 This means attach yourself as a listener to a characteristic, write the command and wait for the reply.
 This process has been made super simple by using “write and listen”.
@@ -272,7 +272,7 @@ anycanc = littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerS
 ```
 
 ### Listen
-_Listen_
+_Listen_:
 Note: if you stop listening to a characteristic, it doesn’t matter if you have more subscribers. The listen process will stop. It’ s up you to provide the business logic to avoid this behavior.
 _Connectable listen_
 _Multiple listen_
@@ -295,9 +295,11 @@ _Peripheral state observer_
 - [ ] `CBManager` and `CBPeripheral` extraction
 - [ ] Add support for Swift Package Manager
 - [ ] Add multiple peripheral support
+- [ ] Add support to: **macOS**, **watchOS**, **tvOS**, **iPadOS**
 
 ## THANKS
 This work would have never been possible without looking at the library [RXBluetooth Kit](https://github.com/Polidea/RxBluetoothKit) from Polidea (check it if you need to deploy on lower target) and [Bluejay](https://github.com/steamclock/bluejay), another amazing library for iOS.
+
 “Icon made by  [Freepik](https://www.flaticon.com/authors/freepik)  from  [www.flaticon.com](http://www.flaticon.com/) “
 
 ## LICENSE
