@@ -442,15 +442,37 @@ Indipendently if it is unexpected or explicit `LittleBlueTooth` will clean up ev
 
 ### Connection event observer
 _Connection event observer_
-The connection event observer informs you about what happen while you are connected to a device.
-_Peripheral state observer_
-For more fine grained control you can also listen to peripheral states
-### Initialization operation
+The `connectionEventPublisher` informs you about what happen while you are connected to a device.
+A connection event is defined by different states:
+* `.connected(PeripheralIdentifier)`: when a peripheral is connected after a `connect` command
+* `.autoConnected(CBPeripheral)`: when a peripheral is connected automatically this event is triggered when you use the  `autoconnectionHandler`
+* `.connectionFailed(CBPeripheral, error: LittleBluetoothError?)`: when during a connection something goes wrong
+* `.disconnected(CBPeripheral, error: LittleBluetoothError?)`: when a peripheral ha been disconnected could be from an explicit disconnection or unexpected disconnection
 
+_Peripheral state observer_
+It can be used for more fine grained control over peripheral states, they comes from the `CBPeripheralStates`
+
+### Initialization operations
+Sometimes after a connection you need to perform some repetitive task, for instance an authetication by sending a key or a NONCE.
+This operations are stored inside the `connectionTasks` property and excuted after a connection normal or from an autoconnection. All other operations will be excuted after this has been done.
 
 ### Autoconnection
+The autoconnection is managed by the `autoconnectionHandler` handler.
+You can inspect the error and decide if an automatic connection is necessary.
+If you return `true` the connection process will start, once the peripheral has been found a connection will be established. If you return `false` iOS will not try to establish a connection.
+Connection process will remain active also in background if the app has the right
+permission, to cancel just call `disconnect`.
+When a connection will be established an `.autoConnected(PeripheralIdentifier)` event will be streamed to the `connectionEventPublisher`
+If you want to cancel it you have to send an explicit disconnection.
+
+Autoconnection will be interrupted in these condition:
+App Permission | Conditions
+------------ | -------------
+App has no BT permission to run in bkg | Explicit disconnection, App killed by user/system, when suspended
+App has  BT permission to run in bkg | Explicit disconnection, App killed by user/system
 
 ## ROADMAP
+- [x] SwiftPM support
 - [ ] State preservation and state restoration
 - [ ] Improve code coverage
 - [ ] `CBManager` and `CBPeripheral` extraction
@@ -460,7 +482,7 @@ For more fine grained control you can also listen to peripheral states
 ## THANKS
 This work would have never been possible without looking at the library [RXBluetooth Kit](https://github.com/Polidea/RxBluetoothKit) from Polidea (check it if you need to deploy on lower target) and [Bluejay](https://github.com/steamclock/bluejay), another amazing library for iOS.
 
-“Icon made by  [Freepik](https://www.flaticon.com/authors/freepik)  from  [www.flaticon.com](http://www.flaticon.com/) “
+Icon made by  [Freepik](https://www.flaticon.com/authors/freepik)  from  [www.flaticon.com](http://www.flaticon.com/) 
 
 ## LICENSE
 MIT License
