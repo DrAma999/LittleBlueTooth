@@ -37,13 +37,17 @@ public class LittleBlueTooth: Identifiable {
     public let id = UUID()
     
     /// This is usefull when you have auto-reconnection and want to do some task right after a connection.
-    /// All other tasks will be delyed until this one ends.
+    /// All other tasks will be delayed until this one ends.
     public var connectionTasks: AnyPublisher<Void, LittleBluetoothError>?
     
     /// This handler must be used to handle connection process after a disconnession.
-    /// The user can decide if he wants ot not to try a connection after a disconnection.
+    /// You can inspect the error and decide if an automatic connection is necessary.
+    /// If you return `true` the connection process will start, once the peripheral has been found a connection will be established.
+    /// If you return `false` iOS will not try to establish a connection
     /// Connection process will remain active also in background if the app has the right
-    /// permission, to cancel just call `disconnect`
+    /// permission, to cancel just call `disconnect`.
+    /// When a connection will be established an `.autoConnected(PeripheralIdentifier)` event will be streamed to
+    /// the `connectionEventPublisher`
     public var autoconnectionHandler: AutoconnectionHandler? = nil
     
     /// Connected peripheral. `nil` if not connected or a connection is not requested
