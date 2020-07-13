@@ -166,8 +166,6 @@ class ConnectionTest: LittleBlueToothTests {
         }
         .store(in: &disposeBag)
 
-
-
         littleBT.changesStatePublisher
             .sink { (state) in
                 print("Peripheral state: \(state)")
@@ -216,4 +214,55 @@ class ConnectionTest: LittleBlueToothTests {
         XCTAssert(isDisconnected)
     }
     
+    
+    func testAutoConnection() {
+        disposeBag.removeAll()
+        
+        blinky.simulateProximityChange(.immediate)
+        var connectionEvent = [ConnectionEvent]()
+        var peripheralState = [PeripheralState]()
+        let connectionExpectation = expectation(description: "Connection test")
+        littleBT.autoconnectionHandler = { (peripheral, error) -> Bool in
+            return true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+            blinky.simulateReset()
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+                connectionExpectation.fulfill()
+            }
+        }
+        
+        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        .flatMap { discovery in
+                self.littleBT.connect(to: discovery)
+        }
+        .sink(receiveCompletion: { completion in
+            print("Completion \(completion)")
+        }) { (connectedPeriph) in
+            print("Discovery \(connectedPeriph)")
+        }
+        .store(in: &disposeBag)
+        
+        littleBT.connectionEventPublisher
+            .sink { (event) in
+                print("ConnectionEvent \(event)")
+                connectionEvent.append(event)
+        }
+        .store(in: &disposeBag)
+        
+        littleBT.peripheralStatePublisher
+            .sink { (state) in
+                print("Peripheral state: \(state)")
+                peripheralState.append(state)
+        }
+        .store(in: &disposeBag)
+        
+        waitForExpectations(timeout: 60)
+        self.littleBT.autoconnectionHandler = nil
+        self.littleBT.disconnect()
+        XCTAssert(connectionEvent.count == 3)
+        XCTAssert(peripheralState.contains(.connected))
+        XCTAssert(peripheralState.contains(.disconnected))
+    }
 }

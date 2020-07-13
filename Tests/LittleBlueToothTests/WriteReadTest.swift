@@ -75,7 +75,7 @@ class ReadWriteTest: LittleBlueToothTests {
         }
         .store(in: &disposeBag)
         
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 30)
         XCTAssert(isWrong)
     }
     
