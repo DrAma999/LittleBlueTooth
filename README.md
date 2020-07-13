@@ -33,9 +33,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 * Initialization operations: sometimes you want to perform some bluetooth commands right after a connection, for instance an authentication, and you want to perform that before another operation have access to the peripheral.
 * Readable and Writable characteristics: basically those two protocols will deal in reading a `Data` object to the concrete type you want or writing your concrete type into a `Data` object.
 * Simplified `Error` normalization and if you want more you can always access the inner `CBError`
-* Select on with queue you want to execute operations and receive them
 * Code coverage > 80%
-* Select the queue where you want to process the request
 
 ## HOW TO USE IT
 ### Scan
@@ -248,7 +246,7 @@ struct LedState: Writable {
 }
 ```
 
-After that is just a matter of call the write method.
+After that is just a matter of call the write publisher.
 
 ```
 littleBT.write(to: charateristic, value: ledState)
@@ -259,7 +257,7 @@ Sometimes you need to write a command to a “Control point” and read the subs
 This means attach yourself as a listener to a characteristic, write the command and wait for the reply.
 This process has been made super simple by using “write and listen”.
 ```
-anycanc = littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        anycanc = littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
@@ -281,18 +279,172 @@ anycanc = littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerS
 ```
 
 ### Listen
+You can listen to a charcteristic in few different ways.
 _Listen_:
+After creating your `LittleCharacteristic` instance, then send the `startListen(from:forType:)` and attach the subscriber. Of course the object you want to read must conform the `Readable` object.
+```
+anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
+.filter { (discovery) -> Bool in
+    print("discovery \(discovery)")
+    if let name = discovery.advertisement.localName, name == "PunchLX" {
+        return true
+    }
+    return false
+}
+.flatMap { (discovery)-> AnyPublisher<Peripheral, LittleBluetoothError> in
+    self.littleBT.connect(to: discovery)
+}
+.flatMap{_ in
+    self.littleBT.startListen(from: self.littleChar, forType: Acceleration.self)
+}
+.sink(receiveCompletion: { result in
+    print("Result: \(result)")
+}, receiveValue: { (acc) in
+    print("Read \(acc)")
+})
+```
+
+
+
 Note: if you stop listening to a characteristic, it doesn’t matter if you have more subscribers. The listen process will stop. It’ s up you to provide the business logic to avoid this behavior.
 _Connectable listen_
+After creating your `LittleCharacteristic` instance, then send the `connectableListenPublisher(for: valueType:)`. Of course the object you want to read must conform the `Readable` object.
+This is usefull when you want to create more subscribers and attach them later. When you are ready just call the `connect()` method and notifications will start to stream.
+```
+let connectable = littleBT.connectableListenPublisher(for: charateristic, valueType: ButtonState.self)
+
+// First subscriber
+connectable
+.sink(receiveCompletion: { completion in
+    print("Completion \(completion)")
+}) { (answer) in
+    print("Sub1 \(answer)")
+}
+.store(in: &disposeBag)
+
+// Second subscriber
+connectable
+.sink(receiveCompletion: { completion in
+    print("Completion \(completion)")
+}) { (answer) in
+  print("Sub2: \(answer)")
+}
+.store(in: &disposeBag)
+
+
+littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+.map { disc -> PeripheralDiscovery in
+    print("Discovery discovery \(disc)")
+    return disc
+}
+.flatMap { discovery in
+    self.littleBT.connect(to: discovery)
+}
+.map { _ -> Void in
+    self.cancellable = connectable.connect()
+    return ()
+}
+.sink(receiveCompletion: { completion in
+    print("Completion \(completion)")
+}) { (answer) in
+    print("Answer \(answer)")
+}
+.store(in: &disposeBag)
+```
+
 _Multiple listen_
 If you need to receive more notifications on just one subscriber this publisher is made for you.
+Just activate one or more notification and subscribe to the `listenPublisher` publisher.
+It starts to stream all notifications once a peripheral is connected automatically.
+Now, it's your responsability to filter and converting `Data` object from `CBCharacteristic` to you type.
+```
+// First publisher
+littleBT.listenPublisher
+.filter { charact -> Bool in
+        charact.uuid == charateristicOne.characteristic
+}
+.tryMap { (characteristic) -> ButtonState in
+    guard let data = characteristic.value else {
+        throw LittleBluetoothError.emptyData
+    }
+    return try ButtonState(from: data)
+}
+.mapError { (error) -> LittleBluetoothError in
+    if let er = error as? LittleBluetoothError {
+        return er
+    }
+    return .emptyData
+}
+.sink(receiveCompletion: { completion in
+        print("Completion \(completion)")
+    }) { (answer) in
+        print("Sub1: \(answer)")
+}
+.store(in: &self.disposeBag)
+
+// Second publisher
+littleBT.listenPublisher
+.filter { charact -> Bool in
+        charact.uuid == charateristicTwo.characteristic
+}
+.tryMap { (characteristic) -> LedState in
+    guard let data = characteristic.value else {
+        throw LittleBluetoothError.emptyData
+    }
+    return try LedState(from: data)
+}.mapError { (error) -> LittleBluetoothError in
+    if let er = error as? LittleBluetoothError {
+        return er
+    }
+    return .emptyData
+}
+.sink(receiveCompletion: { completion in
+        print("Completion \(completion)")
+    }) { (answer) in
+        print("Sub2: \(answer)")
+}
+.store(in: &self.disposeBag)
+
+
+littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+.map { disc -> PeripheralDiscovery in
+        print("Discovery discovery \(disc)")
+        return disc
+}
+.flatMap { discovery in
+    self.littleBT.connect(to: discovery)
+}
+.flatMap { periph in
+    self.littleBT.startListen(from: charateristicOne)
+}
+.flatMap { periph in
+    self.littleBT.startListen(from: charateristicTwo)
+}
+.sink(receiveCompletion: { completion in
+    print("Completion \(completion)")
+}) { (answer) in
+  
+}
+.store(in: &disposeBag)
+
+```
 
 ### Disconnection
+Disconnection can be explicit or unexpected.
+Explicit when you call the method:
+```
+ self.littleBT.disconnect()
+```
+Unexpected can be due for different reasons: device reset, device out of range etc
+
+Indipendently if it is unexpected or explicit `LittleBlueTooth` will clean up everything after registering a disconnection.
 
 
 ### Connection event observer
 _Connection event observer_
+The connection event observer informs you about what happen while you are connected to a device.
 _Peripheral state observer_
+For more fine grained control you can also listen to peripheral states
 ### Initialization operation
 
 
@@ -302,9 +454,8 @@ _Peripheral state observer_
 - [ ] State preservation and state restoration
 - [ ] Improve code coverage
 - [ ] `CBManager` and `CBPeripheral` extraction
-- [ ] Add support for Swift Package Manager
 - [ ] Add multiple peripheral support
-- [ ] Add support to: **macOS**, **watchOS**, **tvOS**, **iPadOS**
+- [ ] Add support to: **macOS**, **watchOS**, **tvOS**
 
 ## THANKS
 This work would have never been possible without looking at the library [RXBluetooth Kit](https://github.com/Polidea/RxBluetoothKit) from Polidea (check it if you need to deploy on lower target) and [Bluejay](https://github.com/steamclock/bluejay), another amazing library for iOS.
@@ -312,4 +463,25 @@ This work would have never been possible without looking at the library [RXBluet
 “Icon made by  [Freepik](https://www.flaticon.com/authors/freepik)  from  [www.flaticon.com](http://www.flaticon.com/) “
 
 ## LICENSE
-MIT
+MIT License
+
+Copyright (c) 2020 Andrea Finollo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+

@@ -23,6 +23,7 @@ struct ButtonState: Readable {
 
 
 class ListenTest: LittleBlueToothTests {
+    var cancellable: Cancellable?
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -82,13 +83,13 @@ class ListenTest: LittleBlueToothTests {
         XCTAssert(counter > 10)
     }
     
-    func testListenMultipleSubscribers() {
+    
+    func testConnectableListen() {
         disposeBag.removeAll()
-       
 
         blinky.simulateProximityChange(.immediate)
         let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
-       
+        
         // Expectation
         let firstListenExpectation = expectation(description: "First sub expectation")
         let secondListenExpectation = expectation(description: "Second sub expectation")
@@ -99,61 +100,19 @@ class ListenTest: LittleBlueToothTests {
         
         // Simulate notification
         let scheduler: AnyCancellable = Timer.publish(every: 0.5, on: .main, in: .common)
-        .autoconnect()
-        .map {_ -> UInt8 in
-            let data = UInt8.random(in: 0...1)
-            blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
-            return data
+            .autoconnect()
+            .map {_ -> UInt8 in
+                let data = UInt8.random(in: 0...1)
+                blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
+                return data
         }.sink { value in
             print("Led value:\(value)")
         }
+
+        let connectable = littleBT.connectableListenPublisher(for: charateristic, valueType: ButtonState.self)
         
-        // Connectable publisher
-        let connectable = littleBT.listenPublisher
-            .filter { charact -> Bool in
-                charact.uuid == charateristic.characteristic
-        }
-        .tryMap { (characteristic) -> ButtonState in
-            guard let data = characteristic.value else {
-                throw LittleBluetoothError.emptyData
-            }
-            return try ButtonState(from: data)
-        }.mapError { (error) -> LittleBluetoothError in
-            if let er = error as? LittleBluetoothError {
-                return er
-            }
-            return .emptyData
-        }
-        .multicast {PassthroughSubject()}
-        
-        var cancellable: Cancellable?
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
-            .map { disc -> PeripheralDiscovery in
-                print("Discovery discovery \(disc)")
-                return disc
-        }
-        .flatMap { discovery in
-            self.littleBT.connect(to: discovery)
-        }
-        .map { _ -> Void in
-            cancellable = connectable.connect()
-            connectable
-            .sink(receiveCompletion: { completion in
-                print("Completion \(completion), cancellable: \(String(describing: cancellable))")
-            }) { (answer) in
-              print("Sub2: \(answer)")
-                sub2Event.append(answer.isOn)
-              secondCounter += 1
-              if secondCounter == 10 {
-                secondListenExpectation.fulfill()
-              }
-            }
-            .store(in: &self.disposeBag)
-            return ()
-        }
-        .flatMap { _ in
-            self.littleBT.startListen(from: charateristic, forType: ButtonState.self)
-        }
+        // First subscriber
+        connectable
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
         }) { (answer) in
@@ -170,12 +129,48 @@ class ListenTest: LittleBlueToothTests {
             }
         }
         .store(in: &disposeBag)
-       
+        
+        // Second subscriber
+        connectable
+        .sink(receiveCompletion: { completion in
+            print("Completion \(completion)")
+        }) { (answer) in
+          print("Sub2: \(answer)")
+            sub2Event.append(answer.isOn)
+          secondCounter += 1
+          if secondCounter == 10 {
+            secondListenExpectation.fulfill()
+          }
+        }
+        .store(in: &disposeBag)
+        
+
+        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        .map { disc -> PeripheralDiscovery in
+                print("Discovery discovery \(disc)")
+                return disc
+        }
+        .flatMap { discovery in
+            self.littleBT.connect(to: discovery)
+        }
+        .map { _ -> Void in
+            self.cancellable = connectable.connect()
+            return ()
+        }
+        .sink(receiveCompletion: { completion in
+            print("Completion \(completion)")
+        }) { (answer) in
+            print("Answer \(answer)")
+        }
+        .store(in: &disposeBag)
+        
+        
         waitForExpectations(timeout: 40)
         XCTAssert(sub1Event.count == sub2Event.count)
         XCTAssert(sub1Event == sub2Event)
     }
     
+ 
 
     func testListenToMoreCharacteristic() {
         disposeBag.removeAll()
@@ -184,8 +179,8 @@ class ListenTest: LittleBlueToothTests {
         let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
         let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
         // Expectation
-        let firstListenExpectation = expectation(description: "First sub more expectation")
-        let secondListenExpectation = expectation(description: "Second sub more expectation")
+        let firstListenExpectation = XCTestExpectation(description: "First sub more expectation")
+        let secondListenExpectation = XCTestExpectation(description: "Second sub more expectation")
         var sub1Event = [Bool]()
         var sub2Event = [Bool]()
         var firstCounter = 0
@@ -204,9 +199,9 @@ class ListenTest: LittleBlueToothTests {
             print(" value:\(value)")
         }
         
-        // Connectable publisher
-        let connectableOne = littleBT.listenPublisher
-            .filter { charact -> Bool in
+        // First publisher
+        littleBT.listenPublisher
+        .filter { charact -> Bool in
                 charact.uuid == charateristicOne.characteristic
         }
         .tryMap { (characteristic) -> ButtonState in
@@ -214,16 +209,29 @@ class ListenTest: LittleBlueToothTests {
                 throw LittleBluetoothError.emptyData
             }
             return try ButtonState(from: data)
-        }.mapError { (error) -> LittleBluetoothError in
+        }
+        .mapError { (error) -> LittleBluetoothError in
             if let er = error as? LittleBluetoothError {
                 return er
             }
             return .emptyData
         }
-        .multicast {PassthroughSubject()}
+        .sink(receiveCompletion: { completion in
+                print("Completion \(completion)")
+            }) { (answer) in
+                print("Sub1: \(answer)")
+                if firstCounter == 10 {
+                    return
+                } else {
+                    sub1Event.append(answer.isOn)
+                    firstCounter += 1
+                }
+        }
+        .store(in: &self.disposeBag)
         
-        let connectableTwo = littleBT.listenPublisher
-            .filter { charact -> Bool in
+        // Second publisher
+        littleBT.listenPublisher
+        .filter { charact -> Bool in
                 charact.uuid == charateristicTwo.characteristic
         }
         .tryMap { (characteristic) -> LedState in
@@ -237,10 +245,18 @@ class ListenTest: LittleBlueToothTests {
             }
             return .emptyData
         }
-        .multicast {PassthroughSubject()}
-        
-        var cancellableOne: Cancellable?
-        var cancellableTwo: Cancellable?
+        .sink(receiveCompletion: { completion in
+                print("Completion \(completion)")
+            }) { (answer) in
+                print("Sub2: \(answer)")
+                if secondCounter == 10 {
+                    return
+                } else {
+                    sub2Event.append(answer.isOn)
+                    secondCounter += 1
+                }
+        }
+        .store(in: &self.disposeBag)
 
         littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
             .map { disc -> PeripheralDiscovery in
@@ -256,43 +272,22 @@ class ListenTest: LittleBlueToothTests {
         .flatMap { periph in
             self.littleBT.startListen(from: charateristicTwo)
         }
-        .map { _ -> Void in
-            cancellableOne = connectableOne.connect()
-            connectableOne
-                .sink(receiveCompletion: { completion in
-                    print("Completion \(completion), cancellable: \(String(describing: cancellableOne))")
-                }) { (answer) in
-                    print("Sub1: \(answer)")
-                    sub1Event.append(answer.isOn)
-                    firstCounter += 1
-                    if firstCounter == 10 {
-                        firstListenExpectation.fulfill()
-                    }
-            }
-            .store(in: &self.disposeBag)
-            cancellableTwo = connectableTwo.connect()
-            connectableTwo
-                .sink(receiveCompletion: { completion in
-                    print("Completion \(completion), cancellable: \(String(describing: cancellableTwo))")
-                }) { (answer) in
-                    print("Sub2: \(answer)")
-                    sub2Event.append(answer.isOn)
-                    secondCounter += 1
-                    if secondCounter == 10 {
-                        secondListenExpectation.fulfill()
-                    }
-            }
-            .store(in: &self.disposeBag)
-            return ()
+        .delay(for: .seconds(20), scheduler: DispatchQueue.global())
+        .flatMap { _ in
+            self.littleBT.stopListen(from: charateristicOne)
+        }
+        .flatMap { _ in
+            self.littleBT.stopListen(from: charateristicTwo)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
         }) { (answer) in
-          
+            secondListenExpectation.fulfill()
+            firstListenExpectation.fulfill()
         }
         .store(in: &disposeBag)
         
-        waitForExpectations(timeout: 40)
+        wait(for: [firstListenExpectation, secondListenExpectation], timeout: 30)
         littleBT.disconnect()
         XCTAssert(sub1Event.count == sub2Event.count)
         
