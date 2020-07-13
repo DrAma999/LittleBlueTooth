@@ -55,17 +55,8 @@ public class LittleBlueTooth: Identifiable {
     
     /// Publish all values from `CBCharacteristic` that you are already listening to.
     /// It's up to you to filter them and convert raw data to the `Readable` object.
-    /// Better if you make it connectable using the `makeConnectable()` and connect to it only when you are sure that a `Peripheral` is connectd
     public var listenPublisher: AnyPublisher<CBCharacteristic, LittleBluetoothError> {
-        return
-            ensureBluetoothState()
-            .flatMap { [unowned self] _ in
-                self.ensurePeripheralConnected()
-            }
-            .flatMap { [unowned self] _ in
-                self.peripheral!.listenPublisher
-            }
-            .eraseToAnyPublisher()
+        _listenPublisher.eraseToAnyPublisher()
     }
     
     // MARK: - Private variables
@@ -77,11 +68,26 @@ public class LittleBlueTooth: Identifiable {
     private var peripheralStatePublisherCancellable: Cancellable?
     /// Peripheral changes  publisher. It will be created after `Peripheral` instance creation.
     private var peripheralChangesPublisherCancellable: Cancellable?
+    /// Notification  publisher. It will be created after `Peripheral` instance creation.
+    private var listenPublisherCancellable: Cancellable?
     /// Cancellable connection event subscriber.
     private var connectionEventSubscriber: AnyCancellable?
     private var connectionEventSubscriberPeri: AnyCancellable?
 
-
+    private lazy var _listenPublisher: Publishers.Multicast<AnyPublisher<CBCharacteristic, LittleBluetoothError>, PassthroughSubject<CBCharacteristic, LittleBluetoothError>>
+        = {  [unowned self] in
+            let pub =
+                ensureBluetoothState()
+                .flatMap { [unowned self] _ in
+                        self.ensurePeripheralConnected()
+                }
+                .flatMap { [unowned self] _ in
+                    self.peripheral!.listenPublisher
+                }
+                .share()
+                .eraseToAnyPublisher()
+            return Publishers.Multicast(upstream: pub, createSubject:{ PassthroughSubject() })
+    }()
     /// Peripheral state connectable publisher. It will be connected after `Peripheral` instance creation.
     private lazy var _peripheralStatePublisher: Publishers.MakeConnectable<AnyPublisher<PeripheralState, Never>> = { [unowned self] in
         let statePublisher =
@@ -151,14 +157,21 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter valueType: The type of the value you want the raw `Data` be converted
     /// - returns: A multicast publisher that will send out values of the type you choose.
     /// - important: The type of the value must be conform to `Readable`
-    public func connectableListenPublisher<T: Readable>(for characteristic: LittleBlueToothCharacteristic, valueType: T.Type, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
+    public func connectableListenPublisher<T: Readable>(for characteristic: LittleBlueToothCharacteristic, valueType: T.Type, queue: DispatchQueue = DispatchQueue.main) -> Publishers.Multicast<AnyPublisher<T, LittleBluetoothError>, PassthroughSubject<T, LittleBluetoothError>> {
         
            let listen = ensureBluetoothState()
            .print("ConnectableListenPublisher")
            .flatMap { [unowned self] _ in
                self.ensurePeripheralConnected()
            }
-           .flatMap { periph in
+           .flatMap { (periph) -> AnyPublisher<(CBCharacteristic, Peripheral), LittleBluetoothError> in
+               return periph.startListen(from: characteristic.characteristic, of: characteristic.service)
+                   .map { (characteristic) -> (CBCharacteristic, Peripheral) in
+                       (characteristic, periph)
+               }
+               .eraseToAnyPublisher()
+           }
+           .flatMap { (_ ,periph) in
                periph.listenPublisher
            }
            .filter { charact -> Bool in
@@ -176,11 +189,8 @@ public class LittleBlueTooth: Identifiable {
                return .emptyData
            }
            .share()
-           .multicast{ PassthroughSubject() }
            .eraseToAnyPublisher()
-
-        return listen
-
+        return Publishers.Multicast(upstream: listen, createSubject:{ PassthroughSubject() })
        }
     
        
@@ -266,13 +276,33 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter characteristic: characteristic you want to stop listen
     /// - returns: A publisher with that informs you about the successful or failed task
     public func stopListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> {
-        return ensureBluetoothState()
+        
+        let stopSubject = PassthroughSubject<CBCharacteristic, LittleBluetoothError>()
+        
+        let key = UUID()
+        ensureBluetoothState()
         .flatMap { [unowned self] _ in
             self.ensurePeripheralConnected()
         }
         .flatMap { (periph) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
             periph.stopListen(from: characteristic.characteristic, of: characteristic.service)
-        }.eraseToAnyPublisher()
+        }
+        .sink(receiveCompletion: { [unowned self, key] (completion) in
+            switch completion {
+            case .finished:
+                break
+            case .failure(let error):
+                stopSubject.send(completion: .failure(error))
+                self.removeAndCancelSubscriber(for: key)
+            }
+        }) { [unowned self, key] (readvalue) in
+            stopSubject.send(readvalue)
+            stopSubject.send(completion: .finished)
+            self.removeAndCancelSubscriber(for: key)
+        }
+        .store(in: &disposeBag, for: key)
+        
+        return stopSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Read
@@ -504,6 +534,7 @@ public class LittleBlueTooth: Identifiable {
         .tryMap { [unowned self] (event) -> CBPeripheral in
             switch event {
             case .connected(let periph):
+                self.listenPublisherCancellable = self._listenPublisher.connect()
                 return periph
             case .connectionFailed(_, let error?):
                 self.cbCentral.cancelPeripheralConnection(self.peripheral!.cbPeripheral)
@@ -679,6 +710,8 @@ public class LittleBlueTooth: Identifiable {
     }
     
     private func cleanUpForDisconnection() {
+        self.listenPublisherCancellable?.cancel()
+        self.listenPublisherCancellable = nil
         self.peripheralStatePublisherCancellable?.cancel()
         self.peripheralStatePublisherCancellable = nil
         self.peripheralChangesPublisherCancellable?.cancel()
