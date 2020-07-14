@@ -29,6 +29,6 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "LittleBlueToothTests",
-            dependencies: ["LittleBlueTooth"]),
+            dependencies: ["LittleBlueTooth","CoreBluetoothMock"]),
     ]
 )
