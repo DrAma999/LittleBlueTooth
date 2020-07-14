@@ -265,4 +265,50 @@ class ConnectionTest: LittleBlueToothTests {
         XCTAssert(peripheralState.contains(.connected))
         XCTAssert(peripheralState.contains(.disconnected))
     }
+    
+    func testPeripheralConnectionInitializationSuccess() {
+        disposeBag.removeAll()
+        
+        blinky.simulateProximityChange(.immediate)
+        let connectionExpectation = expectation(description: "Connection expectation")
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+
+        var ledState: LedState?
+
+        littleBT.connectionTasks = Just(()).setFailureType(to: LittleBluetoothError.self)
+        .flatMap{ _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic, forType: LedState.self)
+        }.map { state in
+            ledState = state
+            return ()
+        }.eraseToAnyPublisher()
+        
+        
+        var connectedPeripheral: Peripheral?
+        
+        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        .flatMap { discovery in
+            self.littleBT.connect(to: discovery)
+        }
+        .sink(receiveCompletion: { completion in
+            print("Completion \(completion)")
+        }) { (connectedPeriph) in
+            print("Discovery \(connectedPeriph)")
+            connectedPeripheral = connectedPeriph
+            self.littleBT.disconnect().sink(receiveCompletion: { _ in
+            }) { _ in
+                connectionExpectation.fulfill()
+            }
+            .store(in: &self.disposeBag)
+        }
+        .store(in: &disposeBag)
+        
+        waitForExpectations(timeout: 15)
+        littleBT.connectionTasks = nil
+        XCTAssertNotNil(connectedPeripheral)
+        XCTAssertNotNil(ledState)
+        XCTAssert(!ledState!.isOn)
+        XCTAssertEqual(connectedPeripheral!.cbPeripheral.identifier, blinky.identifier)
+
+    }
 }
