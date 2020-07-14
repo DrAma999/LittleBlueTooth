@@ -75,7 +75,6 @@ class ScanDiscoveryTest: LittleBlueToothTests {
                     isPowerOff = false
                     if case LittleBluetoothError.bluetoothPoweredOff = error {
                         isPowerOff = true
-                        self.littleBT.stopDiscovery()
                     }
                     self.littleBT.stopDiscovery()
                     .sink(receiveCompletion: {_ in
@@ -141,7 +140,6 @@ class ScanDiscoveryTest: LittleBlueToothTests {
                 isScanTimeout = false
                 if case LittleBluetoothError.scanTimeout = error {
                     isScanTimeout = true
-                    self.littleBT.stopDiscovery()
                 }
                 discoveryExpectation.fulfill()
             case .finished:
