@@ -594,7 +594,9 @@ public class LittleBlueTooth: Identifiable {
         }
         .flatMap { [unowned self] peripheral -> AnyPublisher<Peripheral, LittleBluetoothError> in
             if let connTask = self.connectionTasks {
-                return connTask.map {
+                // I'm doing a copy of the connectionTask so if somethng fails
+                // next time it will start over
+                return AnyPublisher(connTask).map {
                     peripheral
                 }.eraseToAnyPublisher()
             }
