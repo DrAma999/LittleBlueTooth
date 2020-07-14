@@ -13,10 +13,15 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
+
+public protocol PeripheralIdentifiable: Identifiable {
+    var id: UUID {get set}
+    var name: String? {get set}
+}
 /// An object that contains the unique identifier of the `CBPeripheral` and the name of it (if present)
-public struct PeripheralIdentifier: Identifiable {
-    public let id: UUID
-    public let name: String?
+public struct PeripheralIdentifier: PeripheralIdentifiable {
+    public var id: UUID
+    public var name: String?
     
     public init(peripheral: CBPeripheral) {
         self.id = peripheral.identifier
@@ -44,20 +49,15 @@ extension PeripheralIdentifier: CustomStringConvertible {
         Name: \(name ?? "not availbale")
         """
     }
-    
-    
 }
+
 /**
 An object that contains the unique identifier of the `CBPeripheral`, the name of it (if present) and the advertising info.
 */
-public struct PeripheralDiscovery: Identifiable {
-    public var id: UUID {
-        cbPeripheral.identifier
-    }
-    
-    public var name: String? {
-        cbPeripheral.name
-    }
+public struct PeripheralDiscovery: PeripheralIdentifiable {
+        
+    public var id: UUID
+    public var name: String?
     
     public let cbPeripheral: CBPeripheral
     public let advertisement: AdvertisingInfo
@@ -65,6 +65,8 @@ public struct PeripheralDiscovery: Identifiable {
     
     init(_ peripheral: CBPeripheral, advertisement: [String : Any], rssi: NSNumber) {
         self.cbPeripheral = peripheral
+        self.name = peripheral.name
+        self.id = peripheral.identifier
         self.rssi = rssi.intValue
         self.advertisement = AdvertisingInfo(advertisementData: advertisement)
     }
