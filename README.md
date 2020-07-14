@@ -23,6 +23,13 @@ github "DrAma999/LittleBlueTooth" ~> 0.1.0
 
 The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your dependencies. Unforutnately at the moment the nordic library supports only SwiftPM and Cocoapods.
 
+### Swift Package Manager
+Add the following dependency to your Package.swift file:
+```
+.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.1.0")
+```
+Or simply add from XCode menu.
+
 ## FEATURES
 * Built on top of combine
 * Deploys on **iOS**
