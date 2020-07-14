@@ -16,6 +16,7 @@ import CoreBluetooth
 
 public enum ConnectionEvent {
     case connected(CBPeripheral)
+    case autoConnected(CBPeripheral)
     case connectionFailed(CBPeripheral, error: LittleBluetoothError?)
     case disconnected(CBPeripheral, error: LittleBluetoothError?)
 }
@@ -60,6 +61,7 @@ class CBCentralManagerDelegateProxy: NSObject {
         _centralStatePublisher.shareReplay(1).eraseToAnyPublisher()
     }()
     
+    var isAutoconnectionActive = false
 }
 
 extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
@@ -75,12 +77,18 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     
     /// Monitoring connection
     func centralManager(_ central: CBCentralManager, didConnect: CBPeripheral) {
-        let event = ConnectionEvent.connected(didConnect)
-        connectionEventPublisher.send(event)
-
+        if isAutoconnectionActive {
+            isAutoconnectionActive = false
+            let event = ConnectionEvent.autoConnected(didConnect)
+            connectionEventPublisher.send(event)
+        } else {
+            let event = ConnectionEvent.connected(didConnect)
+            connectionEventPublisher.send(event)
+        }
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: Error?) {
+        isAutoconnectionActive = false
         var lttlError: LittleBluetoothError?
         if let error = error {
             lttlError = .peripheralDisconnected(PeripheralIdentifier(peripheral: didDisconnectPeripheral), error)
@@ -90,6 +98,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect: CBPeripheral, error: Error?) {
+        isAutoconnectionActive = false
         var lttlError: LittleBluetoothError?
         if let error = error {
             lttlError = .couldNotConnectToPeripheral(PeripheralIdentifier(peripheral: didFailToConnect), error)
