@@ -39,6 +39,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 ### Scan
 You can scan with or without a timeout, after a timeout you receive a .scanTimeout error. Note that each peripheral found is published to the subscribers chain until you stop the scan request or you connect to a device (when you connect scan is automatically suspended.
 _Scan and stop_:
+
 ```
         // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
@@ -68,6 +69,7 @@ _Scan and stop_:
         })
 ```
 _Scan with connection_:
+
 The scan process is automatically stopped one you start the connection command.
 ```
         // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
@@ -96,6 +98,7 @@ The scan process is automatically stopped one you start the connection command.
         })
 ```
 _Scan with peripherals buffer_:
+
 ```
         // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
@@ -121,6 +124,7 @@ _Scan with peripherals buffer_:
 
 ### Connect
 _Connection from discovery_:
+
 A `PeripheralDiscovery` is a representation of what you usually get from a scan, it has the `UUID` of the peripheral and the advertising info.
 ```
         // Taken a discovery from scan
@@ -138,6 +142,7 @@ A `PeripheralDiscovery` is a representation of what you usually get from a scan,
         })
 ```
 _Direct connection from peripheral identifier_:
+
  `PeripheralIdentifier` is a wrapper around a `CBPeripheral` identifier, this allows you to connect to a peripheral just knowing the `UUID` of the peripheral.
 ```
 
@@ -157,6 +162,7 @@ _Direct connection from peripheral identifier_:
 
 ### Read
 _Reading from a characteristic_:
+
 To read from a characteristic first you have to create an instance of `LittleBluetoothCharacteristic` and define the data you want to read.
 ```
 let littleChar = LittleBlueToothCharacteristic(characteristic: "19B10011-E8F2-537E-4F6C-D104768A1214", for: "19B10010-E8F2-537E-4F6C-D104768A1214")
@@ -229,6 +235,7 @@ After that is just a matter of call the read method.
 
 ### Write
 _Writing to a characteristic_:
+
 To write to a characteristic first you have to create an instance of `LittleBluetoothCharacteristic` and define the data you want to read.
 ```
 let littleChar = LittleBlueToothCharacteristic(characteristic: "19B10011-E8F2-537E-4F6C-D104768A1214", for: "19B10010-E8F2-537E-4F6C-D104768A1214")
@@ -253,6 +260,7 @@ littleBT.write(to: charateristic, value: ledState)
 ```
 
 _WriteAndListen_:
+
 Sometimes you need to write a command to a “Control point” and read the subsequent reply from the BT device.
 This means attach yourself as a listener to a characteristic, write the command and wait for the reply.
 This process has been made super simple by using “write and listen”.
@@ -280,7 +288,9 @@ This process has been made super simple by using “write and listen”.
 
 ### Listen
 You can listen to a charcteristic in few different ways.
+
 _Listen_:
+
 After creating your `LittleCharacteristic` instance, then send the `startListen(from:forType:)` and attach the subscriber. Of course the object you want to read must conform the `Readable` object.
 ```
 anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
@@ -306,8 +316,9 @@ anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
 
 
 
-Note: if you stop listening to a characteristic, it doesn’t matter if you have more subscribers. The listen process will stop. It’ s up you to provide the business logic to avoid this behavior.
-_Connectable listen_
+**Note: if you stop listening to a characteristic, it doesn’t matter if you have more subscribers. The listen process will stop. It’ s up you to provide the business logic to avoid this behavior.**
+_Connectable listen_:
+
 After creating your `LittleCharacteristic` instance, then send the `connectableListenPublisher(for: valueType:)`. Of course the object you want to read must conform the `Readable` object.
 This is usefull when you want to create more subscribers and attach them later. When you are ready just call the `connect()` method and notifications will start to stream.
 ```
@@ -352,7 +363,8 @@ littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionA
 .store(in: &disposeBag)
 ```
 
-_Multiple listen_
+_Multiple listen_:
+
 If you need to receive more notifications on just one subscriber this publisher is made for you.
 Just activate one or more notification and subscribe to the `listenPublisher` publisher.
 It starts to stream all notifications once a peripheral is connected automatically.
@@ -441,7 +453,8 @@ Indipendently if it is unexpected or explicit `LittleBlueTooth` will clean up ev
 
 
 ### Connection event observer
-_Connection event observer_
+_Connection event observer_:
+
 The `connectionEventPublisher` informs you about what happen while you are connected to a device.
 A connection event is defined by different states:
 * `.connected(PeripheralIdentifier)`: when a peripheral is connected after a `connect` command
@@ -449,7 +462,8 @@ A connection event is defined by different states:
 * `.connectionFailed(CBPeripheral, error: LittleBluetoothError?)`: when during a connection something goes wrong
 * `.disconnected(CBPeripheral, error: LittleBluetoothError?)`: when a peripheral ha been disconnected could be from an explicit disconnection or unexpected disconnection
 
-_Peripheral state observer_
+_Peripheral state observer_:
+
 It can be used for more fine grained control over peripheral states, they comes from the `CBPeripheralStates`
 
 ### Initialization operations
