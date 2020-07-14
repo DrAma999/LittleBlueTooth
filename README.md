@@ -2,7 +2,7 @@
 <p align="center">
   <img width="200" height="200" src="README/Icon.png">
 </p>
-<p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13&color=black"</p><p><img src="https://img.shields.io/static/v1?label=coverage&message=83%&color=yellowgreen"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"</p>
+<p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13&color=black"></p><p><img src="https://img.shields.io/static/v1?label=coverage&message=83%&color=yellowgreen"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"> <img src="https://img.shields.io/static/v1?label=SwiftPM&message=compatible&color=green"></p>
 
   
   
