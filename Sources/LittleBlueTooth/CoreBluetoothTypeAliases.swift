@@ -36,6 +36,7 @@ import Foundation
 // the imports to CoreBluetooth to fix conflicts and initiate the manager
 // using CBCentralManagerFactory, instad of just creating a CBCentralManager.
 
+
 public typealias CBCentralManagerFactory         = CBMCentralManagerFactory
 public typealias CBPeer                          = CBMPeer
 public typealias CBUUID                          = CBMUUID
@@ -65,9 +66,10 @@ public let CBCentralManagerOptionShowPowerAlertKey            = CBMCentralManage
 public let CBCentralManagerOptionRestoreIdentifierKey         = CBMCentralManagerOptionRestoreIdentifierKey
 public let CBCentralManagerScanOptionSolicitedServiceUUIDsKey = CBMCentralManagerScanOptionSolicitedServiceUUIDsKey
 public let CBConnectPeripheralOptionStartDelayKey             = CBMConnectPeripheralOptionStartDelayKey
-@available(iOS 13.0, *)
+#if !os(macOS)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public let CBConnectPeripheralOptionRequiresANCS              = CBMConnectPeripheralOptionRequiresANCS
-
+#endif
 public let CBCentralManagerRestoredStatePeripheralsKey        = CBMCentralManagerRestoredStatePeripheralsKey
 public let CBCentralManagerRestoredStateScanServicesKey       = CBMCentralManagerRestoredStateScanServicesKey
 public let CBCentralManagerRestoredStateScanOptionsKey        = CBMCentralManagerRestoredStateScanOptionsKey
@@ -84,4 +86,5 @@ public let CBAdvertisementDataSolicitedServiceUUIDsKey        = CBMAdvertisement
 public let CBConnectPeripheralOptionNotifyOnConnectionKey     = CBMConnectPeripheralOptionNotifyOnConnectionKey
 public let CBConnectPeripheralOptionNotifyOnDisconnectionKey  = CBMConnectPeripheralOptionNotifyOnDisconnectionKey
 public let CBConnectPeripheralOptionNotifyOnNotificationKey   = CBMConnectPeripheralOptionNotifyOnNotificationKey
+
 #endif
