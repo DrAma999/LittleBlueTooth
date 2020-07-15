@@ -127,32 +127,53 @@ public class LittleBlueTooth: Identifiable {
         return changesPublisher
     }()
     
+    private var restoreStateCancellable: AnyCancellable?
+    
     /// Used to inject error to ensure peripheral is connected before any operation, it buffers the last result and throw error if peripheral disconnect for a specific error
     
     var cbCentral: CBCentralManager
     var centralProxy = CBCentralManagerDelegateProxy()
     
     // MARK: - Init
-    public init() {
+    public init(queue: DispatchQueue? = nil, options: [String : Any]? = nil, restoreHandler: ((CentralRestorer) -> Void)? = nil) {
         #if TEST
-        self.cbCentral = CBCentralManagerFactory.instance(delegate: self.centralProxy, queue: nil)
+        self.cbCentral = CBCentralManagerFactory.instance(delegate: self.centralProxy, queue: queue, options: options)
         #else
-        self.cbCentral = CBCentralManager(delegate: self.centralProxy, queue: nil)
+        self.cbCentral = CBCentralManager(delegate: self.centralProxy, queue: queue, options: options)
         #endif
+        if (restoreHandler == nil &&
+            options?[CBCentralManagerOptionRestoreIdentifierKey] != nil) ||
+            (restoreHandler != nil &&
+            options?[CBCentralManagerOptionRestoreIdentifierKey] == nil) {
+            fatalError("If you want to use state preservation/restoration you must implement both restore key and the handler")
+        }
+        attachSubscribers(with: restoreHandler)
+    }
+    
+    func attachSubscribers(with restorehandler: ((CentralRestorer) -> Void)?) {
         self.connectionEventSubscriber =
-        connectionEventPublisher
-        // This delay to make able other subscribers to receive notification
-        .delay(for: .milliseconds(500), scheduler: DispatchQueue.main)
-        .sink { [unowned self] (event) in
-            if case ConnectionEvent.disconnected( let peripheral, let error) = event {
-                self.cleanUpForDisconnection()
-                if let autoCon = self.autoconnectionHandler {
-                    let periph = PeripheralIdentifier(peripheral: peripheral)
-                    if autoCon(periph, error) == true {
-                        _ = self.connect(to: periph, autoreconnect: true)
+            connectionEventPublisher
+                // This delay to make able other subscribers to receive notification
+            .delay(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .sink { [unowned self] (event) in
+                if case ConnectionEvent.disconnected( let peripheral, let error) = event {
+                    self.cleanUpForDisconnection()
+                    if let autoCon = self.autoconnectionHandler {
+                        let periph = PeripheralIdentifier(peripheral: peripheral)
+                        if autoCon(periph, error) == true {
+                            _ = self.connect(to: periph, autoreconnect: true)
+                        }
                     }
-                }
             }
+        }
+        if let handler = restorehandler {
+            self.restoreStateCancellable = centralProxy.willRestoreStatePublisher
+            .map { (central, dictionary) -> CentralRestorer in
+               CentralRestorer(centralManager: central, restoredInfo: dictionary)
+            }
+            .sink(receiveValue: { (restorer) in
+                handler(restorer)
+            })
         }
     }
     

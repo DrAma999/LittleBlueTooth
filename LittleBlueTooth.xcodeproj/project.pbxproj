@@ -22,6 +22,8 @@
 
 /* Begin PBXBuildFile section */
 		655330DB24BE2E70007D299B /* CoreBluetoothMock in Frameworks */ = {isa = PBXBuildFile; productRef = 655330DA24BE2E70007D299B /* CoreBluetoothMock */; };
+		655330DD24BF159D007D299B /* CentralRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DC24BF159D007D299B /* CentralRestorer.swift */; };
+		655330DF24BF5446007D299B /* StateRestoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DE24BF5446007D299B /* StateRestoration.swift */; };
 		658A75C224BB74FC00F874EF /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
 		658A75C524BB765C00F874EF /* LittleBlueTooth.h in Headers */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* LittleBlueTooth.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		OBJ_52 /* LittleBlueToothError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* LittleBlueToothError.swift */; };
@@ -66,6 +68,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		655330DC24BF159D007D299B /* CentralRestorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralRestorer.swift; sourceTree = "<group>"; };
+		655330DE24BF5446007D299B /* StateRestoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRestoration.swift; sourceTree = "<group>"; };
 		"LittleBlueTooth::LittleBlueTooth::Product" /* LittleBlueTooth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LittleBlueTooth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"LittleBlueTooth::LittleBlueToothTests::Product" /* LittleBlueToothTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = LittleBlueToothTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -143,6 +147,7 @@
 				OBJ_16 /* LittleBlueToothCharacteristic.swift */,
 				OBJ_17 /* Peripheral.swift */,
 				OBJ_18 /* PeripheralDiscovery.swift */,
+				655330DC24BF159D007D299B /* CentralRestorer.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -194,6 +199,7 @@
 				OBJ_38 /* ScanDiscoveryTest.swift */,
 				OBJ_39 /* UtilityTest.swift */,
 				OBJ_40 /* WriteReadTest.swift */,
+				655330DE24BF5446007D299B /* StateRestoration.swift */,
 			);
 			name = LittleBlueToothTests;
 			path = Tests/LittleBlueToothTests;
@@ -357,6 +363,7 @@
 				OBJ_54 /* LittleBlueToothCharacteristic.swift in Sources */,
 				OBJ_55 /* Peripheral.swift in Sources */,
 				OBJ_56 /* PeripheralDiscovery.swift in Sources */,
+				655330DD24BF159D007D299B /* CentralRestorer.swift in Sources */,
 				OBJ_57 /* CBCentralManagerDelegateProxy.swift in Sources */,
 				OBJ_58 /* CBPeripheralProxy.swift in Sources */,
 				OBJ_59 /* ReplaySubject.swift in Sources */,
@@ -381,6 +388,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_82 /* ConnectionTest.swift in Sources */,
+				655330DF24BF5446007D299B /* StateRestoration.swift in Sources */,
 				OBJ_83 /* ListenTest.swift in Sources */,
 				OBJ_84 /* LittleBlueToothTests.swift in Sources */,
 				OBJ_85 /* MockPeripherals.swift in Sources */,

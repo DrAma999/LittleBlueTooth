@@ -471,13 +471,27 @@ App Permission | Conditions
 App has no BT permission to run in bkg | Explicit disconnection, App killed by user/system, when suspended
 App has  BT permission to run in bkg | Explicit disconnection, App killed by user/system
 
+### State preservation and state restoration
+First read Apple documentation [here](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html) and [here](https://developer.apple.com/library/archive/qa/qa1962/_index.html).
+To make state restoration/preservation work, first you must instantiate `LittleBluetTooth` with a dictionary that contains for the key `CBCentralManagerOptionRestoreIdentifierKey` a specific string identifier and you must add a handler that it will be called during state restoration. You MUST also opt-in for bluetooth in background.
+
+If your app is woken up by a bluetooh event in background it will call the `applicationDidFinishLauching` along with a dictionary. Using this key, `UIApplicationLaunchOptionsBluetoothCentralsKey`, you receive an array of identifiers of CBCentralManager instances that were working before the app was closed. You have a chance to restore the  `LittleBlueTooth` central manger by extracting the identifer from the launching option dictionary and passing it to the option dictionary of littleBT (or you can simply instantiate using a constant).
+If an state restoration event is triggered the handler will receive a `CentralRestorer` object. You can query this object and try to understand wich was the state of the peripheral when the application was closed.
+For instance query the peripherals and if the app was closed while connecting or when it was connected you can
+obtain the `PeripheralIdentifier` object and restore the connection.
+
 ## ROADMAP
 - [x] SwiftPM support
-- [ ] State preservation and state restoration
+- [x] State preservation and state restoration
 - [ ] Improve code coverage
 - [ ] `CBManager` and `CBPeripheral` extraction
 - [ ] Add multiple peripheral support
-- [ ] Add support to: **macOS**, **watchOS**, **tvOS**
+- [x] Add support to: **macOS**, **watchOS**, **tvOS**
+
+## ISSUES
+## CONTRIBUTING
+Since I'm working on this project in my spare time any help is appreciated.
+Feel free to make a pull request.
 
 ## THANKS
 This work would have never been possible without looking at the library [RXBluetooth Kit](https://github.com/Polidea/RxBluetoothKit) from Polidea (check it if you need to deploy on lower target) and [Bluejay](https://github.com/steamclock/bluejay), another amazing library for iOS.
