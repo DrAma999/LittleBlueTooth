@@ -16,14 +16,13 @@ let package = Package(
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "LittleBlueTooth",
-            targets: ["LittleBlueTooth"]),
+            targets: ["LittleBlueTooth"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
          .package(name: "CoreBluetoothMock",
                   url: "https://github.com/enricodk/IOS-CoreBluetooth-Mock.git",
-                  .branch("multiplatform"),
-                  from: "0.8.0"),
+                  .branch("multiplatform"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -33,6 +32,6 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "LittleBlueToothTests",
-            dependencies: ["LittleBlueTooth","CoreBluetoothMock"]),
+            dependencies: ["LittleBlueTooth","CoreBluetoothMock"])
     ]
 )
