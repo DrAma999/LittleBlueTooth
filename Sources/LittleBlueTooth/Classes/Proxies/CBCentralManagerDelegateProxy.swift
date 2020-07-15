@@ -106,7 +106,8 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         let event = ConnectionEvent.connectionFailed(didFailToConnect, error: lttlError)
         connectionEventPublisher.send(event)
     }
-    
+    #if !os(macOS)
     func centralManager(_ central: CBCentralManager, connectionEventDidOccur event: CBConnectionEvent, for peripheral: CBPeripheral) {}
+    #endif
     
 }

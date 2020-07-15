@@ -7,7 +7,10 @@ let package = Package(
     name: "LittleBlueTooth",
     platforms: [
         // Add support for all platforms starting from a specific version.
+        .macOS(.v10_15),
         .iOS(.v13),
+        .watchOS(.v6),
+        .tvOS(.v13)
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
@@ -18,7 +21,8 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
          .package(name: "CoreBluetoothMock",
-                  url: "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git",
+                  url: "https://github.com/enricodk/IOS-CoreBluetooth-Mock.git",
+                  .branch("multiplatform"),
                   from: "0.8.0"),
     ],
     targets: [
