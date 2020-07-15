@@ -21,9 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		655330DB24BE2E70007D299B /* CoreBluetoothMock in Frameworks */ = {isa = PBXBuildFile; productRef = 655330DA24BE2E70007D299B /* CoreBluetoothMock */; };
 		655330DD24BF159D007D299B /* CentralRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DC24BF159D007D299B /* CentralRestorer.swift */; };
 		655330DF24BF5446007D299B /* StateRestoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DE24BF5446007D299B /* StateRestoration.swift */; };
+		6559F6B124BF90DC0035FF4A /* CoreBluetoothMock in Frameworks */ = {isa = PBXBuildFile; productRef = 6559F6B024BF90DC0035FF4A /* CoreBluetoothMock */; };
 		658A75C224BB74FC00F874EF /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
 		658A75C524BB765C00F874EF /* LittleBlueTooth.h in Headers */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* LittleBlueTooth.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		OBJ_52 /* LittleBlueToothError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* LittleBlueToothError.swift */; };
@@ -106,7 +106,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
 			files = (
-				655330DB24BE2E70007D299B /* CoreBluetoothMock in Frameworks */,
+				6559F6B124BF90DC0035FF4A /* CoreBluetoothMock in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,7 +284,7 @@
 			);
 			name = LittleBlueTooth;
 			packageProductDependencies = (
-				655330DA24BE2E70007D299B /* CoreBluetoothMock */,
+				6559F6B024BF90DC0035FF4A /* CoreBluetoothMock */,
 			);
 			productName = LittleBlueTooth;
 			productReference = "LittleBlueTooth::LittleBlueTooth::Product" /* LittleBlueTooth.framework */;
@@ -339,7 +339,7 @@
 			);
 			mainGroup = OBJ_5;
 			packageReferences = (
-				655330D924BE2E70007D299B /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */,
+				6559F6AF24BF90DC0035FF4A /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */,
 			);
 			productRefGroup = OBJ_41 /* Products */;
 			projectDirPath = "";
@@ -820,7 +820,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		655330D924BE2E70007D299B /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */ = {
+		6559F6AF24BF90DC0035FF4A /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/enricodk/IOS-CoreBluetooth-Mock.git";
 			requirement = {
@@ -831,9 +831,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		655330DA24BE2E70007D299B /* CoreBluetoothMock */ = {
+		6559F6B024BF90DC0035FF4A /* CoreBluetoothMock */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 655330D924BE2E70007D299B /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */;
+			package = 6559F6AF24BF90DC0035FF4A /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */;
 			productName = CoreBluetoothMock;
 		};
 /* End XCSwiftPackageProductDependency section */
