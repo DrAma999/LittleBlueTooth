@@ -495,6 +495,7 @@ App has  BT permission to run in bkg | Explicit disconnection, App killed by use
 ## ROADMAP
 - [x] SwiftPM support
 - [ ] State preservation and state restoration
+- [ ] Implement descriptors
 - [ ] Improve code coverage
 - [ ] `CBManager` and `CBPeripheral` extraction
 - [ ] Add multiple peripheral support
