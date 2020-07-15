@@ -51,15 +51,19 @@ public enum BluetoothState {
 }
 
 class CBCentralManagerDelegateProxy: NSObject {
-    // Subjects
-    let _centralStatePublisher = CurrentValueSubject<BluetoothState, Never>(BluetoothState.unknown)
-//    let willRestoreState = PassthroughSubject<[String: Any]>.create(bufferSize: 1)
+    
     let centralDiscoveriesPublisher = PassthroughSubject<PeripheralDiscovery, Never>()
     let connectionEventPublisher = PassthroughSubject<ConnectionEvent, Never>()
-    
     lazy var centralStatePublisher: AnyPublisher<BluetoothState, Never> = {
         _centralStatePublisher.shareReplay(1).eraseToAnyPublisher()
     }()
+    lazy var willRestoreStatePublisher: AnyPublisher<(CBCentralManager, [String: Any]), Never> = {
+        _willRestoreStatePublisher.shareReplay(1).eraseToAnyPublisher()
+    }()
+    
+    let _centralStatePublisher = CurrentValueSubject<BluetoothState, Never>(BluetoothState.unknown)
+    let _willRestoreStatePublisher = PassthroughSubject<(CBCentralManager, [String: Any]), Never>()
+
     
     var isAutoconnectionActive = false
 }
@@ -106,6 +110,11 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         let event = ConnectionEvent.connectionFailed(didFailToConnect, error: lttlError)
         connectionEventPublisher.send(event)
     }
+    
+    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
+        _willRestoreStatePublisher.send((central,dict))
+    }
+    
     #if !os(macOS)
     func centralManager(_ central: CBCentralManager, connectionEventDidOccur event: CBConnectionEvent, for peripheral: CBPeripheral) {}
     #endif
