@@ -29,8 +29,11 @@ public struct CentralRestorer {
     
     /// Dictionary that contains all of the peripheral scan options that were being used
     /// by the central manager at the time the app was terminated by the system.
-      public var scanOptions: [String: AnyObject]? {
-          return restoredInfo[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject]
+      public var scanOptions: [String: AnyObject] {
+        if let info = restoredInfo[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject] {
+            return info
+        }
+        return [:]
       }
 
       /// Array of `CBUUID` objects of services which have been restored.
@@ -42,4 +45,16 @@ public struct CentralRestorer {
         }
         return []
       }
+}
+
+extension CentralRestorer: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return """
+        Peripherals: \(peripherals)
+        Scan options: \(scanOptions)
+        Services: \(services)
+        """
+    }
+    
+    
 }
