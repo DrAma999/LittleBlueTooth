@@ -170,6 +170,7 @@ public class LittleBlueTooth: Identifiable {
             self.restoreStateCancellable = centralProxy.willRestoreStatePublisher
             .map { (central, dictionary) -> CentralRestorer in
                CentralRestorer(centralManager: central, restoredInfo: dictionary)
+                // If peripheral is connected or connection must set peripheral, if connected should use initilize?
             }
             .sink(receiveValue: { (restorer) in
                 handler(restorer)
