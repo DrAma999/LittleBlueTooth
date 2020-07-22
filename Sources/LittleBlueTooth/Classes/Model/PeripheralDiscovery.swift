@@ -22,10 +22,12 @@ public protocol PeripheralIdentifiable: Identifiable {
 public struct PeripheralIdentifier: PeripheralIdentifiable {
     public var id: UUID
     public var name: String?
+    public var cbPeripheral: CBPeripheral?
     
     public init(peripheral: CBPeripheral) {
         self.id = peripheral.identifier
         self.name = peripheral.name
+        self.cbPeripheral = peripheral
     }
     
     public init(uuid: UUID, name: String? = nil) {

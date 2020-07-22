@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import os.log
 #if TEST
 import CoreBluetoothMock
 #else
@@ -24,6 +25,26 @@ public protocol Writable {
 
 /// Pass a `Peripheral` and an evetual `LittleBluetoothError` and expect a boolean as an answer
 public typealias AutoconnectionHandler = (PeripheralIdentifier, LittleBluetoothError?) -> Bool
+
+/// Configuration object that must be passed during the `LittleBlueTooth` initialization
+public struct LittleBluetoothConfiguration {
+    /// `CBCentralManager` options dictionary for instance the restore identifier, thay are the same
+    /// requested for `CBCentralManager`
+    public var centralManagerOptions: [String : Any]? = nil
+    /// `CBCentralManager` queue
+    public var centralManagerQueue: DispatchQueue? = nil
+    /// This handler must be used to handle connection process after a disconnession.
+    /// You can inspect the error and decide if an automatic connection is necessary.
+    /// If you return `true` the connection process will start, once the peripheral has been found a connection will be established.
+    /// If you return `false` iOS will not try to establish a connection
+    /// Connection process will remain active also in background if the app has the right
+    /// permission, to cancel just call `disconnect`.
+    /// When a connection will be established an `.autoConnected(PeripheralIdentifier)` event will be streamed to
+    /// the `connectionEventPublisher`
+    public var autoconnectionHandler: AutoconnectionHandler? = nil
+    /// Handler used to manage state restoration....
+    public var restoreHandler: ((CentralRestorer) -> Void)? = nil
+}
 
 /**
 `LittleBlueTooth` can control only one peripheral at time. It has an `id` properties to identifiy different instances.
@@ -135,28 +156,70 @@ public class LittleBlueTooth: Identifiable {
     var centralProxy = CBCentralManagerDelegateProxy()
     
     // MARK: - Init
-    public init(queue: DispatchQueue? = nil, options: [String : Any]? = nil, restoreHandler: ((CentralRestorer) -> Void)? = nil) {
+    public init(with configuration: LittleBluetoothConfiguration) {
         #if TEST
-        self.cbCentral = CBCentralManagerFactory.instance(delegate: self.centralProxy, queue: queue, options: options)
+        self.cbCentral = CBCentralManagerFactory.instance(delegate: self.centralProxy, queue: configuration.centralManagerQueue, options: configuration.centralManagerOptions)
         #else
-        self.cbCentral = CBCentralManager(delegate: self.centralProxy, queue: queue, options: options)
+        self.cbCentral = CBCentralManager(delegate: self.centralProxy, queue: configuration.centralManagerQueue, options: configuration.centralManagerOptions)
         #endif
-        if (restoreHandler == nil &&
-            options?[CBCentralManagerOptionRestoreIdentifierKey] != nil) ||
-            (restoreHandler != nil &&
-            options?[CBCentralManagerOptionRestoreIdentifierKey] == nil) {
+        self.autoconnectionHandler = configuration.autoconnectionHandler
+        if (configuration.restoreHandler == nil &&
+            configuration.centralManagerOptions?[CBCentralManagerOptionRestoreIdentifierKey] != nil) ||
+            (configuration.restoreHandler != nil &&
+                configuration.centralManagerOptions?[CBCentralManagerOptionRestoreIdentifierKey] == nil) {
             fatalError("If you want to use state preservation/restoration you must implement both restore key and the handler")
         }
-        attachSubscribers(with: restoreHandler)
+        attachSubscribers(with: configuration.restoreHandler)
+        os_log(
+            "LBT init options %{public}@",
+            log: OSLog.BT_Log_General,
+            type: .debug,
+            configuration.centralManagerOptions?.description ?? ""
+        )
     }
     
     func attachSubscribers(with restorehandler: ((CentralRestorer) -> Void)?) {
         self.connectionEventSubscriber =
             connectionEventPublisher
+            .flatMap { [unowned self] (event) -> AnyPublisher<ConnectionEvent, Never> in
+                print("Received event \(event)")
+                switch event {
+                case .connected(let periph),
+                     .autoConnected(let periph):
+                    if let connTask = self.connectionTasks {
+                        // I'm doing a copy of the connectionTask so if something fails
+                        // next time it will start over.
+                        // TEMPORARY WORKAROUND: Those Dispatch async will make the states flow correctly in the process: first connect, then ready. Without it woulb the contrary
+                        return AnyPublisher(connTask)
+                            .catch { [unowned self] (error) -> Just<Void> in
+                                DispatchQueue.main.async {
+                                    self.centralProxy.connectionEventPublisher.send(ConnectionEvent.notReady(periph, error: error))
+                                }
+                                return Just(())
+                        }
+                        .map { _ in
+                            DispatchQueue.main.async {
+                                self.centralProxy.connectionEventPublisher.send(ConnectionEvent.ready(periph))
+                            }
+                            return event
+                        }
+                        .eraseToAnyPublisher()
+                    } else {
+                        DispatchQueue.main.async {
+                            self.centralProxy.connectionEventPublisher.send(ConnectionEvent.ready(periph))
+                        }
+                        return Just(event).eraseToAnyPublisher()
+                    }
+                default:
+                    return Just(event).eraseToAnyPublisher()
+                }
+            }
                 // This delay to make able other subscribers to receive notification
             .delay(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .sink { [unowned self] (event) in
+                print("Sinking event \(event)")
                 if case ConnectionEvent.disconnected( let peripheral, let error) = event {
+                    os_log("LBT Disconnection Event", log: OSLog.BT_Log_General, type: .debug)
                     self.cleanUpForDisconnection()
                     if let autoCon = self.autoconnectionHandler {
                         let periph = PeripheralIdentifier(peripheral: peripheral)
@@ -169,12 +232,41 @@ public class LittleBlueTooth: Identifiable {
         if let handler = restorehandler {
             self.restoreStateCancellable = centralProxy.willRestoreStatePublisher
             .map { (central, dictionary) -> CentralRestorer in
-               CentralRestorer(centralManager: central, restoredInfo: dictionary)
+               let restorer = CentralRestorer(centralManager: central, restoredInfo: dictionary)
                 // If peripheral is connected or connection must set peripheral, if connected should use initilize?
+                
+                return restorer
             }
             .sink(receiveValue: { (restorer) in
                 handler(restorer)
             })
+        }
+    }
+    
+    private func restore(_ peripheral: PeripheralIdentifier?) {
+        if let periph = peripheral, let cbPeripheral = periph.cbPeripheral {
+            switch cbPeripheral.state {
+            case .connected:
+                // If autoconnection was made in background I should receive a callback from connect and the connection state publisher should take care of putting the peripheral in ready. But probably I must connect other connectable
+                // Of course I need to set delegate and peripheral
+                print("Peripheral already connected")
+            case .connecting:
+                // If autoconnection was made in background I should receive a callback from connect and the connection state publisher should take care of putting the peripheral in ready. But probably I must connect other connectable
+                // Of course I need to set delegate and peripheral as I do before the actual connection
+                print("Peripheral connecting")
+            case .disconnected:
+                // A disconnetion event will be sent to the connection event publisher
+                // If a reconection handler is set it will dispatch a new connection
+                print("Peripheral disconnected")
+            case .disconnecting:
+                // A disconnetion event will be sent to the connection event publisher
+                // If a reconection handler is set it will dispatch a new connection
+                print("Peripheral disconnecting")
+            @unknown default:
+                fatalError("Connection event in default not handled")
+            }
+            os_log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.BT_Log_General, type: .debug, cbPeripheral.description, cbPeripheral.delegate != nil ? "true" : "false", cbPeripheral.state.rawValue)
+
         }
     }
     
@@ -498,9 +590,10 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter options: Scanning options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with stream of disovered peripherals.
     public func startDiscovery(withServices services: [CBUUID]?, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> {
-        if self.cbCentral.isScanning {
-            return Result<PeripheralDiscovery, LittleBluetoothError>.Publisher(.failure(.alreadyScanning)).eraseToAnyPublisher()
-        }
+//        if self.cbCentral.isScanning {
+//            self.cbCentral.stopScan()
+//            return Result<PeripheralDiscovery, LittleBluetoothError>.Publisher(.failure(.alreadyScanning)).eraseToAnyPublisher()
+//        }
         
         let scanSubject = PassthroughSubject<PeripheralDiscovery, LittleBluetoothError>()
         let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
@@ -508,6 +601,12 @@ public class LittleBlueTooth: Identifiable {
         scanning =
         ensureBluetoothState()
         .print("DiscoverPublisher")
+        .map { [unowned self] _  -> Void in
+            if self.cbCentral.isScanning {
+                self.cbCentral.stopScan()
+            }
+            return ()
+        }
         .flatMap { [unowned self] _  -> Publishers.SetFailureType<PassthroughSubject<PeripheralDiscovery, Never>, LittleBluetoothError> in
             self.cbCentral.scanForPeripherals(withServices: services, options: options)
             return self.centralProxy.centralDiscoveriesPublisher.setFailureType(to: LittleBluetoothError.self)
@@ -582,14 +681,26 @@ public class LittleBlueTooth: Identifiable {
         .flatMap { [unowned self] _ in
             self.centralProxy.connectionEventPublisher.setFailureType(to: LittleBluetoothError.self)
         }
+        .filter{ (event) -> Bool in
+            print("Connct to event: \(event)")
+            switch event {
+                case .connected( _),
+                     .autoConnected( _):
+                    self.listenPublisherCancellable = self._listenPublisher.connect()
+               return false
+            default:
+                return true
+            }
+        }
+        .prefix(1)
         .tryMap { [unowned self] (event) -> CBPeripheral in
             switch event {
-            case .connected(let periph):
-                self.listenPublisherCancellable = self._listenPublisher.connect()
+            case .ready(let periph):
                 return periph
-            case .autoConnected(let periph):
-                self.listenPublisherCancellable = self._listenPublisher.connect()
-                return periph
+            case .notReady(_, let error?):
+                self.cbCentral.cancelPeripheralConnection(self.peripheral!.cbPeripheral)
+                self.peripheral = nil
+                throw error
             case .connectionFailed(_, let error?):
                 self.cbCentral.cancelPeripheralConnection(self.peripheral!.cbPeripheral)
                 self.peripheral = nil
@@ -606,6 +717,8 @@ public class LittleBlueTooth: Identifiable {
                 self.cbCentral.cancelPeripheralConnection(self.peripheral!.cbPeripheral)
                 self.peripheral = nil
                 throw LittleBluetoothError.peripheralDisconnected(PeripheralIdentifier(peripheral: periph), nil)
+            default:
+                fatalError("Connection event not handled")
             }
         }
         .mapError { (error) -> LittleBluetoothError in
@@ -613,16 +726,6 @@ public class LittleBlueTooth: Identifiable {
         }
         .map { [unowned self] peripheral -> Peripheral in
             return self.peripheral!
-        }
-        .flatMap { [unowned self] peripheral -> AnyPublisher<Peripheral, LittleBluetoothError> in
-            if let connTask = self.connectionTasks {
-                // I'm doing a copy of the connectionTask so if somethng fails
-                // next time it will start over
-                return AnyPublisher(connTask).map {
-                    peripheral
-                }.eraseToAnyPublisher()
-            }
-            return Just(peripheral).setFailureType(to: LittleBluetoothError.self).eraseToAnyPublisher()
         }
         .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout), scheduler: DispatchQueue.main, customError: {.connectTimeout})
         .sink(receiveCompletion: { [unowned self, key] (completion) in
@@ -796,4 +899,16 @@ extension TimeInterval {
         let microseconds = Int64(self * TimeInterval(USEC_PER_SEC)) // perhaps use nanoseconds, though would more often be > Int.max
         return microseconds < Int.max ? DispatchTimeInterval.microseconds(Int(microseconds)) : DispatchTimeInterval.seconds(Int(self))
     }
+}
+
+extension OSLog {
+    public static var Subsystem = Bundle.main.bundleIdentifier!
+    public static var Peripheral = "LittleBluetooth_Peripheral"
+    public static var CentralManager = "LittleBluetooth_CentralManager"
+    public static var General = "LittleBluetooth_General"
+
+    static let BT_Log_General = OSLog(subsystem: Subsystem, category: General)
+    static let BT_Log_Peripheral = OSLog(subsystem: Subsystem, category: Peripheral)
+    static let BT_Log_CentralManager = OSLog(subsystem: Subsystem, category: CentralManager)
+
 }
