@@ -60,12 +60,12 @@ class CBCentralManagerDelegateProxy: NSObject {
     lazy var centralStatePublisher: AnyPublisher<BluetoothState, Never> = {
         _centralStatePublisher.shareReplay(1).eraseToAnyPublisher()
     }()
-    lazy var willRestoreStatePublisher: AnyPublisher<(CBCentralManager, [String: Any]), Never> = {
+    lazy var willRestoreStatePublisher: AnyPublisher<CentralRestorer, Never> = {
         _willRestoreStatePublisher.shareReplay(1).eraseToAnyPublisher()
     }()
     
     let _centralStatePublisher = CurrentValueSubject<BluetoothState, Never>(BluetoothState.unknown)
-    let _willRestoreStatePublisher = PassthroughSubject<(CBCentralManager, [String: Any]), Never>()
+    let _willRestoreStatePublisher = PassthroughSubject<CentralRestorer, Never>()
 
     
     var isAutoconnectionActive = false
@@ -126,10 +126,10 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         os_log("CBCMD WillRestoreState %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, dict.description)
         if let peripheral = (dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral])?.first {
             let peri = central.retrievePeripherals(withIdentifiers: [peripheral.identifier]).first!
-//            os_log("CBCMD WillRestoreState %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.BT_Log_CentralManager, type: .debug, peri.description, peri.delegate != nil ? "true" : "false", peri.state.rawValue)
+        os_log("CBCMD WillRestoreState %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.BT_Log_CentralManager, type: .debug, peri.description, peri.delegate != nil ? "true" : "false", peri.state.rawValue)
 
         }
-        _willRestoreStatePublisher.send((central,dict))
+        _willRestoreStatePublisher.send(CentralRestorer(centralManager: central, restoredInfo: dict))
     }
     
     #if !os(macOS)
