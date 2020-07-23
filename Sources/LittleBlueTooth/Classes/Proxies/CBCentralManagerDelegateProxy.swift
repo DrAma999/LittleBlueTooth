@@ -126,7 +126,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         os_log("CBCMD WillRestoreState %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, dict.description)
         if let peripheral = (dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral])?.first {
             let peri = central.retrievePeripherals(withIdentifiers: [peripheral.identifier]).first!
-        os_log("CBCMD WillRestoreState %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.BT_Log_CentralManager, type: .debug, peri.description, peri.delegate != nil ? "true" : "false", peri.state.rawValue)
+//        os_log("CBCMD WillRestoreState %{public}@, has delegate: %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, peri.description, peri.delegate != nil ? "true" : "false")
 
         }
         _willRestoreStatePublisher.send(CentralRestorer(centralManager: central, restoredInfo: dict))

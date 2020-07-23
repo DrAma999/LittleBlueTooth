@@ -131,7 +131,7 @@ class ConnectionTest: LittleBlueToothTests {
         .store(in: &disposeBag)
 
         waitForExpectations(timeout: 30)
-        XCTAssert(connectionEvent.count == 2)
+        XCTAssert(connectionEvent.count == 3)
         XCTAssert(peripheralState.contains(.connected))
         XCTAssert(peripheralState.contains(.disconnected))
 
@@ -261,7 +261,7 @@ class ConnectionTest: LittleBlueToothTests {
         waitForExpectations(timeout: 20)
         self.littleBT.autoconnectionHandler = nil
         self.littleBT.disconnect()
-        XCTAssert(connectionEvent.count == 4)
+        XCTAssert(connectionEvent.count == 5)
         XCTAssert(peripheralState.contains(.connected))
         XCTAssert(peripheralState.contains(.disconnected))
     }

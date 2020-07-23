@@ -444,8 +444,9 @@ Indipendently if it is unexpected or explicit `LittleBlueTooth` will clean up ev
 _Connection event observer_
 The `connectionEventPublisher` informs you about what happen while you are connected to a device.
 A connection event is defined by different states:
-* `.connected(PeripheralIdentifier)`: when a peripheral is connected after a `connect` command
+* `.connected(CBPeripheral)`: when a peripheral is connected after a `connect` command
 * `.autoConnected(CBPeripheral)`: when a peripheral is connected automatically this event is triggered when you use the  `autoconnectionHandler`
+* `.ready(CBPeripheral)`: this state means that now you can send commands to a peripheral. Why ready and not just connected? because you could have been set some `connectionTasks` and ready means that, if they where present, they have been executed.
 * `.connectionFailed(CBPeripheral, error: LittleBluetoothError?)`: when during a connection something goes wrong
 * `.disconnected(CBPeripheral, error: LittleBluetoothError?)`: when a peripheral ha been disconnected could be from an explicit disconnection or unexpected disconnection
 
@@ -476,9 +477,11 @@ First read Apple documentation [here](https://developer.apple.com/library/archiv
 To make state restoration/preservation work, first you must instantiate `LittleBluetTooth` with a dictionary that contains for the key `CBCentralManagerOptionRestoreIdentifierKey` a specific string identifier and you must add a handler that it will be called during state restoration. You MUST also opt-in for bluetooth LE accessories in background.
 
 If your app is woken up by a bluetooh event in background it will call the `applicationDidFinishLauching` along with a dictionary. Using this key, `UIApplicationLaunchOptionsBluetoothCentralsKey`, you receive an array of identifiers of CBCentralManager instances that were working before the app was closed. You have a chance to restore the  `LittleBlueTooth` central manger by extracting the identifer from the launching option dictionary and passing it to the option dictionary of littleBT (or you can simply instantiate using a constant).
-If an state restoration event is triggered the handler will receive a `CentralRestorer` object. You can query this object and try to understand wich was the state of the peripheral when the application was closed.
-For instance query the peripherals and if the app was closed while connecting or when it was connected you can
-obtain the `PeripheralIdentifier` object and restore the connection.
+If an state restoration event is triggered the handler will receive a `Restored` object.  A restored object con be a `Peripheral` along with its instance or a scan along with the discovery publisher that will publish all the discovered peripherals.
+To be notified again about peripheral state please subscribe to the `connectionEventPublisher` only if the peripheral is in a ready state is possible to send other command
+Note:
+* Restoration can happen in background
+* The Peripheral object returned can be in different state depending an what has been resored. If a peripheral has been disconnected and an  `autoconnectionHandler` is provided LittleBluetooth will try to re-establish a connection.
 
 ## ROADMAP
 - [x] SwiftPM support
