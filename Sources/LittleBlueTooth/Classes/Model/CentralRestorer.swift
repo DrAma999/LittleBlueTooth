@@ -6,12 +6,15 @@
 //
 
 import Foundation
+import Combine
 #if TEST
 import CoreBluetoothMock
 #else
 import CoreBluetooth
 #endif
-
+/**
+ This object contains parsed information passed from the `centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any])` method of `CBCentralManagerDelegate` dictionary
+ */
 public struct CentralRestorer {
     public unowned let centralManager: CBCentralManager
     public let restoredInfo: [String : Any]
@@ -55,6 +58,27 @@ extension CentralRestorer: CustomDebugStringConvertible {
         Services: \(services)
         """
     }
+}
+
+/**
+This object contains the restored action during state restoration
+*/
+public enum Restored: CustomDebugStringConvertible {
+    /// Peripherals scan has been restored
+    case scan(discoveryPublisher: AnyPublisher<PeripheralDiscovery, LittleBluetoothError>)
+    /// Peripheral has been restored
+    case peripheral(Peripheral)
+    /// Nothing has been restored
+    case nothing
     
-    
+    public var debugDescription: String {
+        switch self {
+        case .scan(_):
+            return "Restored Scan"
+        case .peripheral(let periph):
+            return "Restored \(periph.debugDescription)"
+        case .nothing:
+            return "Nothing to be restored"
+        }
+    }
 }

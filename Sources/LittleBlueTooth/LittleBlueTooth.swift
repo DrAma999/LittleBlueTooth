@@ -23,48 +23,6 @@ public protocol Writable {
     var data: Data {get}
 }
 
-public enum Restored: CustomDebugStringConvertible {
-    case scan(discoveryPublisher: AnyPublisher<PeripheralDiscovery, LittleBluetoothError>)
-    case peripheral(Peripheral)
-    case nothing
-    
-    public var debugDescription: String {
-        switch self {
-        case .scan(_):
-            return "Restored Scan"
-        case .peripheral(let periph):
-            return "Restored \(periph.debugDescription)"
-        case .nothing:
-            return "Nothing to be restored"
-        }
-    }
-}
-
-/// Pass a `Peripheral` and an evetual `LittleBluetoothError` and expect a boolean as an answer
-public typealias AutoconnectionHandler = (PeripheralIdentifier, LittleBluetoothError?) -> Bool
-
-/// Configuration object that must be passed during the `LittleBlueTooth` initialization
-public struct LittleBluetoothConfiguration {
-    /// `CBCentralManager` options dictionary for instance the restore identifier, thay are the same
-    /// requested for `CBCentralManager`
-    public var centralManagerOptions: [String : Any]? = nil
-    /// `CBCentralManager` queue
-    public var centralManagerQueue: DispatchQueue? = nil
-    /// This handler must be used to handle connection process after a disconnession.
-    /// You can inspect the error and decide if an automatic connection is necessary.
-    /// If you return `true` the connection process will start, once the peripheral has been found a connection will be established.
-    /// If you return `false` iOS will not try to establish a connection
-    /// Connection process will remain active also in background if the app has the right
-    /// permission, to cancel just call `disconnect`.
-    /// When a connection will be established an `.autoConnected(PeripheralIdentifier)` event will be streamed to
-    /// the `connectionEventPublisher`
-    public var autoconnectionHandler: AutoconnectionHandler? = nil
-    /// Handler used to manage state restoration....
-    public var restoreHandler: ((Restored) -> Void)? = nil
-    
-    public init() {}
-}
-
 /**
 `LittleBlueTooth` can control only one peripheral at time. It has an `id` properties to identifiy different instances.
 Please note that Apple do not enacourage the use of more `CBCentralManger` instances, due to resurce hits.
@@ -190,7 +148,7 @@ public class LittleBlueTooth: Identifiable {
             configuration.centralManagerOptions?[CBCentralManagerOptionRestoreIdentifierKey] != nil) ||
             (configuration.restoreHandler != nil &&
                 configuration.centralManagerOptions?[CBCentralManagerOptionRestoreIdentifierKey] == nil) {
-            fatalError("If you want to use state preservation/restoration you must implement both restore key and the handler")
+            print("If you want to use state preservation/restoration you should probablu want to implement the `restoreHandler`")
         }
         attachSubscribers(with: configuration.restoreHandler)
 //        os_log(

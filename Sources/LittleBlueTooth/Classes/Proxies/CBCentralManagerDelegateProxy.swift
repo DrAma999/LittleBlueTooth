@@ -69,7 +69,12 @@ class CBCentralManagerDelegateProxy: NSObject {
 
     
     var isAutoconnectionActive = false
-    var rest: AnyCancellable?
+    var stateRestorationCancellable: AnyCancellable!
+    
+    override init() {
+        super.init()
+        self.stateRestorationCancellable = willRestoreStatePublisher.sink { _ in }
+    }
    
 }
 
