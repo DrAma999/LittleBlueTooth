@@ -102,6 +102,7 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     }
 }
 
+
 let blinky = CBMPeripheralSpec
     .simulatePeripheral(proximity: .outOfRange)
     .advertising(
@@ -206,3 +207,45 @@ let thingy = CBMPeripheralSpec
         ],
         withInterval: 0.100)
     .build()
+
+class FakePeriph: CBMPeripheral {
+    var identifier: UUID = UUID()
+    
+    var delegate: CBMPeripheralDelegate? = nil
+    
+    var name: String? = "SoFake"
+    
+    var state: CBMPeripheralState = .disconnected
+    
+    var services: [CBMService]? = nil
+    
+    var canSendWriteWithoutResponse: Bool = false
+    
+    var ancsAuthorized: Bool = false
+    
+    func readRSSI() {}
+    
+    func discoverServices(_ serviceUUIDs: [CBMUUID]?) {}
+    
+    func discoverIncludedServices(_ includedServiceUUIDs: [CBMUUID]?, for service: CBMService) {}
+    
+    func discoverCharacteristics(_ characteristicUUIDs: [CBMUUID]?, for service: CBMService) {}
+    
+    func discoverDescriptors(for characteristic: CBMCharacteristic) {}
+    
+    func readValue(for characteristic: CBMCharacteristic) {}
+    
+    func readValue(for descriptor: CBMDescriptor) {}
+    
+    func maximumWriteValueLength(for type: CBMCharacteristicWriteType) -> Int {
+        return Int.max
+    }
+    
+    func writeValue(_ data: Data, for characteristic: CBMCharacteristic, type: CBMCharacteristicWriteType) {}
+    
+    func writeValue(_ data: Data, for descriptor: CBMDescriptor) {}
+    
+    func setNotifyValue(_ enabled: Bool, for characteristic: CBMCharacteristic) {}
+    
+    func openL2CAPChannel(_ PSM: CBML2CAPPSM) {}
+}

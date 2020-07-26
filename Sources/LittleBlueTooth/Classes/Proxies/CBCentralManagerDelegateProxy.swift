@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import os.log
 #if TEST
 import CoreBluetoothMock
 #else
@@ -17,6 +18,8 @@ import CoreBluetooth
 public enum ConnectionEvent {
     case connected(CBPeripheral)
     case autoConnected(CBPeripheral)
+    case ready(CBPeripheral)
+    case notReady(CBPeripheral, error: LittleBluetoothError?)
     case connectionFailed(CBPeripheral, error: LittleBluetoothError?)
     case disconnected(CBPeripheral, error: LittleBluetoothError?)
 }
@@ -51,32 +54,46 @@ public enum BluetoothState {
 }
 
 class CBCentralManagerDelegateProxy: NSObject {
-    // Subjects
-    let _centralStatePublisher = CurrentValueSubject<BluetoothState, Never>(BluetoothState.unknown)
-//    let willRestoreState = PassthroughSubject<[String: Any]>.create(bufferSize: 1)
+    
     let centralDiscoveriesPublisher = PassthroughSubject<PeripheralDiscovery, Never>()
     let connectionEventPublisher = PassthroughSubject<ConnectionEvent, Never>()
-    
     lazy var centralStatePublisher: AnyPublisher<BluetoothState, Never> = {
         _centralStatePublisher.shareReplay(1).eraseToAnyPublisher()
     }()
+    lazy var willRestoreStatePublisher: AnyPublisher<CentralRestorer, Never> = {
+        _willRestoreStatePublisher.shareReplay(1).eraseToAnyPublisher()
+    }()
+    
+    let _centralStatePublisher = CurrentValueSubject<BluetoothState, Never>(BluetoothState.unknown)
+    let _willRestoreStatePublisher = PassthroughSubject<CentralRestorer, Never>()
+
     
     var isAutoconnectionActive = false
+    var stateRestorationCancellable: AnyCancellable!
+    
+    override init() {
+        super.init()
+        self.stateRestorationCancellable = willRestoreStatePublisher.sink { _ in }
+    }
+   
 }
 
 extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
+//        os_log("CBCMD DidUpdateState %{public}d", log: OSLog.LittleBT_Log_General, type: .debug, central.state.rawValue)
        _centralStatePublisher.send(BluetoothState(central.state))
     }
     
     /// Scan
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+//        os_log("CBCMD DidDiscover %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, peripheral.description)
         let peripheraldiscovery = PeripheralDiscovery(peripheral, advertisement: advertisementData, rssi: RSSI)
         centralDiscoveriesPublisher.send(peripheraldiscovery)
     }
     
     /// Monitoring connection
     func centralManager(_ central: CBCentralManager, didConnect: CBPeripheral) {
+//        os_log("CBCMD DidConnect %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, didConnect.description)
         if isAutoconnectionActive {
             isAutoconnectionActive = false
             let event = ConnectionEvent.autoConnected(didConnect)
@@ -88,6 +105,9 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: Error?) {
+//        #if !TEST
+//        os_log("CBCMD DidDisconnect %{public}@, Error %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, didDisconnectPeripheral.description, error?.localizedDescription ?? "")
+//        #endif
         isAutoconnectionActive = false
         var lttlError: LittleBluetoothError?
         if let error = error {
@@ -107,6 +127,13 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         connectionEventPublisher.send(event)
     }
     
+    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
+//        os_log("CBCMD WillRestoreState %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, dict.description)
+        _willRestoreStatePublisher.send(CentralRestorer(centralManager: central, restoredInfo: dict))
+    }
+    
+    #if !os(macOS)
     func centralManager(_ central: CBCentralManager, connectionEventDidOccur event: CBConnectionEvent, for peripheral: CBPeripheral) {}
+    #endif
     
 }
