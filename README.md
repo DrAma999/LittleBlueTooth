@@ -2,14 +2,14 @@
 <p align="center">
   <img width="200" height="200" src="README/Icon.png">
 </p>
-<p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13&color=black"></p><p><img src="https://img.shields.io/static/v1?label=coverage&message=83%&color=yellowgreen"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"> <img src="https://img.shields.io/static/v1?label=SwiftPM&message=compatible&color=green"></p>
+<p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13|macOS10.15|watchOS6.0|tvOS13&color=black"></p><p><img src="https://img.shields.io/static/v1?label=coverage&message=83%&color=yellowgreen"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"> <img src="https://img.shields.io/static/v1?label=SwiftPM&message=compatible&color=green"></p>
 
   
   
 # LITTLE BLUETOOTH
 ## INTRODUCTION
 LittleBluetooth is a library that helps you developing applications that need to work with a bluetooth low energy device.
-It is written using `Swift` and the `Combine` framework thus is only compatible from iOS13 to upper version.
+It is written using `Swift` and the `Combine` framework thus is only compatible from iOS 13, macOS 10.15, watchOS 6.0 to upper version.
 An instance of LittleBluetooth can control only one peripheral, you can use more instances as many peripheral you need, but first read this [answer](https://developer.apple.com/forums/thread/20810) on Apple forums to understand the impact of having more `CBCentralManager` instances.
 The library is still on development so use at own you risk.
 
@@ -32,7 +32,7 @@ Or simply add from XCode menu.
 
 ## FEATURES
 * Built on top of combine
-* Deploys on **iOS**
+* Deploys on **iOS, macOS, tvOS, watchOS**
 * Chainable operations: scan, connect, start listen, stop listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
 * Peripheral state and bluetooth state observation. You can watch the bluetooth state and also the peripheral state for a more fine grained control in the UI. Of course those information are also checked before starting any operation.
 * Single notification channel: you can subscribe to the notification channel to receive all the data of the enabled characteristics. Of course you have also single and connectable publishers.
