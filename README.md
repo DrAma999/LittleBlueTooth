@@ -498,11 +498,14 @@ App has  BT permission to run in bkg | Explicit disconnection, App killed by use
 
 ### State preservation and state restoration
 First read Apple documentation [here](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html), [here](https://developer.apple.com/library/archive/qa/qa1962/_index.html) and my article on [Medium](https://medium.com/@andrea.alessandro/core-bluetooh-state-preservation-and-restoration-f107031b32fa).
+
 To make state restoration/preservation work, first you must instantiate `LittleBluetTooth` with a dictionary that contains for the key `CBCentralManagerOptionRestoreIdentifierKey` a specific string identifier by using the `LittleBluetoothConfiguration` and you must add a handler that it will be called during state restoration. You MUST also opt-in for bluetooth LE accessories in background.
 Must be also noted that state restoration works *always* not only in background, for instance if you kill the application using the swipe, the next time you relaunch it the Central Manager will return the previous state, you must consider that. If you only want only some operations run in background, just ask the UIApplication state.
+
 If your app is woken up by a bluetooh event in background it will call the `applicationDidFinishLauching` along with a dictionary. Using this key, `UIApplicationLaunchOptionsBluetoothCentralsKey`, you receive an array of identifiers of CBCentralManager instances that were working before the app was closed. You have a chance to restore the  `LittleBlueTooth` central manger by extracting the identifer from the launching option dictionary and passing it to the `LittleBlueToothConfiguration` (or you can simply instantiate using a constant).
 If an state restoration event is triggered the handler will receive a `Restored` object.  A restored object con be a `Peripheral` along with its instance or a scan along with the discovery publisher that will publish all the discovered peripherals. A peripheral will be ruturned even if it is has been disconnected.
 To be notified again about peripheral state please subscribe to the `connectionEventPublisher` only if the peripheral is in a ready state is possible to send other command.
+
 If you don't want LittleBluetooth to manage state restoration, you can subscribe to the `restoreStatePublisher` publisher, you will receive a `CentralRestorer` object that contains all the necessary information to manage state restoration by yourself.
 Note:
 * Restoration can happen in background
