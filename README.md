@@ -2,14 +2,16 @@
 <p align="center">
   <img width="200" height="200" src="README/Icon.png">
 </p>
-<p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13&color=black"</p><p><img src="https://img.shields.io/static/v1?label=coverage&message=83%&color=yellowgreen"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"</p>
+<p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13|macOS10.15|watchOS6.0|tvOS13&color=black"></p><p><img src="https://img.shields.io/static/v1?label=coverage&message=83%&color=yellowgreen"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"> <img src="https://img.shields.io/static/v1?label=SwiftPM&message=compatible&color=green"></p>
+
+![Swift](https://github.com/DrAma999/LittleBlueTooth/workflows/Swift/badge.svg?branch=master)
 
   
   
 # LITTLE BLUETOOTH
 ## INTRODUCTION
-LittleBluetooth is a library that helps you developing applications that need to work with a bluetooth devices.
-It is written using `Swift` and the `Combine` framework thus is only compatible from iOS13 to upper version.
+LittleBluetooth is a library that helps you developing applications that need to work with a bluetooth low energy device.
+It is written using `Swift` and the `Combine` framework thus is only compatible from iOS 13, macOS 10.15, watchOS 6.0 to upper version.
 An instance of LittleBluetooth can control only one peripheral, you can use more instances as many peripheral you need, but first read this [answer](https://developer.apple.com/forums/thread/20810) on Apple forums to understand the impact of having more `CBCentralManager` instances.
 The library is still on development so use at own you risk.
 
@@ -23,9 +25,16 @@ github "DrAma999/LittleBlueTooth" ~> 0.2.0
 
 The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your dependencies. Unforutnately at the moment the nordic library supports only SwiftPM and Cocoapods.
 
+### Swift Package Manager
+Add the following dependency to your Package.swift file:
+```
+.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.1.0")
+```
+Or simply add from XCode menu.
+
 ## FEATURES
 * Built on top of combine
-* Deploys on **iOS**
+* Deploys on **iOS, macOS, tvOS, watchOS**
 * Chainable operations: scan, connect, start listen, stop listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
 * Peripheral state and bluetooth state observation. You can watch the bluetooth state and also the peripheral state for a more fine grained control in the UI. Of course those information are also checked before starting any operation.
 * Single notification channel: you can subscribe to the notification channel to receive all the data of the enabled characteristics. Of course you have also single and connectable publishers.
@@ -42,6 +51,7 @@ All `LittleBluetoothConfiguration` properties are optional.
 ### Scan
 You can scan with or without a timeout, after a timeout you receive a .scanTimeout error. Note that each peripheral found is published to the subscribers chain until you stop the scan request or you connect to a device (when you connect scan is automatically suspended.
 _Scan and stop_:
+
 ```
         // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
@@ -71,6 +81,7 @@ _Scan and stop_:
         })
 ```
 _Scan with connection_:
+
 The scan process is automatically stopped one you start the connection command.
 ```
         // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
@@ -99,6 +110,7 @@ The scan process is automatically stopped one you start the connection command.
         })
 ```
 _Scan with peripherals buffer_:
+
 ```
         // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
@@ -124,6 +136,7 @@ _Scan with peripherals buffer_:
 
 ### Connect
 _Connection from discovery_:
+
 A `PeripheralDiscovery` is a representation of what you usually get from a scan, it has the `UUID` of the peripheral and the advertising info.
 ```
         // Taken a discovery from scan
@@ -141,6 +154,7 @@ A `PeripheralDiscovery` is a representation of what you usually get from a scan,
         })
 ```
 _Direct connection from peripheral identifier_:
+
  `PeripheralIdentifier` is a wrapper around a `CBPeripheral` identifier, this allows you to connect to a peripheral just knowing the `UUID` of the peripheral.
 ```
 
@@ -160,6 +174,7 @@ _Direct connection from peripheral identifier_:
 
 ### Read
 _Reading from a characteristic_:
+
 To read from a characteristic first you have to create an instance of `LittleBluetoothCharacteristic` and define the data you want to read.
 ```
 let littleChar = LittleBlueToothCharacteristic(characteristic: "19B10011-E8F2-537E-4F6C-D104768A1214", for: "19B10010-E8F2-537E-4F6C-D104768A1214")
@@ -232,6 +247,7 @@ After that is just a matter of call the read method.
 
 ### Write
 _Writing to a characteristic_:
+
 To write to a characteristic first you have to create an instance of `LittleBluetoothCharacteristic` and define the data you want to read.
 ```
 let littleChar = LittleBlueToothCharacteristic(characteristic: "19B10011-E8F2-537E-4F6C-D104768A1214", for: "19B10010-E8F2-537E-4F6C-D104768A1214")
@@ -256,6 +272,7 @@ littleBT.write(to: charateristic, value: ledState)
 ```
 
 _WriteAndListen_:
+
 Sometimes you need to write a command to a “Control point” and read the subsequent reply from the BT device.
 This means attach yourself as a listener to a characteristic, write the command and wait for the reply.
 This process has been made super simple by using “write and listen”.
@@ -283,7 +300,9 @@ This process has been made super simple by using “write and listen”.
 
 ### Listen
 You can listen to a charcteristic in few different ways.
+
 _Listen_:
+
 After creating your `LittleCharacteristic` instance, then send the `startListen(from:forType:)` and attach the subscriber. Of course the object you want to read must conform the `Readable` object.
 ```
 anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
@@ -309,8 +328,9 @@ anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
 
 
 
-Note: if you stop listening to a characteristic, it doesn’t matter if you have more subscribers. The listen process will stop. It’ s up you to provide the business logic to avoid this behavior.
-_Connectable listen_
+**Note: if you stop listening to a characteristic, it doesn’t matter if you have more subscribers. The listen process will stop. It’ s up you to provide the business logic to avoid this behavior.**
+_Connectable listen_:
+
 After creating your `LittleCharacteristic` instance, then send the `connectableListenPublisher(for: valueType:)`. Of course the object you want to read must conform the `Readable` object.
 This is usefull when you want to create more subscribers and attach them later. When you are ready just call the `connect()` method and notifications will start to stream.
 ```
@@ -355,7 +375,8 @@ littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionA
 .store(in: &disposeBag)
 ```
 
-_Multiple listen_
+_Multiple listen_:
+
 If you need to receive more notifications on just one subscriber this publisher is made for you.
 Just activate one or more notification and subscribe to the `listenPublisher` publisher.
 It starts to stream all notifications once a peripheral is connected automatically.
@@ -444,7 +465,8 @@ Indipendently if it is unexpected or explicit `LittleBlueTooth` will clean up ev
 
 
 ### Connection event observer
-_Connection event observer_
+_Connection event observer_:
+
 The `connectionEventPublisher` informs you about what happen while you are connected to a device.
 A connection event is defined by different states:
 * `.connected(CBPeripheral)`: when a peripheral is connected after a `connect` command
@@ -453,7 +475,8 @@ A connection event is defined by different states:
 * `.connectionFailed(CBPeripheral, error: LittleBluetoothError?)`: when during a connection something goes wrong
 * `.disconnected(CBPeripheral, error: LittleBluetoothError?)`: when a peripheral ha been disconnected could be from an explicit disconnection or unexpected disconnection
 
-_Peripheral state observer_
+_Peripheral state observer_:
+
 It can be used for more fine grained control over peripheral states, they comes from the `CBPeripheralStates`
 
 ### Initialization operations
@@ -477,11 +500,14 @@ App has  BT permission to run in bkg | Explicit disconnection, App killed by use
 
 ### State preservation and state restoration
 First read Apple documentation [here](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html), [here](https://developer.apple.com/library/archive/qa/qa1962/_index.html) and my article on [Medium](https://medium.com/@andrea.alessandro/core-bluetooh-state-preservation-and-restoration-f107031b32fa).
+
 To make state restoration/preservation work, first you must instantiate `LittleBluetTooth` with a dictionary that contains for the key `CBCentralManagerOptionRestoreIdentifierKey` a specific string identifier by using the `LittleBluetoothConfiguration` and you must add a handler that it will be called during state restoration. You MUST also opt-in for bluetooth LE accessories in background.
 Must be also noted that state restoration works *always* not only in background, for instance if you kill the application using the swipe, the next time you relaunch it the Central Manager will return the previous state, you must consider that. If you only want only some operations run in background, just ask the UIApplication state.
+
 If your app is woken up by a bluetooh event in background it will call the `applicationDidFinishLauching` along with a dictionary. Using this key, `UIApplicationLaunchOptionsBluetoothCentralsKey`, you receive an array of identifiers of CBCentralManager instances that were working before the app was closed. You have a chance to restore the  `LittleBlueTooth` central manger by extracting the identifer from the launching option dictionary and passing it to the `LittleBlueToothConfiguration` (or you can simply instantiate using a constant).
 If an state restoration event is triggered the handler will receive a `Restored` object.  A restored object con be a `Peripheral` along with its instance or a scan along with the discovery publisher that will publish all the discovered peripherals. A peripheral will be ruturned even if it is has been disconnected.
 To be notified again about peripheral state please subscribe to the `connectionEventPublisher` only if the peripheral is in a ready state is possible to send other command.
+
 If you don't want LittleBluetooth to manage state restoration, you can subscribe to the `restoreStatePublisher` publisher, you will receive a `CentralRestorer` object that contains all the necessary information to manage state restoration by yourself.
 Note:
 * Restoration can happen in background
