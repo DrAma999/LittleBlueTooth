@@ -18,7 +18,7 @@ The library is still on development so use at own you risk.
 Add the following to your Cartfile:
 
 ```
-github "DrAma999/LittleBlueTooth" ~> 0.1.0
+github "DrAma999/LittleBlueTooth" ~> 0.2.0
 ```
 
 The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your dependencies. Unforutnately at the moment the nordic library supports only SwiftPM and Cocoapods.
@@ -36,6 +36,9 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 * Code coverage > 80%
 
 ## HOW TO USE IT
+### Instantiate
+Create a `LittleBluetoothConfiguration` object and pass to the init method of `LittleBlueTooth`.
+All `LittleBluetoothConfiguration` properties are optional.
 ### Scan
 You can scan with or without a timeout, after a timeout you receive a .scanTimeout error. Note that each peripheral found is published to the subscribers chain until you stop the scan request or you connect to a device (when you connect scan is automatically suspended.
 _Scan and stop_:
@@ -444,8 +447,9 @@ Indipendently if it is unexpected or explicit `LittleBlueTooth` will clean up ev
 _Connection event observer_
 The `connectionEventPublisher` informs you about what happen while you are connected to a device.
 A connection event is defined by different states:
-* `.connected(PeripheralIdentifier)`: when a peripheral is connected after a `connect` command
+* `.connected(CBPeripheral)`: when a peripheral is connected after a `connect` command
 * `.autoConnected(CBPeripheral)`: when a peripheral is connected automatically this event is triggered when you use the  `autoconnectionHandler`
+* `.ready(CBPeripheral)`: this state means that now you can send commands to a peripheral. Why ready and not just connected? because you could have been set some `connectionTasks` and ready means that, if they where present, they have been executed.
 * `.connectionFailed(CBPeripheral, error: LittleBluetoothError?)`: when during a connection something goes wrong
 * `.disconnected(CBPeripheral, error: LittleBluetoothError?)`: when a peripheral ha been disconnected could be from an explicit disconnection or unexpected disconnection
 
@@ -472,13 +476,16 @@ App has no BT permission to run in bkg | Explicit disconnection, App killed by u
 App has  BT permission to run in bkg | Explicit disconnection, App killed by user/system
 
 ### State preservation and state restoration
-First read Apple documentation [here](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html) and [here](https://developer.apple.com/library/archive/qa/qa1962/_index.html).
-To make state restoration/preservation work, first you must instantiate `LittleBluetTooth` with a dictionary that contains for the key `CBCentralManagerOptionRestoreIdentifierKey` a specific string identifier and you must add a handler that it will be called during state restoration. You MUST also opt-in for bluetooth LE accessories in background.
-
-If your app is woken up by a bluetooh event in background it will call the `applicationDidFinishLauching` along with a dictionary. Using this key, `UIApplicationLaunchOptionsBluetoothCentralsKey`, you receive an array of identifiers of CBCentralManager instances that were working before the app was closed. You have a chance to restore the  `LittleBlueTooth` central manger by extracting the identifer from the launching option dictionary and passing it to the option dictionary of littleBT (or you can simply instantiate using a constant).
-If an state restoration event is triggered the handler will receive a `CentralRestorer` object. You can query this object and try to understand wich was the state of the peripheral when the application was closed.
-For instance query the peripherals and if the app was closed while connecting or when it was connected you can
-obtain the `PeripheralIdentifier` object and restore the connection.
+First read Apple documentation [here](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html), [here](https://developer.apple.com/library/archive/qa/qa1962/_index.html) and my article on [Medium](https://medium.com/@andrea.alessandro/core-bluetooh-state-preservation-and-restoration-f107031b32fa).
+To make state restoration/preservation work, first you must instantiate `LittleBluetTooth` with a dictionary that contains for the key `CBCentralManagerOptionRestoreIdentifierKey` a specific string identifier by using the `LittleBluetoothConfiguration` and you must add a handler that it will be called during state restoration. You MUST also opt-in for bluetooth LE accessories in background.
+Must be also noted that state restoration works *always* not only in background, for instance if you kill the application using the swipe, the next time you relaunch it the Central Manager will return the previous state, you must consider that. If you only want only some operations run in background, just ask the UIApplication state.
+If your app is woken up by a bluetooh event in background it will call the `applicationDidFinishLauching` along with a dictionary. Using this key, `UIApplicationLaunchOptionsBluetoothCentralsKey`, you receive an array of identifiers of CBCentralManager instances that were working before the app was closed. You have a chance to restore the  `LittleBlueTooth` central manger by extracting the identifer from the launching option dictionary and passing it to the `LittleBlueToothConfiguration` (or you can simply instantiate using a constant).
+If an state restoration event is triggered the handler will receive a `Restored` object.  A restored object con be a `Peripheral` along with its instance or a scan along with the discovery publisher that will publish all the discovered peripherals. A peripheral will be ruturned even if it is has been disconnected.
+To be notified again about peripheral state please subscribe to the `connectionEventPublisher` only if the peripheral is in a ready state is possible to send other command.
+If you don't want LittleBluetooth to manage state restoration, you can subscribe to the `restoreStatePublisher` publisher, you will receive a `CentralRestorer` object that contains all the necessary information to manage state restoration by yourself.
+Note:
+* Restoration can happen in background
+* The Peripheral object returned can be in different state depending an what has been restored. If a peripheral has been disconnected and an  `autoconnectionHandler` is provided LittleBluetooth will try to re-establish a connection.
 
 ## ROADMAP
 - [x] SwiftPM support
@@ -486,9 +493,10 @@ obtain the `PeripheralIdentifier` object and restore the connection.
 - [ ] Improve code coverage
 - [ ] `CBManager` and `CBPeripheral` extraction
 - [ ] Add multiple peripheral support
-- [x] Add support to: **macOS**, **watchOS**, **tvOS**
+- [x] Add support to: **macOS**, **watchOS**, **tvOS**, **macOS catalyst**
 
 ## ISSUES
+
 ## CONTRIBUTING
 Since I'm working on this project in my spare time any help is appreciated.
 Feel free to make a pull request.

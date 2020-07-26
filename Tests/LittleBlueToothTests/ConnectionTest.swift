@@ -16,7 +16,7 @@ class ConnectionTest: LittleBlueToothTests {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         try super.setUpWithError()
-        littleBT = LittleBlueTooth()
+        littleBT = LittleBlueTooth(with: LittleBluetoothConfiguration())
     }
 
     override func tearDownWithError() throws {
@@ -131,7 +131,7 @@ class ConnectionTest: LittleBlueToothTests {
         .store(in: &disposeBag)
 
         waitForExpectations(timeout: 30)
-        XCTAssert(connectionEvent.count == 2)
+        XCTAssert(connectionEvent.count == 3)
         XCTAssert(peripheralState.contains(.connected))
         XCTAssert(peripheralState.contains(.disconnected))
 
@@ -258,10 +258,10 @@ class ConnectionTest: LittleBlueToothTests {
         }
         .store(in: &disposeBag)
         
-        waitForExpectations(timeout: 60)
+        waitForExpectations(timeout: 20)
         self.littleBT.autoconnectionHandler = nil
         self.littleBT.disconnect()
-        XCTAssert(connectionEvent.count == 3)
+        XCTAssert(connectionEvent.count == 5)
         XCTAssert(peripheralState.contains(.connected))
         XCTAssert(peripheralState.contains(.disconnected))
     }

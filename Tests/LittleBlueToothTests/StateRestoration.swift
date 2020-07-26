@@ -15,7 +15,11 @@ class StateRestoration: LittleBlueToothTests {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         try super.setUpWithError()
-        littleBT = LittleBlueTooth()
+        CBMCentralManagerFactory.simulateStateRestoration = { (identifier) -> [String : Any]  in
+            return [ CBCentralManagerRestoredStatePeripheralsKey : [blinky] ]
+        }
+      
+       
     }
 
     override func tearDownWithError() throws {
@@ -23,6 +27,15 @@ class StateRestoration: LittleBlueToothTests {
     }
     
     func testStateRestore() {
+        let wrongCharacteristicExpectation = expectation(description: "State restoration")
+
+        var littleBTConf = LittleBluetoothConfiguration()
+        littleBTConf.restoreHandler = { restored in
+            print("restored \(restored)")
+        }
+        littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
+        littleBT = LittleBlueTooth(with: littleBTConf)
         
+        waitForExpectations(timeout: 10)
     }
 }
