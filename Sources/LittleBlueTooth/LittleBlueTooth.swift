@@ -114,6 +114,10 @@ public class LittleBlueTooth: Identifiable {
         _listenPublisher.eraseToAnyPublisher()
     }
     
+    public var restoreStatePublisher: AnyPublisher<CentralRestorer, Never> {
+        return centralProxy.willRestoreStatePublisher
+    }
+    
     // MARK: - Private variables
     /// Cancellable operation idendified by a `UUID` key
     private var disposeBag = [UUID : AnyCancellable]()
@@ -829,7 +833,7 @@ public class LittleBlueTooth: Identifiable {
               @unknown default:
                   fatalError("Connection event in default not handled")
               }
-//              os_log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.BT_Log_General, type: .debug, cbPeripheral.description, cbPeripheral.delegate != nil ? "true" : "false", cbPeripheral.state.rawValue)
+              os_log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.BT_Log_General, type: .debug, cbPeripheral.description, cbPeripheral.delegate != nil ? "true" : "false", cbPeripheral.state.rawValue)
               return Restored.peripheral(self.peripheral!)
           }
           return Restored.nothing
@@ -947,8 +951,8 @@ extension OSLog {
     public static var CentralManager = "LittleBluetooth_CentralManager"
     public static var General = "LittleBluetooth_General"
 
-    static let BT_Log_General = OSLog(subsystem: Subsystem, category: General)
-    static let BT_Log_Peripheral = OSLog(subsystem: Subsystem, category: Peripheral)
-    static let BT_Log_CentralManager = OSLog(subsystem: Subsystem, category: CentralManager)
+    public static let BT_Log_General = OSLog(subsystem: Subsystem, category: General)
+    public static let BT_Log_Peripheral = OSLog(subsystem: Subsystem, category: Peripheral)
+    public static let BT_Log_CentralManager = OSLog(subsystem: Subsystem, category: CentralManager)
 
 }

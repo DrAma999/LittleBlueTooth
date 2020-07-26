@@ -80,7 +80,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     
     /// Scan
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-//        os_log("CBCMD DidDiscover %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, peripheral.description)
+        os_log("CBCMD DidDiscover %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, peripheral.description)
 
         let peripheraldiscovery = PeripheralDiscovery(peripheral, advertisement: advertisementData, rssi: RSSI)
         centralDiscoveriesPublisher.send(peripheraldiscovery)
@@ -88,7 +88,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     
     /// Monitoring connection
     func centralManager(_ central: CBCentralManager, didConnect: CBPeripheral) {
-//        os_log("CBCMD DidConnect %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, didConnect.description)
+        os_log("CBCMD DidConnect %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, didConnect.description)
 
         if isAutoconnectionActive {
             isAutoconnectionActive = false
@@ -101,7 +101,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: Error?) {
-//        os_log("CBCMD DidDisconnect %{public}@, Error %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, didDisconnectPeripheral.description, error?.localizedDescription ?? "")
+        os_log("CBCMD DidDisconnect %{public}@, Error %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, didDisconnectPeripheral.description, error?.localizedDescription ?? "")
 
         isAutoconnectionActive = false
         var lttlError: LittleBluetoothError?
@@ -124,11 +124,6 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
         os_log("CBCMD WillRestoreState %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, dict.description)
-        if let peripheral = (dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral])?.first {
-            let peri = central.retrievePeripherals(withIdentifiers: [peripheral.identifier]).first!
-//        os_log("CBCMD WillRestoreState %{public}@, has delegate: %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, peri.description, peri.delegate != nil ? "true" : "false")
-
-        }
         _willRestoreStatePublisher.send(CentralRestorer(centralManager: central, restoredInfo: dict))
     }
     
