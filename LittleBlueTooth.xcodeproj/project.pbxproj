@@ -22,7 +22,6 @@
 
 /* Begin PBXBuildFile section */
 		655330DD24BF159D007D299B /* CentralRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DC24BF159D007D299B /* CentralRestorer.swift */; };
-		655330DF24BF5446007D299B /* StateRestoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DE24BF5446007D299B /* StateRestoration.swift */; };
 		6559F6B124BF90DC0035FF4A /* CoreBluetoothMock in Frameworks */ = {isa = PBXBuildFile; productRef = 6559F6B024BF90DC0035FF4A /* CoreBluetoothMock */; };
 		658A75C224BB74FC00F874EF /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
 		658A75C524BB765C00F874EF /* LittleBlueTooth.h in Headers */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* LittleBlueTooth.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -389,7 +388,6 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_82 /* ConnectionTest.swift in Sources */,
-				655330DF24BF5446007D299B /* StateRestoration.swift in Sources */,
 				OBJ_83 /* ListenTest.swift in Sources */,
 				OBJ_84 /* LittleBlueToothTests.swift in Sources */,
 				OBJ_85 /* MockPeripherals.swift in Sources */,

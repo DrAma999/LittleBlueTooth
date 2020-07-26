@@ -69,27 +69,26 @@ class CBCentralManagerDelegateProxy: NSObject {
 
     
     var isAutoconnectionActive = false
+    var rest: AnyCancellable?
+   
 }
 
 extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        os_log("CBCMD DidUpdateState %{public}d", log: OSLog.BT_Log_CentralManager, type: .debug, central.state.rawValue)
-
+//        os_log("CBCMD DidUpdateState %{public}d", log: OSLog.LittleBT_Log_General, type: .debug, central.state.rawValue)
        _centralStatePublisher.send(BluetoothState(central.state))
     }
     
     /// Scan
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        os_log("CBCMD DidDiscover %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, peripheral.description)
-
+//        os_log("CBCMD DidDiscover %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, peripheral.description)
         let peripheraldiscovery = PeripheralDiscovery(peripheral, advertisement: advertisementData, rssi: RSSI)
         centralDiscoveriesPublisher.send(peripheraldiscovery)
     }
     
     /// Monitoring connection
     func centralManager(_ central: CBCentralManager, didConnect: CBPeripheral) {
-        os_log("CBCMD DidConnect %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, didConnect.description)
-
+//        os_log("CBCMD DidConnect %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, didConnect.description)
         if isAutoconnectionActive {
             isAutoconnectionActive = false
             let event = ConnectionEvent.autoConnected(didConnect)
@@ -101,8 +100,9 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: Error?) {
-        os_log("CBCMD DidDisconnect %{public}@, Error %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, didDisconnectPeripheral.description, error?.localizedDescription ?? "")
-
+//        #if !TEST
+//        os_log("CBCMD DidDisconnect %{public}@, Error %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, didDisconnectPeripheral.description, error?.localizedDescription ?? "")
+//        #endif
         isAutoconnectionActive = false
         var lttlError: LittleBluetoothError?
         if let error = error {
@@ -123,7 +123,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
-        os_log("CBCMD WillRestoreState %{public}@", log: OSLog.BT_Log_CentralManager, type: .debug, dict.description)
+//        os_log("CBCMD WillRestoreState %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, dict.description)
         _willRestoreStatePublisher.send(CentralRestorer(centralManager: central, restoredInfo: dict))
     }
     

@@ -117,7 +117,7 @@ public class LittleBlueTooth: Identifiable {
     public var restoreStatePublisher: AnyPublisher<CentralRestorer, Never> {
         return centralProxy.willRestoreStatePublisher
     }
-    
+        
     // MARK: - Private variables
     /// Cancellable operation idendified by a `UUID` key
     private var disposeBag = [UUID : AnyCancellable]()
@@ -181,7 +181,7 @@ public class LittleBlueTooth: Identifiable {
     // MARK: - Init
     public init(with configuration: LittleBluetoothConfiguration) {
         #if TEST
-        self.cbCentral = CBCentralManagerFactory.instance(delegate: self.centralProxy, queue: configuration.centralManagerQueue, options: configuration.centralManagerOptions)
+        self.cbCentral = CBCentralManagerFactory.instance(delegate: self.centralProxy, queue: configuration.centralManagerQueue, options: configuration.centralManagerOptions, forceMock: true)
         #else
         self.cbCentral = CBCentralManager(delegate: self.centralProxy, queue: configuration.centralManagerQueue, options: configuration.centralManagerOptions)
         #endif
@@ -193,12 +193,12 @@ public class LittleBlueTooth: Identifiable {
             fatalError("If you want to use state preservation/restoration you must implement both restore key and the handler")
         }
         attachSubscribers(with: configuration.restoreHandler)
-        os_log(
-            "LBT init options %{public}@",
-            log: OSLog.BT_Log_General,
-            type: .debug,
-            configuration.centralManagerOptions?.description ?? ""
-        )
+//        os_log(
+//            "LBT init options %{public}@",
+//            log: OSLog.LittleBT_Log_General,
+//            type: .debug,
+//            configuration.centralManagerOptions?.description ?? ""
+//        )
     }
     
     func attachSubscribers(with restorehandler: ((Restored) -> Void)?) {
@@ -214,7 +214,7 @@ public class LittleBlueTooth: Identifiable {
                     if let connTask = self.connectionTasks {
                         // I'm doing a copy of the connectionTask so if something fails
                         // next time it will start over.
-                        // TEMPORARY WORKAROUND: Those Dispatch async will make the states flow correctly in the process: first connect, then ready. Without it woulb the contrary
+                        // TEMPORARY WORKAROUND: Those Dispatch async will make the states flow correctly in the process: first connect, then ready. Without it would be the contrary
                         return AnyPublisher(connTask)
                             .catch { [unowned self] (error) -> Just<Void> in
                                 DispatchQueue.main.async {
@@ -244,7 +244,6 @@ public class LittleBlueTooth: Identifiable {
             .sink { [unowned self] (event) in
                 print("Sinking event \(event)")
                 if case ConnectionEvent.disconnected( let peripheral, let error) = event {
-                    os_log("LBT Disconnection Event", log: OSLog.BT_Log_General, type: .debug)
                     self.cleanUpForDisconnection()
                     if let autoCon = self.autoconnectionHandler {
                         let periph = PeripheralIdentifier(peripheral: peripheral)
@@ -803,7 +802,7 @@ public class LittleBlueTooth: Identifiable {
               let restoreDiscoverServices = restorer.services
               let restoreScanOptions = restorer.scanOptions
               let restoreDiscoveryPublisher = self.startDiscovery(withServices: restoreDiscoverServices, options: restoreScanOptions)
-            os_log("LBT Scan restore %{public}@", log: OSLog.BT_Log_General, type: .debug, restorer.centralManager.isScanning ? "true" : "false")
+//            os_log("LBT Scan restore %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, restorer.centralManager.isScanning ? "true" : "false")
               return .scan(discoveryPublisher: restoreDiscoveryPublisher)
           }
           if let periph = restorer.peripherals.first, let cbPeripheral = periph.cbPeripheral {
@@ -833,7 +832,9 @@ public class LittleBlueTooth: Identifiable {
               @unknown default:
                   fatalError("Connection event in default not handled")
               }
-              os_log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.BT_Log_General, type: .debug, cbPeripheral.description, cbPeripheral.delegate != nil ? "true" : "false", cbPeripheral.state.rawValue)
+//            #if !TEST
+//              os_log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.LittleBT_Log_General, type: .debug, cbPeripheral.description, cbPeripheral.delegate != nil ? "true" : "false", cbPeripheral.state.rawValue)
+//            #endif
               return Restored.peripheral(self.peripheral!)
           }
           return Restored.nothing
@@ -947,12 +948,8 @@ extension TimeInterval {
 
 extension OSLog {
     public static var Subsystem = Bundle.main.bundleIdentifier!
-    public static var Peripheral = "LittleBluetooth_Peripheral"
-    public static var CentralManager = "LittleBluetooth_CentralManager"
-    public static var General = "LittleBluetooth_General"
+    public static var General = "LittleBluetooth"
 
-    public static let BT_Log_General = OSLog(subsystem: Subsystem, category: General)
-    public static let BT_Log_Peripheral = OSLog(subsystem: Subsystem, category: Peripheral)
-    public static let BT_Log_CentralManager = OSLog(subsystem: Subsystem, category: CentralManager)
+    public static let LittleBT_Log_General = OSLog(subsystem: Subsystem, category: General)
 
 }
