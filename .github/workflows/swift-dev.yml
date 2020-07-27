@@ -1,0 +1,29 @@
+name: Swift
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: macOS-latest
+  
+    steps:
+      - uses: actions/checkout@develop
+      - name: Test
+        run: |
+          cd LittleBlueTooth
+          xcodebuild clean test -project LittleBlueTooth.xcodeproj -configuration Develop-Test -scheme LittleBlueTooth CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
+          bash <(curl -s https://codecov.io/bash -t f6d52016-db36-40b3-8ecf-64f59bce9762)
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: swift build -v
+ 
