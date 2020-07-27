@@ -28,7 +28,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 ### Swift Package Manager
 Add the following dependency to your Package.swift file:
 ```
-.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.1.0")
+.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.2.0")
 ```
 Or simply add from XCode menu.
 
