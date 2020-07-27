@@ -50,10 +50,10 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic)
         }
-        .sink(receiveCompletion: { completion in
+        .sink(receiveCompletion: { (completion) in
             print("Completion \(completion)")
             switch completion {
             case .finished:
@@ -97,8 +97,8 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -141,8 +141,8 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -182,8 +182,8 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { _ in
             self.littleBT.write(to: charateristic, value: Data([0x01]))
         }
-        .flatMap { _ in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -272,12 +272,12 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.read(from: ledCharateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: ledCharateristic)
         }
         .flatMap { led -> AnyPublisher<ButtonState, LittleBluetoothError> in
             ledIsOff = !led.isOn
-            return self.littleBT.read(from: buttonCharateristic, forType: ButtonState.self)
+            return self.littleBT.read(from: buttonCharateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -316,7 +316,7 @@ class ReadWriteTest: LittleBlueToothTests {
         }
         .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
             blinky.simulateDisconnection()
-            return self.littleBT.read(from: charateristic, forType: LedState.self)
+            return self.littleBT.read(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")

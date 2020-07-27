@@ -418,7 +418,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		658A75C624BB772700F874EF /* Debug Test */ = {
+		658A75C624BB772700F874EF /* Debug-test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
@@ -470,9 +470,9 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				USE_HEADERMAP = NO;
 			};
-			name = "Debug Test";
+			name = "Debug-test";
 		};
-		658A75C724BB772700F874EF /* Debug Test */ = {
+		658A75C724BB772700F874EF /* Debug-test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ENABLE_TESTABILITY = YES;
@@ -504,9 +504,9 @@
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				WATCHOS_DEPLOYMENT_TARGET = 6.0;
 			};
-			name = "Debug Test";
+			name = "Debug-test";
 		};
-		658A75C824BB772700F874EF /* Debug Test */ = {
+		658A75C824BB772700F874EF /* Debug-test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -518,9 +518,9 @@
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				WATCHOS_DEPLOYMENT_TARGET = 6.0;
 			};
-			name = "Debug Test";
+			name = "Debug-test";
 		};
-		658A75C924BB772700F874EF /* Debug Test */ = {
+		658A75C924BB772700F874EF /* Debug-test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -529,9 +529,9 @@
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				WATCHOS_DEPLOYMENT_TARGET = 6.0;
 			};
-			name = "Debug Test";
+			name = "Debug-test";
 		};
-		658A75CA24BB772700F874EF /* Debug Test */ = {
+		658A75CA24BB772700F874EF /* Debug-test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -561,7 +561,7 @@
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				WATCHOS_DEPLOYMENT_TARGET = 6.0;
 			};
-			name = "Debug Test";
+			name = "Debug-test";
 		};
 		OBJ_3 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -857,7 +857,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_3 /* Debug */,
-				658A75C624BB772700F874EF /* Debug Test */,
+				658A75C624BB772700F874EF /* Debug-test */,
 				OBJ_4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -867,7 +867,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_49 /* Debug */,
-				658A75C724BB772700F874EF /* Debug Test */,
+				658A75C724BB772700F874EF /* Debug-test */,
 				OBJ_50 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -877,7 +877,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_68 /* Debug */,
-				658A75C824BB772700F874EF /* Debug Test */,
+				658A75C824BB772700F874EF /* Debug-test */,
 				OBJ_69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -887,7 +887,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_74 /* Debug */,
-				658A75C924BB772700F874EF /* Debug Test */,
+				658A75C924BB772700F874EF /* Debug-test */,
 				OBJ_75 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -897,7 +897,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_79 /* Debug */,
-				658A75CA24BB772700F874EF /* Debug Test */,
+				658A75CA24BB772700F874EF /* Debug-test */,
 				OBJ_80 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
