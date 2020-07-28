@@ -12,7 +12,9 @@ jobs:
     runs-on: macOS-latest
   
     steps:
-      - uses: actions/checkout@develop
+      - uses: actions/checkout@v2
+        with:
+        ref: develop
       - name: Test
         run: |
           cd LittleBlueTooth
