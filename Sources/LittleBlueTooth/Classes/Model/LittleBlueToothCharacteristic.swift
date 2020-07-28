@@ -46,5 +46,19 @@ public struct LittleBlueToothCharacteristic: Identifiable {
     }
 }
 
-extension LittleBlueToothCharacteristic: Equatable, Hashable {}
+extension LittleBlueToothCharacteristic: Equatable, Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        if lhs.id == rhs.id &&
+            lhs.service == rhs.service {
+            return true
+        }
+        return false
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(service)
+    }
+    
+}
 
