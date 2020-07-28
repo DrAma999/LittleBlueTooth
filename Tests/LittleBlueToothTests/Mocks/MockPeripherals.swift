@@ -195,7 +195,7 @@ let thingy = CBMPeripheralSpec
     .advertising(
         advertisementData: [
             CBMAdvertisementDataServiceUUIDsKey : [
-                CBUUID(string: "FEAA")  // Eddystone
+                CBMUUID(string: "FEAA")  // Eddystone
             ],
             CBMAdvertisementDataServiceDataKey : [
                 // Physical Web beacon: 10ee03676f2e676c2f7049576466972

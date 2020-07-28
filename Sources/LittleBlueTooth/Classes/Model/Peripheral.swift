@@ -85,7 +85,6 @@ public class Peripheral: Identifiable {
     init(_ peripheral: CBPeripheral) {
         self.cbPeripheral = peripheral
         self.cbPeripheral.delegate = self.peripheralProxy
-
         #if !TEST
         self.peripheralStatePublisher = self.cbPeripheral.publisher(for: \.state)
             .map{ (state) -> PeripheralState in
