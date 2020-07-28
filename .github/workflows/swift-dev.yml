@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-        ref: develop
+          ref: my-branch
       - name: Test
         run: |
           cd LittleBlueTooth
