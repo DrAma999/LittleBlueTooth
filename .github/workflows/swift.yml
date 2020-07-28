@@ -17,7 +17,6 @@ jobs:
           ref: develop
       - name: Test
         run: |
-          cd LittleBlueTooth
           xcodebuild clean test -project LittleBlueTooth.xcodeproj -configuration Develop-Test -scheme LittleBlueTooth CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
           bash <(curl -s https://codecov.io/bash)
   build:
