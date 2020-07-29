@@ -14,6 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: swift build
+      run: swift build -Xswiftc "-DTEST"
     - name: Test
       run: swift test -Xswiftc "-DTEST"
