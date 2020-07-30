@@ -71,7 +71,7 @@ class ListenTest: LittleBlueToothTests {
             if counter > 10 {
                 scheduler.cancel()
                 self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                }) { (perip) in
+                }) { (_) in
                     listenExpectation.fulfill()
                 }
                 .store(in: &self.disposeBag)
@@ -122,7 +122,7 @@ class ListenTest: LittleBlueToothTests {
             if firstCounter == 10 {
                 scheduler.cancel()
                 self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                }) { (perip) in
+                }) { (_) in
                     firstListenExpectation.fulfill()
                 }
                 .store(in: &self.disposeBag)

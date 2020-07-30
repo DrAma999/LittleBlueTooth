@@ -47,7 +47,7 @@ class WriteWithoutResponse: LittleBlueToothTests {
        }) { (answer) in
            print("Answer \(answer)")
            self.littleBT.disconnect().sink(receiveCompletion: {_ in
-           }) { (perip) in
+           }) { (_) in
                writeWOResp.fulfill()
            }
            .store(in: &self.disposeBag)

@@ -146,7 +146,7 @@ class ScanDiscoveryTest: LittleBlueToothTests {
                 break
             }
         }) { (connectedPeriph) in
-            
+            print("Connected periph: \(connectedPeriph)")
         }
         .store(in: &disposeBag)
         wait(for: [discoveryExpectation], timeout: 15)

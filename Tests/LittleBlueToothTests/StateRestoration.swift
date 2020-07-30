@@ -37,9 +37,9 @@ class StateRestoration: LittleBlueToothTests {
         // Cannot simulate the restore of peripheral since all in CentralRestore I check against the retrive peripheral that must be of CBPeripheral type
         let restoreExpectation = expectation(description: "State restoration")
         
-        var periph: [PeripheralIdentifier]? = nil
-        var scanOptions: [String : Any]? = nil
-        var scanServices: [CBUUID]? = nil
+        var periph: [PeripheralIdentifier]?
+        var scanOptions: [String : Any]?
+        var scanServices: [CBUUID]?
         
         var littleBTConf = LittleBluetoothConfiguration()
         littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]

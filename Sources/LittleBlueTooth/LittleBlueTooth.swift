@@ -480,7 +480,7 @@ public class LittleBlueTooth: Identifiable {
                 writeSubject.send(completion: .failure(error))
                 self.removeAndCancelSubscriber(for: key)
             }
-        }, receiveValue: { [unowned self, key] (value) in
+        }, receiveValue: { [unowned self, key] (_) in
             writeSubject.send(())
             writeSubject.send(completion: .finished)
             self.removeAndCancelSubscriber(for: key)
