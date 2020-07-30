@@ -46,7 +46,7 @@ public class LittleBlueTooth: Identifiable {
     /// permission, to cancel just call `disconnect`.
     /// When a connection will be established an `.autoConnected(PeripheralIdentifier)` event will be streamed to
     /// the `connectionEventPublisher`
-    public var autoconnectionHandler: AutoconnectionHandler? = nil
+    public var autoconnectionHandler: AutoconnectionHandler?
     
     /// Connected peripheral. `nil` if not connected or a connection is not requested
     public var peripheral: Peripheral?
@@ -229,7 +229,7 @@ public class LittleBlueTooth: Identifiable {
     
     deinit {
         print("Deinit: \(self)")
-        disposeBag.forEach { (key, value) in
+        disposeBag.forEach { (_, value) in
             value.cancel()
         }
         scanning?.cancel()
@@ -623,7 +623,7 @@ public class LittleBlueTooth: Identifiable {
             let filtered = self.cbCentral.retrievePeripherals(withIdentifiers: [peripheralIdentifier.id]).filter { (periph) -> Bool in
                 periph.identifier == peripheralIdentifier.id
             }
-            if filtered.count == 0 {
+            if filtered.isEmpty {
                 throw LittleBluetoothError.peripheralNotFound
             }
             self.peripheral = Peripheral(filtered.first!)
@@ -859,7 +859,7 @@ public class LittleBlueTooth: Identifiable {
                 return true
             }
         }
-        .map { [unowned self] (event) -> Peripheral in
+        .map { [unowned self] (_) -> Peripheral in
             return self.peripheral!
         }
         .mapError { (error) -> LittleBluetoothError in

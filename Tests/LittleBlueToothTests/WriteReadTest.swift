@@ -63,7 +63,7 @@ class ReadWriteTest: LittleBlueToothTests {
                 if case LittleBluetoothError.serviceNotFound(_) = error {
                     isWrong = true
                     self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                    }) { (perip) in
+                    }) { (_) in
                         wrongServiceExpectation.fulfill()
                     }
                     .store(in: &self.disposeBag)
@@ -110,7 +110,7 @@ class ReadWriteTest: LittleBlueToothTests {
                 if case LittleBluetoothError.characteristicNotFound(_) = error {
                     isWrong = true
                     self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                    }) { (perip) in
+                    }) { (_) in
                         wrongCharacteristicExpectation.fulfill()
                     }
                     .store(in: &self.disposeBag)
@@ -151,7 +151,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Answer \(answer)")
             ledState = answer
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
-            }) { (perip) in
+            }) { (_) in
                 readExpectation.fulfill()
             }
             .store(in: &self.disposeBag)
@@ -192,7 +192,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Answer \(answer)")
             ledState = answer
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
-            }) { (perip) in
+            }) { (_) in
                 readExpectation.fulfill()
             }
             .store(in: &self.disposeBag)
@@ -241,7 +241,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Answer \(answer)")
             ledState = answer
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
-            }) { (perip) in
+            }) { (_) in
                 writeAndListenExpectation.fulfill()
             }
             .store(in: &self.disposeBag)
@@ -286,7 +286,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Answer \(button)")
             buttonIsOff = !button.isOn
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
-            }) { (perip) in
+            }) { (_) in
                 multipleReadExpectation.fulfill()
             }
             .store(in: &self.disposeBag)
