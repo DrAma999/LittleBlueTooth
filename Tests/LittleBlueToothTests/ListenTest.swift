@@ -260,10 +260,10 @@ class ListenTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { periph in
+        .flatMap { _ in
             self.littleBT.startListen(from: charateristicOne)
         }
-        .flatMap { periph in
+        .flatMap { _ in
             self.littleBT.startListen(from: charateristicTwo)
         }
         .delay(for: .seconds(20), scheduler: DispatchQueue.global())
@@ -275,7 +275,7 @@ class ListenTest: LittleBlueToothTests {
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
-        }) { (answer) in
+        }) { (_) in
             secondListenExpectation.fulfill()
             firstListenExpectation.fulfill()
         }

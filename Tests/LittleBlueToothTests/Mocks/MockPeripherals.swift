@@ -95,7 +95,7 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor characteristic: CBMCharacteristic,
                     data: Data) -> Result<Void, Error> {
-        if data.count > 0 {
+        if !data.isEmpty {
             ledEnabled = data[0] != 0x00
         }
         return .success(())
@@ -211,13 +211,13 @@ let thingy = CBMPeripheralSpec
 class FakePeriph: CBMPeripheral {
     var identifier: UUID = UUID()
     
-    var delegate: CBMPeripheralDelegate? = nil
+    var delegate: CBMPeripheralDelegate?
     
     var name: String? = "SoFake"
     
     var state: CBMPeripheralState = .disconnected
     
-    var services: [CBMService]? = nil
+    var services: [CBMService]?
     
     var canSendWriteWithoutResponse: Bool = false
     
