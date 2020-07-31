@@ -27,6 +27,24 @@
 		658A75C224BB74FC00F874EF /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
 		658A75C524BB765C00F874EF /* LittleBlueTooth.h in Headers */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* LittleBlueTooth.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6590D38224D0030000BEE864 /* WriteWithoutResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */; };
+		65AD4BD424D437B700C0CBE6 /* LittleBlueTooth.h in Headers */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* LittleBlueTooth.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		65AD4BD624D437B700C0CBE6 /* LittleBlueToothError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* LittleBlueToothError.swift */; };
+		65AD4BD724D437B700C0CBE6 /* AdvertisingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* AdvertisingData.swift */; };
+		65AD4BD824D437B700C0CBE6 /* LittleBlueToothCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* LittleBlueToothCharacteristic.swift */; };
+		65AD4BD924D437B700C0CBE6 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_17 /* Peripheral.swift */; };
+		65AD4BDA24D437B700C0CBE6 /* PeripheralDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_18 /* PeripheralDiscovery.swift */; };
+		65AD4BDB24D437B700C0CBE6 /* CentralRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DC24BF159D007D299B /* CentralRestorer.swift */; };
+		65AD4BDC24D437B700C0CBE6 /* CBCentralManagerDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_20 /* CBCentralManagerDelegateProxy.swift */; };
+		65AD4BDD24D437B700C0CBE6 /* CBPeripheralProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_21 /* CBPeripheralProxy.swift */; };
+		65AD4BDE24D437B700C0CBE6 /* ReplaySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* ReplaySubject.swift */; };
+		65AD4BDF24D437B700C0CBE6 /* ReplaySubjectSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* ReplaySubjectSubscription.swift */; };
+		65AD4BE024D437B700C0CBE6 /* ShareReplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* ShareReplay.swift */; };
+		65AD4BE124D437B700C0CBE6 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_27 /* Utilities.swift */; };
+		65AD4BE224D437B700C0CBE6 /* LittleBluetoothConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */; };
+		65AD4BE324D437B700C0CBE6 /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
+		65AD4BE424D437B700C0CBE6 /* LittleBlueTooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_29 /* LittleBlueTooth.swift */; };
+		65AD4BE624D437B700C0CBE6 /* CoreBluetoothMock in Frameworks */ = {isa = PBXBuildFile; productRef = 65AD4BD124D437B700C0CBE6 /* CoreBluetoothMock */; };
+		65AD4BF024D438AD00C0CBE6 /* LittleBlueToothForTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */; };
 		65BA2D0F24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */; };
 		OBJ_52 /* LittleBlueToothError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* LittleBlueToothError.swift */; };
 		OBJ_53 /* AdvertisingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* AdvertisingData.swift */; };
@@ -49,17 +67,9 @@
 		OBJ_86 /* ScanDiscoveryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_38 /* ScanDiscoveryTest.swift */; };
 		OBJ_87 /* UtilityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_39 /* UtilityTest.swift */; };
 		OBJ_88 /* WriteReadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_40 /* WriteReadTest.swift */; };
-		OBJ_90 /* LittleBlueTooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "LittleBlueTooth::LittleBlueTooth::Product" /* LittleBlueTooth.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		658A75BD24BB71AD00F874EF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = OBJ_1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = "LittleBlueTooth::LittleBlueTooth";
-			remoteInfo = LittleBlueTooth;
-		};
 		658A75BE24BB71AE00F874EF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = OBJ_1 /* Project object */;
@@ -67,12 +77,21 @@
 			remoteGlobalIDString = "LittleBlueTooth::LittleBlueToothTests";
 			remoteInfo = LittleBlueToothTests;
 		};
+		65AD4BED24D438A000C0CBE6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65AD4BD024D437B700C0CBE6;
+			remoteInfo = LittleBlueToothForTest;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		655330DC24BF159D007D299B /* CentralRestorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralRestorer.swift; sourceTree = "<group>"; };
 		655330DE24BF5446007D299B /* StateRestoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRestoration.swift; sourceTree = "<group>"; };
 		6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteWithoutResponse.swift; sourceTree = "<group>"; };
+		65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LittleBlueToothForTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		65AD4BEC24D437B700C0CBE6 /* LittleBlueTooth copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "LittleBlueTooth copy-Info.plist"; path = "/Users/Andrea/Documents/GitHub/LittleBlueTooth/LittleBlueTooth copy-Info.plist"; sourceTree = "<absolute>"; };
 		65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LittleBluetoothConfiguration.swift; sourceTree = "<group>"; };
 		"LittleBlueTooth::LittleBlueTooth::Product" /* LittleBlueTooth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LittleBlueTooth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"LittleBlueTooth::LittleBlueToothTests::Product" /* LittleBlueToothTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = LittleBlueToothTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,6 +125,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		65AD4BE524D437B700C0CBE6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				65AD4BE624D437B700C0CBE6 /* CoreBluetoothMock in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		OBJ_65 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
@@ -118,13 +145,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_90 /* LittleBlueTooth.framework in Frameworks */,
+				65AD4BF024D438AD00C0CBE6 /* LittleBlueToothForTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		65AD4BEF24D438AD00C0CBE6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		OBJ_11 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -224,6 +258,7 @@
 			children = (
 				"LittleBlueTooth::LittleBlueToothTests::Product" /* LittleBlueToothTests.xctest */,
 				"LittleBlueTooth::LittleBlueTooth::Product" /* LittleBlueTooth.framework */,
+				65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */,
 			);
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -238,6 +273,8 @@
 				OBJ_44 /* README */,
 				OBJ_45 /* LICENSE */,
 				OBJ_46 /* README.md */,
+				65AD4BEC24D437B700C0CBE6 /* LittleBlueTooth copy-Info.plist */,
+				65AD4BEF24D438AD00C0CBE6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -273,9 +310,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		65AD4BD324D437B700C0CBE6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65AD4BD424D437B700C0CBE6 /* LittleBlueTooth.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		65AD4BD024D437B700C0CBE6 /* LittleBlueToothForTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 65AD4BE724D437B700C0CBE6 /* Build configuration list for PBXNativeTarget "LittleBlueToothForTest" */;
+			buildPhases = (
+				65AD4BD324D437B700C0CBE6 /* Headers */,
+				65AD4BD524D437B700C0CBE6 /* Sources */,
+				65AD4BE524D437B700C0CBE6 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LittleBlueToothForTest;
+			packageProductDependencies = (
+				65AD4BD124D437B700C0CBE6 /* CoreBluetoothMock */,
+			);
+			productName = LittleBlueTooth;
+			productReference = 65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		"LittleBlueTooth::LittleBlueTooth" /* LittleBlueTooth */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = OBJ_48 /* Build configuration list for PBXNativeTarget "LittleBlueTooth" */;
@@ -306,7 +371,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				OBJ_91 /* PBXTargetDependency */,
+				65AD4BEE24D438A000C0CBE6 /* PBXTargetDependency */,
 			);
 			name = LittleBlueToothTests;
 			productName = LittleBlueToothTests;
@@ -353,6 +418,7 @@
 			projectRoot = "";
 			targets = (
 				"LittleBlueTooth::LittleBlueTooth" /* LittleBlueTooth */,
+				65AD4BD024D437B700C0CBE6 /* LittleBlueToothForTest */,
 				"LittleBlueTooth::SwiftPMPackageDescription" /* LittleBlueToothPackageDescription */,
 				"LittleBlueTooth::LittleBlueToothPackageTests::ProductTarget" /* LittleBlueToothPackageTests */,
 				"LittleBlueTooth::LittleBlueToothTests" /* LittleBlueToothTests */,
@@ -361,6 +427,28 @@
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		65AD4BD524D437B700C0CBE6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				65AD4BD624D437B700C0CBE6 /* LittleBlueToothError.swift in Sources */,
+				65AD4BD724D437B700C0CBE6 /* AdvertisingData.swift in Sources */,
+				65AD4BD824D437B700C0CBE6 /* LittleBlueToothCharacteristic.swift in Sources */,
+				65AD4BD924D437B700C0CBE6 /* Peripheral.swift in Sources */,
+				65AD4BDA24D437B700C0CBE6 /* PeripheralDiscovery.swift in Sources */,
+				65AD4BDB24D437B700C0CBE6 /* CentralRestorer.swift in Sources */,
+				65AD4BDC24D437B700C0CBE6 /* CBCentralManagerDelegateProxy.swift in Sources */,
+				65AD4BDD24D437B700C0CBE6 /* CBPeripheralProxy.swift in Sources */,
+				65AD4BDE24D437B700C0CBE6 /* ReplaySubject.swift in Sources */,
+				65AD4BDF24D437B700C0CBE6 /* ReplaySubjectSubscription.swift in Sources */,
+				65AD4BE024D437B700C0CBE6 /* ShareReplay.swift in Sources */,
+				65AD4BE124D437B700C0CBE6 /* Utilities.swift in Sources */,
+				65AD4BE224D437B700C0CBE6 /* LittleBluetoothConfiguration.swift in Sources */,
+				65AD4BE324D437B700C0CBE6 /* CoreBluetoothTypeAliases.swift in Sources */,
+				65AD4BE424D437B700C0CBE6 /* LittleBlueTooth.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		OBJ_51 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
@@ -411,15 +499,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		65AD4BEE24D438A000C0CBE6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65AD4BD024D437B700C0CBE6 /* LittleBlueToothForTest */;
+			targetProxy = 65AD4BED24D438A000C0CBE6 /* PBXContainerItemProxy */;
+		};
 		OBJ_76 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = "LittleBlueTooth::LittleBlueToothTests" /* LittleBlueToothTests */;
 			targetProxy = 658A75BE24BB71AE00F874EF /* PBXContainerItemProxy */;
-		};
-		OBJ_91 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = "LittleBlueTooth::LittleBlueTooth" /* LittleBlueTooth */;
-			targetProxy = 658A75BD24BB71AD00F874EF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -498,7 +586,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -DTEST";
-				PRODUCT_BUNDLE_IDENTIFIER = LittleBlueTooth;
+				PRODUCT_BUNDLE_IDENTIFIER = it.vanillagorilla.LittleBlueTooth;
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
@@ -568,6 +656,108 @@
 				WATCHOS_DEPLOYMENT_TARGET = 6.0;
 			};
 			name = "Debug-test";
+		};
+		65AD4BE824D437B700C0CBE6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = "LittleBlueTooth copy-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MARKETING_VERSION = 0.3.0;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = it.vanillagorilla.LittleBlueTooth;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = LittleBlueToothForTest;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGET_NAME = LittleBlueToothForTest;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				WATCHOS_DEPLOYMENT_TARGET = 6.0;
+			};
+			name = Debug;
+		};
+		65AD4BE924D437B700C0CBE6 /* Debug-test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = "LittleBlueTooth copy-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MARKETING_VERSION = 0.3.0;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTEST";
+				PRODUCT_BUNDLE_IDENTIFIER = it.vanillagorilla.LittleBlueTooth;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = LittleBlueToothForTest;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGET_NAME = LittleBlueToothForTest;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				WATCHOS_DEPLOYMENT_TARGET = 6.0;
+			};
+			name = "Debug-test";
+		};
+		65AD4BEA24D437B700C0CBE6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = "LittleBlueTooth copy-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MARKETING_VERSION = 0.3.0;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = it.vanillagorilla.LittleBlueTooth;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = LittleBlueToothForTest;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGET_NAME = LittleBlueToothForTest;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				WATCHOS_DEPLOYMENT_TARGET = 6.0;
+			};
+			name = Release;
 		};
 		OBJ_3 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -694,7 +884,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = LittleBlueTooth;
+				PRODUCT_BUNDLE_IDENTIFIER = it.vanillagorilla.LittleBlueTooth;
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
@@ -728,7 +918,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = LittleBlueTooth;
+				PRODUCT_BUNDLE_IDENTIFIER = it.vanillagorilla.LittleBlueTooth;
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
@@ -859,6 +1049,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		65AD4BE724D437B700C0CBE6 /* Build configuration list for PBXNativeTarget "LittleBlueToothForTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65AD4BE824D437B700C0CBE6 /* Debug */,
+				65AD4BE924D437B700C0CBE6 /* Debug-test */,
+				65AD4BEA24D437B700C0CBE6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		OBJ_2 /* Build configuration list for PBXProject "LittleBlueTooth" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -920,12 +1120,25 @@
 				kind = branch;
 			};
 		};
+		65AD4BD224D437B700C0CBE6 /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/enricodk/IOS-CoreBluetooth-Mock.git";
+			requirement = {
+				branch = multiplatform;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		6559F6B024BF90DC0035FF4A /* CoreBluetoothMock */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6559F6AF24BF90DC0035FF4A /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */;
+			productName = CoreBluetoothMock;
+		};
+		65AD4BD124D437B700C0CBE6 /* CoreBluetoothMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65AD4BD224D437B700C0CBE6 /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */;
 			productName = CoreBluetoothMock;
 		};
 /* End XCSwiftPackageProductDependency section */

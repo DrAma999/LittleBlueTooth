@@ -9,7 +9,7 @@
 import XCTest
 import Combine
 import CoreBluetoothMock
-@testable import LittleBlueTooth
+@testable import LittleBlueToothForTest
 
 struct LedState: Readable {
     let isOn: Bool

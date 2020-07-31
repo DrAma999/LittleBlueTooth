@@ -16,7 +16,10 @@ let package = Package(
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "LittleBlueTooth",
-            targets: ["LittleBlueTooth"])
+            targets: ["LittleBlueTooth"]),
+        .library(
+            name: "LittleBlueToothForTest",
+            targets: ["LittleBlueToothForTest"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -30,8 +33,13 @@ let package = Package(
         .target(
             name: "LittleBlueTooth",
             dependencies: []),
+        .target(
+            name: "LittleBlueToothForTest",
+            dependencies: ["CoreBluetoothMock"],
+            swiftSettings: [.define("TEST")]
+        ),
         .testTarget(
             name: "LittleBlueToothTests",
-            dependencies: ["LittleBlueTooth","CoreBluetoothMock"])
+            dependencies: ["LittleBlueToothForTest","CoreBluetoothMock"])
     ]
 )

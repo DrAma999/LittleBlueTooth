@@ -8,7 +8,7 @@
 
 import XCTest
 import CoreBluetoothMock
-@testable import LittleBlueTooth
+@testable import LittleBlueToothForTest
 
 class UtilityTest: LittleBlueToothTests {
 
