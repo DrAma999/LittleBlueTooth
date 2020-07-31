@@ -8,7 +8,7 @@
 import XCTest
 import Combine
 import CoreBluetoothMock
-@testable import LittleBlueTooth
+@testable import LittleBlueToothForTest
 
 
 class StateRestoration: LittleBlueToothTests {

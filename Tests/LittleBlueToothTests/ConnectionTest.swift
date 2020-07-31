@@ -9,7 +9,7 @@
 import XCTest
 import CoreBluetoothMock
 import Combine
-@testable import LittleBlueTooth
+@testable import LittleBlueToothForTest
 
 class ConnectionTest: LittleBlueToothTests {
 
