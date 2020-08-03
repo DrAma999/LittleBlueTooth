@@ -288,7 +288,7 @@ public class LittleBlueTooth: Identifiable {
        
     /// Returns a shared publisher for listening to a specific characteristic.
     /// - parameter characteristic: Characteristc you want to be notified.
-    /// - returns: A shared publisher that will send out values of the type you choose.
+    /// - returns: A shared publisher that will send out values of the type defined by the generic type.
     /// - important: The type of the value must be conform to `Readable`
     public func startListen<T: Readable>(from charact: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
         let lis = ensureBluetoothState()

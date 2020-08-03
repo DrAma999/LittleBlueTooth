@@ -261,17 +261,17 @@ class ListenTest: LittleBlueToothTests {
             self.littleBT.connect(to: discovery)
         }
         .flatMap { _ in
-            self.littleBT.startListen(from: charateristicOne)
+            self.littleBT.enableListen(from: charateristicOne)
         }
         .flatMap { _ in
-            self.littleBT.startListen(from: charateristicTwo)
+            self.littleBT.enableListen(from: charateristicTwo)
         }
         .delay(for: .seconds(20), scheduler: DispatchQueue.global())
         .flatMap { _ in
-            self.littleBT.stopListen(from: charateristicOne)
+            self.littleBT.disableListen(from: charateristicOne)
         }
         .flatMap { _ in
-            self.littleBT.stopListen(from: charateristicTwo)
+            self.littleBT.disableListen(from: charateristicTwo)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")

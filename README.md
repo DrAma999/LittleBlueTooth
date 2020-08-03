@@ -22,20 +22,22 @@ Add the following to your Cartfile:
 ```
 github "DrAma999/LittleBlueTooth" ~> 0.3.0
 ```
-
-The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your dependencies. 
+Since the framework supports most of the Apple devices, you probably want to to build for a specific platform by adding the option `--platform` after the `carthage update` command. For instance:
+`carthage update --platform iOS`
+*This step is super-optional:*
+The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your Cartfile and use the `LittleBlueToothForTest` product instead of  `LittleBlueTooth`, note that this target is made only to run tests by using mocks.
 
 ### Swift Package Manager
 Add the following dependency to your Package.swift file:
 ```
 .package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.3.0")
 ```
-Or simply add from XCode menu.
+Or simply add the URL from XCode menu Swift packages.
 
 ## FEATURES
 * Built on top of combine
 * Deploys on **iOS, macOS, macOS (Catalyst), tvOS, watchOS**
-* Chainable operations: scan, connect, start listen, stop listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
+* Chainable operations: scan, connect, enable listen, disable listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
 * Peripheral state and bluetooth state observation. You can watch the bluetooth state and also the peripheral states for a more fine grained control in the UI. Those information are also checked before starting any operation.
 * Single notification channel: you can subscribe to the notification channel to receive all the data of the enabled characteristics. You have also single and connectable publishers.
 * Write and listen (or better listen and write): sometimes you need to write a command and get a “response” right away
@@ -439,10 +441,10 @@ littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionA
     self.littleBT.connect(to: discovery)
 }
 .flatMap { periph in
-    self.littleBT.startListen(from: charateristicOne)
+    self.littleBT.enableListen(from: charateristicOne)
 }
 .flatMap { periph in
-    self.littleBT.startListen(from: charateristicTwo)
+    self.littleBT.enableListen(from: charateristicTwo)
 }
 .sink(receiveCompletion: { completion in
     print("Completion \(completion)")
