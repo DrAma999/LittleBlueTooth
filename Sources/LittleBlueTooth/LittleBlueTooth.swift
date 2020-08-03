@@ -288,7 +288,6 @@ public class LittleBlueTooth: Identifiable {
        
     /// Returns a shared publisher for listening to a specific characteristic.
     /// - parameter characteristic: Characteristc you want to be notified.
-    /// - parameter forType: The type of the value you want the raw `Data` be converted
     /// - returns: A shared publisher that will send out values of the type you choose.
     /// - important: The type of the value must be conform to `Readable`
     public func startListen<T: Readable>(from charact: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
@@ -332,7 +331,7 @@ public class LittleBlueTooth: Identifiable {
     /// - returns: A  publisher with the `LittleBlueToothCharacteristic` where the notify command has been activated.
     /// - important: This publisher only activate the notification on a specific characteristic, it will not send notified values.
     /// After starting the listen command you should subscribe to the `listenPublisher` to be notified.
-    public func startListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
+    public func enableListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
         
         let startListenSubject = PassthroughSubject<LittleBlueToothCharacteristic, LittleBluetoothError>()
         let key = UUID()
@@ -364,10 +363,10 @@ public class LittleBlueTooth: Identifiable {
     }
     
     
-    /// Stop listen from a specific characteristic
+    /// Disable listen from a specific characteristic
     /// - parameter characteristic: characteristic you want to stop listen
     /// - returns: A publisher with that informs you about the successful or failed task
-    public func stopListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
+    public func disableListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
         
         let stopSubject = PassthroughSubject<LittleBlueToothCharacteristic, LittleBluetoothError>()
         
