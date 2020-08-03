@@ -5,9 +5,9 @@
         "package": "CoreBluetoothMock",
         "repositoryURL": "https://github.com/enricodk/IOS-CoreBluetooth-Mock.git",
         "state": {
-          "branch": "multiplatform",
-          "revision": "725088fb62c17aa8db3d45d1081cd1ff7f757564",
-          "version": null
+          "branch": null,
+          "revision": "835c9785d41b824218f86c78154a61a3b3abb297",
+          "version": "0.8.0"
         }
       }
     ]

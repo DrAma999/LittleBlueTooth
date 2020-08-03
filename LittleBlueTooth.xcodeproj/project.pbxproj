@@ -1116,8 +1116,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/enricodk/IOS-CoreBluetooth-Mock.git";
 			requirement = {
-				branch = multiplatform;
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.8.0;
 			};
 		};
 		65AD4BD224D437B700C0CBE6 /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */ = {
