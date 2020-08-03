@@ -20,21 +20,21 @@ The library is still on development so use at own you risk.
 Add the following to your Cartfile:
 
 ```
-github "DrAma999/LittleBlueTooth" ~> 0.2.0
+github "DrAma999/LittleBlueTooth" ~> 0.3.0
 ```
 
-The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your dependencies. Unfortunately at the moment the nordic library supports only SwiftPM and Cocoapods.
+The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your dependencies. 
 
 ### Swift Package Manager
 Add the following dependency to your Package.swift file:
 ```
-.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.2.0")
+.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.3.0")
 ```
 Or simply add from XCode menu.
 
 ## FEATURES
 * Built on top of combine
-* Deploys on **iOS, macOS, tvOS, watchOS**
+* Deploys on **iOS, macOS, macOS (Catalyst), tvOS, watchOS**
 * Chainable operations: scan, connect, start listen, stop listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
 * Peripheral state and bluetooth state observation. You can watch the bluetooth state and also the peripheral states for a more fine grained control in the UI. Those information are also checked before starting any operation.
 * Single notification channel: you can subscribe to the notification channel to receive all the data of the enabled characteristics. You have also single and connectable publishers.
