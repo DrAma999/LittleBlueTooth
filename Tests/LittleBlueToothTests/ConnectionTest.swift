@@ -9,7 +9,7 @@
 import XCTest
 import CoreBluetoothMock
 import Combine
-@testable import LittleBlueTooth
+@testable import LittleBlueToothForTest
 
 class ConnectionTest: LittleBlueToothTests {
 
@@ -31,7 +31,7 @@ class ConnectionTest: LittleBlueToothTests {
         
         var connectedPeripheral: Peripheral?
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
@@ -63,7 +63,7 @@ class ConnectionTest: LittleBlueToothTests {
         
         var isAlreadyConnected = false
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
         .flatMap { discovery in
             self.littleBT.connect(to: discovery).map {_ in discovery}
         }
@@ -105,7 +105,7 @@ class ConnectionTest: LittleBlueToothTests {
             }
         }
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
             .flatMap { discovery in
                 self.littleBT.connect(to: discovery)
         }
@@ -132,8 +132,6 @@ class ConnectionTest: LittleBlueToothTests {
 
         waitForExpectations(timeout: 30)
         XCTAssert(connectionEvent.count == 3)
-        XCTAssert(peripheralState.contains(.connected))
-        XCTAssert(peripheralState.contains(.disconnected))
 
     }
     
@@ -149,15 +147,15 @@ class ConnectionTest: LittleBlueToothTests {
             blinky.simulateServiceChange(newName: "pippo",
                                          newServices: [.blinkyService])
         }
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
 
 
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -194,7 +192,7 @@ class ConnectionTest: LittleBlueToothTests {
         var isDisconnected = false
         
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
@@ -228,12 +226,12 @@ class ConnectionTest: LittleBlueToothTests {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
             blinky.simulateReset()
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
                 connectionExpectation.fulfill()
             }
         }
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
         .flatMap { discovery in
                 self.littleBT.connect(to: discovery)
         }
@@ -262,8 +260,6 @@ class ConnectionTest: LittleBlueToothTests {
         self.littleBT.autoconnectionHandler = nil
         self.littleBT.disconnect()
         XCTAssert(connectionEvent.count == 5)
-        XCTAssert(peripheralState.contains(.connected))
-        XCTAssert(peripheralState.contains(.disconnected))
     }
     
     func testPeripheralConnectionInitializationSuccess() {
@@ -271,13 +267,13 @@ class ConnectionTest: LittleBlueToothTests {
         
         blinky.simulateProximityChange(.immediate)
         let connectionExpectation = expectation(description: "Connection expectation")
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
 
         var ledState: LedState?
 
         littleBT.connectionTasks = Just(()).setFailureType(to: LittleBluetoothError.self)
         .flatMap{ _ -> AnyPublisher<LedState, LittleBluetoothError> in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+            self.littleBT.read(from: charateristic)
         }.map { state in
             ledState = state
             return ()
@@ -286,7 +282,7 @@ class ConnectionTest: LittleBlueToothTests {
         
         var connectedPeripheral: Peripheral?
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }

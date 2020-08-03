@@ -14,9 +14,9 @@ public typealias AutoconnectionHandler = (PeripheralIdentifier, LittleBluetoothE
 public struct LittleBluetoothConfiguration {
     /// `CBCentralManager` options dictionary for instance the restore identifier, thay are the same
     /// requested for `CBCentralManager`
-    public var centralManagerOptions: [String : Any]? = nil
+    public var centralManagerOptions: [String : Any]?
     /// `CBCentralManager` queue
-    public var centralManagerQueue: DispatchQueue? = nil
+    public var centralManagerQueue: DispatchQueue?
     /// This handler must be used to handle connection process after a disconnession.
     /// You can inspect the error and decide if an automatic connection is necessary.
     /// If you return `true` the connection process will start, once the peripheral has been found a connection will be established.
@@ -25,10 +25,10 @@ public struct LittleBluetoothConfiguration {
     /// permission, to cancel just call `disconnect`.
     /// When a connection will be established an `.autoConnected(PeripheralIdentifier)` event will be streamed to
     /// the `connectionEventPublisher`
-    public var autoconnectionHandler: AutoconnectionHandler? = nil
+    public var autoconnectionHandler: AutoconnectionHandler?
     /// Handler used to manage state restoration. `Restored` object will contain the restored information
     /// could be a peripheral, a scan or nothing
-    public var restoreHandler: ((Restored) -> Void)? = nil
+    public var restoreHandler: ((Restored) -> Void)?
     
     public init() {}
 }

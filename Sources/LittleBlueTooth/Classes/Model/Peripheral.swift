@@ -57,7 +57,7 @@ public class Peripheral: Identifiable {
     }
     
     public let cbPeripheral: CBPeripheral
-    public var rssi: Int? = nil
+    public var rssi: Int?
     
     private let peripheralProxy = CBPeripheralDelegateProxy()
     
@@ -85,7 +85,6 @@ public class Peripheral: Identifiable {
     init(_ peripheral: CBPeripheral) {
         self.cbPeripheral = peripheral
         self.cbPeripheral.delegate = self.peripheralProxy
-
         #if !TEST
         self.peripheralStatePublisher = self.cbPeripheral.publisher(for: \.state)
             .map{ (state) -> PeripheralState in
@@ -287,10 +286,10 @@ public class Peripheral: Identifiable {
     func writeAndListen(from charateristicUUID: CBUUID, of serviceUUID: CBUUID, data: Data) -> AnyPublisher<Data?, LittleBluetoothError> {
         
         let writeListen = startListen(from: charateristicUUID, of: serviceUUID)
-            .flatMap { (characteristic) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+            .flatMap { (_) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
                 self.write(to: charateristicUUID, of: serviceUUID, data: data)
             }
-            .flatMap { (charcteristic) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+            .flatMap { (_) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
                 self.peripheralProxy.peripheralUpdatedValueForNotifyCharacteristicPublisher
                 .tryMap { (value) -> CBCharacteristic in
                     switch value {
@@ -310,7 +309,7 @@ public class Peripheral: Identifiable {
                 }
                 return false
             }
-            .flatMap{ (charact) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+            .flatMap{ (_) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
                 self.stopListen(from: charateristicUUID, of: serviceUUID)
             }
             .map { charact -> Data? in

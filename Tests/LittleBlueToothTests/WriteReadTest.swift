@@ -9,7 +9,7 @@
 import XCTest
 import Combine
 import CoreBluetoothMock
-@testable import LittleBlueTooth
+@testable import LittleBlueToothForTest
 
 struct LedState: Readable {
     let isOn: Bool
@@ -26,7 +26,8 @@ class ReadWriteTest: LittleBlueToothTests {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         try super.setUpWithError()
-        littleBT = LittleBlueTooth(with: LittleBluetoothConfiguration())
+        let lttlCon = LittleBluetoothConfiguration()
+        littleBT = LittleBlueTooth(with: lttlCon)
     }
 
     override func tearDownWithError() throws {
@@ -50,10 +51,10 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic)
         }
-        .sink(receiveCompletion: { completion in
+        .sink(receiveCompletion: { (completion) in
             print("Completion \(completion)")
             switch completion {
             case .finished:
@@ -62,7 +63,7 @@ class ReadWriteTest: LittleBlueToothTests {
                 if case LittleBluetoothError.serviceNotFound(_) = error {
                     isWrong = true
                     self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                    }) { (perip) in
+                    }) { (_) in
                         wrongServiceExpectation.fulfill()
                     }
                     .store(in: &self.disposeBag)
@@ -97,8 +98,8 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -109,7 +110,7 @@ class ReadWriteTest: LittleBlueToothTests {
                 if case LittleBluetoothError.characteristicNotFound(_) = error {
                     isWrong = true
                     self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                    }) { (perip) in
+                    }) { (_) in
                         wrongCharacteristicExpectation.fulfill()
                     }
                     .store(in: &self.disposeBag)
@@ -141,8 +142,8 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -150,7 +151,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Answer \(answer)")
             ledState = answer
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
-            }) { (perip) in
+            }) { (_) in
                 readExpectation.fulfill()
             }
             .store(in: &self.disposeBag)
@@ -182,8 +183,8 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { _ in
             self.littleBT.write(to: charateristic, value: Data([0x01]))
         }
-        .flatMap { _ in
-            self.littleBT.read(from: charateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -191,7 +192,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Answer \(answer)")
             ledState = answer
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
-            }) { (perip) in
+            }) { (_) in
                 readExpectation.fulfill()
             }
             .store(in: &self.disposeBag)
@@ -240,7 +241,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Answer \(answer)")
             ledState = answer
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
-            }) { (perip) in
+            }) { (_) in
                 writeAndListenExpectation.fulfill()
             }
             .store(in: &self.disposeBag)
@@ -272,12 +273,12 @@ class ReadWriteTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.read(from: ledCharateristic, forType: LedState.self)
+        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: ledCharateristic)
         }
         .flatMap { led -> AnyPublisher<ButtonState, LittleBluetoothError> in
             ledIsOff = !led.isOn
-            return self.littleBT.read(from: buttonCharateristic, forType: ButtonState.self)
+            return self.littleBT.read(from: buttonCharateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -285,7 +286,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Answer \(button)")
             buttonIsOff = !button.isOn
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
-            }) { (perip) in
+            }) { (_) in
                 multipleReadExpectation.fulfill()
             }
             .store(in: &self.disposeBag)
@@ -316,7 +317,7 @@ class ReadWriteTest: LittleBlueToothTests {
         }
         .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
             blinky.simulateDisconnection()
-            return self.littleBT.read(from: charateristic, forType: LedState.self)
+            return self.littleBT.read(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -337,36 +338,5 @@ class ReadWriteTest: LittleBlueToothTests {
         waitForExpectations(timeout: 10)
         XCTAssert(isDisconnected)
     }
-    
-//    
-//    func testWriteWOResponse() {
-//        disposeBag.removeAll()
-//        
-//        blinkyWOR.simulateProximityChange(.immediate)
-//        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
-//        let writeWOResp = expectation(description: "Write without response expectation")
-//
-//        
-//        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
-//        .flatMap { discovery in
-//            self.littleBT.connect(to: discovery)
-//        }
-//        .flatMap { _ in
-//            self.littleBT.write(to: charateristic, value: Data([0x01]), response: false)
-//        }
-//        .sink(receiveCompletion: { completion in
-//            print("Completion \(completion)")
-//        }) { (answer) in
-//            print("Answer \(answer)")
-//            self.littleBT.disconnect().sink(receiveCompletion: {_ in
-//            }) { (perip) in
-//                writeWOResp.fulfill()
-//            }
-//            .store(in: &self.disposeBag)
-//
-//        }
-//        .store(in: &disposeBag)
-//         waitForExpectations(timeout: 10)
-//    }
 
 }

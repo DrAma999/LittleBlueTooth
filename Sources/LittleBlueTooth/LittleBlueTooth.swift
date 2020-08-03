@@ -46,7 +46,7 @@ public class LittleBlueTooth: Identifiable {
     /// permission, to cancel just call `disconnect`.
     /// When a connection will be established an `.autoConnected(PeripheralIdentifier)` event will be streamed to
     /// the `connectionEventPublisher`
-    public var autoconnectionHandler: AutoconnectionHandler? = nil
+    public var autoconnectionHandler: AutoconnectionHandler?
     
     /// Connected peripheral. `nil` if not connected or a connection is not requested
     public var peripheral: Peripheral?
@@ -66,10 +66,14 @@ public class LittleBlueTooth: Identifiable {
         _peripheralChangesPublisher.eraseToAnyPublisher()
     }
     
-    /// Publish all values from `CBCharacteristic` that you are already listening to.
+    /// Publish all values from `LittleBlueToothCharacteristic` that you are already listening to.
     /// It's up to you to filter them and convert raw data to the `Readable` object.
-    public var listenPublisher: AnyPublisher<CBCharacteristic, LittleBluetoothError> {
-        _listenPublisher.eraseToAnyPublisher()
+    public var listenPublisher: AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
+        return _listenPublisher
+            .map { (characteristic) -> LittleBlueToothCharacteristic in
+                LittleBlueToothCharacteristic(with: characteristic)
+            }
+            .eraseToAnyPublisher()
     }
     
     public var restoreStatePublisher: AnyPublisher<CentralRestorer, Never> {
@@ -225,7 +229,7 @@ public class LittleBlueTooth: Identifiable {
     
     deinit {
         print("Deinit: \(self)")
-        disposeBag.forEach { (key, value) in
+        disposeBag.forEach { (_, value) in
             value.cancel()
         }
         scanning?.cancel()
@@ -253,7 +257,7 @@ public class LittleBlueTooth: Identifiable {
                self.ensurePeripheralReady()
            }
            .flatMap { (periph) -> AnyPublisher<(CBCharacteristic, Peripheral), LittleBluetoothError> in
-               return periph.startListen(from: characteristic.characteristic, of: characteristic.service)
+               return periph.startListen(from: characteristic.id, of: characteristic.service)
                    .map { (characteristic) -> (CBCharacteristic, Peripheral) in
                        (characteristic, periph)
                }
@@ -263,7 +267,7 @@ public class LittleBlueTooth: Identifiable {
                periph.listenPublisher
            }
            .filter { charact -> Bool in
-             charact.uuid == characteristic.characteristic
+             charact.uuid == characteristic.id
            }
            .tryMap { (characteristic) -> T in
                guard let data = characteristic.value else {
@@ -284,19 +288,18 @@ public class LittleBlueTooth: Identifiable {
        
     /// Returns a shared publisher for listening to a specific characteristic.
     /// - parameter characteristic: Characteristc you want to be notified.
-    /// - parameter forType: The type of the value you want the raw `Data` be converted
-    /// - returns: A shared publisher that will send out values of the type you choose.
+    /// - returns: A shared publisher that will send out values of the type defined by the generic type.
     /// - important: The type of the value must be conform to `Readable`
-    public func startListen<T: Readable>(from charact: LittleBlueToothCharacteristic, forType: T.Type, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
+    public func startListen<T: Readable>(from charact: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
         let lis = ensureBluetoothState()
         .print("StartListenPublisher")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
         }
-        .flatMap { (periph) -> AnyPublisher<(CBCharacteristic, Peripheral), LittleBluetoothError> in
-            return periph.startListen(from: charact.characteristic, of: charact.service)
-                .map { (characteristic) -> (CBCharacteristic, Peripheral) in
-                    (characteristic, periph)
+        .flatMap { (periph) -> AnyPublisher<(LittleBlueToothCharacteristic, Peripheral), LittleBluetoothError> in
+            return periph.startListen(from: charact.id, of: charact.service)
+                .map { (characteristic) -> (LittleBlueToothCharacteristic, Peripheral) in
+                    (LittleBlueToothCharacteristic(with: characteristic), periph)
             }
             .eraseToAnyPublisher()
         }
@@ -304,7 +307,7 @@ public class LittleBlueTooth: Identifiable {
             periph.listenPublisher
         }
         .filter { characteristic -> Bool in
-            charact.characteristic == characteristic.uuid
+            charact.id == characteristic.uuid
         }
         .tryMap { (characteristic) -> T in
             guard let data = characteristic.value else {
@@ -322,15 +325,15 @@ public class LittleBlueTooth: Identifiable {
         
     }
     
-    /// Returns a  publisher with the `CBCharacteristic` where the notify command has been activated.
+    /// Returns a  publisher with the `LittleBlueToothCharacteristic` where the notify command has been activated.
     /// After starting the listen command you should subscribe to the `listenPublisher` to be notified.
     /// - parameter characteristic: Characteristc you want to be notified.
-    /// - returns: A  publisher with the `CBCharacteristic` where the notify command has been activated.
+    /// - returns: A  publisher with the `LittleBlueToothCharacteristic` where the notify command has been activated.
     /// - important: This publisher only activate the notification on a specific characteristic, it will not send notified values.
     /// After starting the listen command you should subscribe to the `listenPublisher` to be notified.
-    public func startListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> {
+    public func enableListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
         
-        let startListenSubject = PassthroughSubject<CBCharacteristic, LittleBluetoothError>()
+        let startListenSubject = PassthroughSubject<LittleBlueToothCharacteristic, LittleBluetoothError>()
         let key = UUID()
         
         self.ensureBluetoothState()
@@ -339,7 +342,7 @@ public class LittleBlueTooth: Identifiable {
             self.ensurePeripheralReady()
         }
         .flatMap { (periph) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
-            periph.startListen(from: characteristic.characteristic, of: characteristic.service)
+            periph.startListen(from: characteristic.id, of: characteristic.service)
         }
         .sink(receiveCompletion: { [unowned self, key] (completion) in
             switch completion {
@@ -350,7 +353,7 @@ public class LittleBlueTooth: Identifiable {
                 self.removeAndCancelSubscriber(for: key)
             }
         }) { [unowned self, key] (characteristic) in
-            startListenSubject.send(characteristic)
+            startListenSubject.send(LittleBlueToothCharacteristic(with: characteristic))
             startListenSubject.send(completion: .finished)
             self.removeAndCancelSubscriber(for: key)
         }
@@ -360,12 +363,12 @@ public class LittleBlueTooth: Identifiable {
     }
     
     
-    /// Stop listen from a specific characteristic
+    /// Disable listen from a specific characteristic
     /// - parameter characteristic: characteristic you want to stop listen
     /// - returns: A publisher with that informs you about the successful or failed task
-    public func stopListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> {
+    public func disableListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
         
-        let stopSubject = PassthroughSubject<CBCharacteristic, LittleBluetoothError>()
+        let stopSubject = PassthroughSubject<LittleBlueToothCharacteristic, LittleBluetoothError>()
         
         let key = UUID()
         ensureBluetoothState()
@@ -373,7 +376,7 @@ public class LittleBlueTooth: Identifiable {
             self.ensurePeripheralReady()
         }
         .flatMap { (periph) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
-            periph.stopListen(from: characteristic.characteristic, of: characteristic.service)
+            periph.stopListen(from: characteristic.id, of: characteristic.service)
         }
         .sink(receiveCompletion: { [unowned self, key] (completion) in
             switch completion {
@@ -384,7 +387,7 @@ public class LittleBlueTooth: Identifiable {
                 self.removeAndCancelSubscriber(for: key)
             }
         }) { [unowned self, key] (readvalue) in
-            stopSubject.send(readvalue)
+            stopSubject.send(LittleBlueToothCharacteristic(with:readvalue))
             stopSubject.send(completion: .finished)
             self.removeAndCancelSubscriber(for: key)
         }
@@ -399,7 +402,7 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter characteristic: characteristic where you want to read
     /// - returns: A publisher with the value you want to read.
     /// - important: The type of the value must be conform to `Readable`
-    public func read<T: Readable>(from characteristic: LittleBlueToothCharacteristic, timeout: TimeInterval? = nil, forType: T.Type, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
+    public func read<T: Readable>(from characteristic: LittleBlueToothCharacteristic, timeout: TimeInterval? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
         
         let readSubject = PassthroughSubject<T, LittleBluetoothError>()
         let key = UUID()
@@ -411,7 +414,7 @@ public class LittleBlueTooth: Identifiable {
             self.ensurePeripheralReady()
         }
         .flatMap { periph in
-            periph.read(from: characteristic.characteristic, of: characteristic.service)
+            periph.read(from: characteristic.id, of: characteristic.service)
         }
         .tryMap { (data) -> T in
             guard let data = data else {
@@ -423,7 +426,7 @@ public class LittleBlueTooth: Identifiable {
             if let er = error as? LittleBluetoothError {
                 return er
             }
-            return .couldNotReadFromCharacteristic(characteristic: characteristic.characteristic, error: error)
+            return .couldNotReadFromCharacteristic(characteristic: characteristic.id, error: error)
         }
         .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout), scheduler: DispatchQueue.main, customError: {.readTimeout})
         .sink(receiveCompletion: { [unowned self, key] (completion) in
@@ -465,7 +468,7 @@ public class LittleBlueTooth: Identifiable {
             self.ensurePeripheralReady()
         }
         .flatMap { periph in
-            periph.write(to: characteristic.characteristic, of: characteristic.service, data: value.data, response: response)
+            periph.write(to: characteristic.id, of: characteristic.service, data: value.data, response: response)
         }
         .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout), scheduler: DispatchQueue.main, customError: {.writeTimeout})
         .sink(receiveCompletion: { [unowned self, key] (completion) in
@@ -476,7 +479,7 @@ public class LittleBlueTooth: Identifiable {
                 writeSubject.send(completion: .failure(error))
                 self.removeAndCancelSubscriber(for: key)
             }
-        }, receiveValue: { [unowned self, key] (value) in
+        }, receiveValue: { [unowned self, key] (_) in
             writeSubject.send(())
             writeSubject.send(completion: .finished)
             self.removeAndCancelSubscriber(for: key)
@@ -504,7 +507,7 @@ public class LittleBlueTooth: Identifiable {
             self.ensurePeripheralReady()
         }
         .flatMap { (periph) in
-            periph.writeAndListen(from: characteristic.characteristic, of: characteristic.service, data: value.data)
+            periph.writeAndListen(from: characteristic.id, of: characteristic.service, data: value.data)
         }
         .tryMap { (data) -> R in
             guard let data = data else {
@@ -515,7 +518,7 @@ public class LittleBlueTooth: Identifiable {
             if let er = error as? LittleBluetoothError {
                 return er
             }
-            return .couldNotReadFromCharacteristic(characteristic: characteristic.characteristic, error: error)
+            return .couldNotReadFromCharacteristic(characteristic: characteristic.id, error: error)
         }
         .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout), scheduler: DispatchQueue.main, customError: {.writeAndListenTimeout})
         .sink(receiveCompletion: { [unowned self, key] (completion) in
@@ -619,7 +622,7 @@ public class LittleBlueTooth: Identifiable {
             let filtered = self.cbCentral.retrievePeripherals(withIdentifiers: [peripheralIdentifier.id]).filter { (periph) -> Bool in
                 periph.identifier == peripheralIdentifier.id
             }
-            if filtered.count == 0 {
+            if filtered.isEmpty {
                 throw LittleBluetoothError.peripheralNotFound
             }
             self.peripheral = Peripheral(filtered.first!)
@@ -855,7 +858,7 @@ public class LittleBlueTooth: Identifiable {
                 return true
             }
         }
-        .map { [unowned self] (event) -> Peripheral in
+        .map { [unowned self] (_) -> Peripheral in
             return self.peripheral!
         }
         .mapError { (error) -> LittleBluetoothError in

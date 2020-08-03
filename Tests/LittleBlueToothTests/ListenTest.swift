@@ -9,7 +9,7 @@
 import XCTest
 import Combine
 import CoreBluetoothMock
-@testable import LittleBlueTooth
+@testable import LittleBlueToothForTest
 
 struct ButtonState: Readable {
     let isOn: Bool
@@ -39,7 +39,7 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
         let listenExpectation = expectation(description: "Listen expectation")
         
         var counter = 0
@@ -52,7 +52,7 @@ class ListenTest: LittleBlueToothTests {
             print("Led value:\(value)")
         }
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
             .map { disc -> PeripheralDiscovery in
                 print("Discovery discovery \(disc)")
                 return disc
@@ -60,8 +60,8 @@ class ListenTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.startListen(from: charateristic, forType: ButtonState.self)
+        .flatMap { _ -> AnyPublisher<ButtonState, LittleBluetoothError> in
+            self.littleBT.startListen(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -71,7 +71,7 @@ class ListenTest: LittleBlueToothTests {
             if counter > 10 {
                 scheduler.cancel()
                 self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                }) { (perip) in
+                }) { (_) in
                     listenExpectation.fulfill()
                 }
                 .store(in: &self.disposeBag)
@@ -88,7 +88,7 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
 
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
         
         // Expectation
         let firstListenExpectation = expectation(description: "First sub expectation")
@@ -122,7 +122,7 @@ class ListenTest: LittleBlueToothTests {
             if firstCounter == 10 {
                 scheduler.cancel()
                 self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                }) { (perip) in
+                }) { (_) in
                     firstListenExpectation.fulfill()
                 }
                 .store(in: &self.disposeBag)
@@ -145,7 +145,7 @@ class ListenTest: LittleBlueToothTests {
         .store(in: &disposeBag)
         
 
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
         .map { disc -> PeripheralDiscovery in
                 print("Discovery discovery \(disc)")
                 return disc
@@ -176,8 +176,8 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
-        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
         // Expectation
         let firstListenExpectation = XCTestExpectation(description: "First sub more expectation")
         let secondListenExpectation = XCTestExpectation(description: "Second sub more expectation")
@@ -202,13 +202,10 @@ class ListenTest: LittleBlueToothTests {
         // First publisher
         littleBT.listenPublisher
         .filter { charact -> Bool in
-                charact.uuid == charateristicOne.characteristic
+            charact.id == charateristicOne.id
         }
         .tryMap { (characteristic) -> ButtonState in
-            guard let data = characteristic.value else {
-                throw LittleBluetoothError.emptyData
-            }
-            return try ButtonState(from: data)
+            try characteristic.value()
         }
         .mapError { (error) -> LittleBluetoothError in
             if let er = error as? LittleBluetoothError {
@@ -232,13 +229,10 @@ class ListenTest: LittleBlueToothTests {
         // Second publisher
         littleBT.listenPublisher
         .filter { charact -> Bool in
-                charact.uuid == charateristicTwo.characteristic
+            charact.id == charateristicTwo.id
         }
         .tryMap { (characteristic) -> LedState in
-            guard let data = characteristic.value else {
-                throw LittleBluetoothError.emptyData
-            }
-            return try LedState(from: data)
+            try characteristic.value()
         }.mapError { (error) -> LittleBluetoothError in
             if let er = error as? LittleBluetoothError {
                 return er
@@ -258,7 +252,7 @@ class ListenTest: LittleBlueToothTests {
         }
         .store(in: &self.disposeBag)
 
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
             .map { disc -> PeripheralDiscovery in
                 print("Discovery discovery \(disc)")
                 return disc
@@ -266,22 +260,22 @@ class ListenTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { periph in
-            self.littleBT.startListen(from: charateristicOne)
+        .flatMap { _ in
+            self.littleBT.enableListen(from: charateristicOne)
         }
-        .flatMap { periph in
-            self.littleBT.startListen(from: charateristicTwo)
+        .flatMap { _ in
+            self.littleBT.enableListen(from: charateristicTwo)
         }
         .delay(for: .seconds(20), scheduler: DispatchQueue.global())
         .flatMap { _ in
-            self.littleBT.stopListen(from: charateristicOne)
+            self.littleBT.disableListen(from: charateristicOne)
         }
         .flatMap { _ in
-            self.littleBT.stopListen(from: charateristicTwo)
+            self.littleBT.disableListen(from: charateristicTwo)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
-        }) { (answer) in
+        }) { (_) in
             secondListenExpectation.fulfill()
             firstListenExpectation.fulfill()
         }
@@ -297,7 +291,7 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
         let listenExpectation = expectation(description: "Listen while powering off expectation")
         var isPowerOff = false
         
@@ -314,7 +308,7 @@ class ListenTest: LittleBlueToothTests {
             CBMCentralManagerMock.simulateInitialState(.poweredOff)
         }
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        littleBT.startDiscovery(withServices: nil)
         .map { disc -> PeripheralDiscovery in
                 print("Discovery discovery \(disc)")
                 return disc
@@ -322,8 +316,8 @@ class ListenTest: LittleBlueToothTests {
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap { _ in
-            self.littleBT.startListen(from: charateristic, forType: ButtonState.self)
+        .flatMap { _ -> AnyPublisher<ButtonState, LittleBluetoothError> in
+            self.littleBT.startListen(from: charateristic)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")

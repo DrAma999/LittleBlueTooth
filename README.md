@@ -20,24 +20,26 @@ The library is still on development so use at own you risk.
 Add the following to your Cartfile:
 
 ```
-github "DrAma999/LittleBlueTooth" ~> 0.2.0
+github "DrAma999/LittleBlueTooth" ~> 0.3.0
 ```
-
-The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your dependencies. Unforutnately at the moment the nordic library supports only SwiftPM and Cocoapods.
+Since the framework supports most of the Apple devices, you probably want to to build for a specific platform by adding the option `--platform` after the `carthage update` command. For instance:
+`carthage update --platform iOS`
+*This step is super-optional:*
+The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your Cartfile and use the `LittleBlueToothForTest` product instead of  `LittleBlueTooth`, note that this target is made only to run tests by using mocks.
 
 ### Swift Package Manager
 Add the following dependency to your Package.swift file:
 ```
-.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.2.0")
+.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.3.0")
 ```
-Or simply add from XCode menu.
+Or simply add the URL from XCode menu Swift packages.
 
 ## FEATURES
 * Built on top of combine
-* Deploys on **iOS, macOS, tvOS, watchOS**
-* Chainable operations: scan, connect, start listen, stop listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
-* Peripheral state and bluetooth state observation. You can watch the bluetooth state and also the peripheral state for a more fine grained control in the UI. Of course those information are also checked before starting any operation.
-* Single notification channel: you can subscribe to the notification channel to receive all the data of the enabled characteristics. Of course you have also single and connectable publishers.
+* Deploys on **iOS, macOS, macOS (Catalyst), tvOS, watchOS**
+* Chainable operations: scan, connect, enable listen, disable listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
+* Peripheral state and bluetooth state observation. You can watch the bluetooth state and also the peripheral states for a more fine grained control in the UI. Those information are also checked before starting any operation.
+* Single notification channel: you can subscribe to the notification channel to receive all the data of the enabled characteristics. You have also single and connectable publishers.
 * Write and listen (or better listen and write): sometimes you need to write a command and get a “response” right away
 * Initialization operations: sometimes you want to perform some bluetooth commands right after a connection, for instance an authentication, and you want to perform that before another operation have access to the peripheral.
 * Readable and Writable characteristics: basically those two protocols will deal in reading a `Data` object to the concrete type you want or writing your concrete type into a `Data` object.
@@ -48,8 +50,14 @@ Or simply add from XCode menu.
 ### Instantiate
 Create a `LittleBluetoothConfiguration` object and pass to the init method of `LittleBlueTooth`.
 All `LittleBluetoothConfiguration` properties are optional.
+```
+    var littleBTConf = LittleBluetoothConfiguration()
+    littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
+    littleBT = LittleBlueTooth(with: littleBTConf)
+```
 ### Scan
-You can scan with or without a timeout, after a timeout you receive a .scanTimeout error. Note that each peripheral found is published to the subscribers chain until you stop the scan request or you connect to a device (when you connect scan is automatically suspended.
+You can scan with or without a timeout, after a timeout you receive a `.scanTimeout` error. Note that each peripheral found is published to the subscribers chain until you stop the scan request or you connect to a device (when you connect scan is automatically suspended.
+
 _Scan and stop_:
 
 ```
@@ -63,9 +71,9 @@ _Scan and stop_:
             }
             return false
         }
-        .flatMap{ (discovery) -> AnyPublisher<Void, LittleBluetoothError> in
+        .flatMap{ (discovery) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> in
             print("Discovery: \(discovery)")
-            return self.littleBT.stopDiscovery()
+            return self.littleBT.stopDiscovery()map {discovery}.eraseToAnyPublisher()
         }
         .sink(receiveCompletion: { result in
             print("Result: \(result)")
@@ -82,7 +90,7 @@ _Scan and stop_:
 ```
 _Scan with connection_:
 
-The scan process is automatically stopped one you start the connection command.
+The scan process is automatically stopped once you start the connection command.
 ```
         // Remember that the AnyCancellable resulting from the `sink` must have a strong reference
         // Also pay attention to eventual retain cycles
@@ -215,7 +223,7 @@ struct Acceleration: Readable {
 }
 ```
 
-After that is just a matter of call the read method.
+After that, is just a matter of call the read method.
 
 ```
         anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
@@ -228,8 +236,8 @@ After that is just a matter of call the read method.
         .flatMap { (discovery)-> AnyPublisher<Peripheral, LittleBluetoothError> in
             self.littleBT.connect(to: discovery)
         }
-        .flatMap{_ in
-            self.littleBT.read(from: self.littleChar, forType: Acceleration.self)
+        .flatMap{_ -> AnyPublisher<LedState, LittleBluetoothError> in
+            self.littleBT.read(from: self.littleChar)
         }
         .sink(receiveCompletion: { result in
             print("Result: \(result)")
@@ -299,11 +307,11 @@ This process has been made super simple by using “write and listen”.
 ```
 
 ### Listen
-You can listen to a charcteristic in few different ways.
+You can listen to a charcteristic in different ways.
 
 _Listen_:
 
-After creating your `LittleCharacteristic` instance, then send the `startListen(from:forType:)` and attach the subscriber. Of course the object you want to read must conform the `Readable` object.
+After creating your `LittleCharacteristic` instance, then send the `startListen(from:)` and attach the subscriber. Of course the object you want to read must conform the `Readable` object.
 ```
 anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
 .filter { (discovery) -> Bool in
@@ -316,8 +324,8 @@ anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
 .flatMap { (discovery)-> AnyPublisher<Peripheral, LittleBluetoothError> in
     self.littleBT.connect(to: discovery)
 }
-.flatMap{_ in
-    self.littleBT.startListen(from: self.littleChar, forType: Acceleration.self)
+.flatMap{_ -> AnyPublisher<LedState, LittleBluetoothError>in
+    self.littleBT.startListen(from: self.littleChar)
 }
 .sink(receiveCompletion: { result in
     print("Result: \(result)")
@@ -385,13 +393,10 @@ Now, it's your responsability to filter and converting `Data` object from `CBCha
 // First publisher
 littleBT.listenPublisher
 .filter { charact -> Bool in
-        charact.uuid == charateristicOne.characteristic
+        charact.id == charateristicOne.id
 }
 .tryMap { (characteristic) -> ButtonState in
-    guard let data = characteristic.value else {
-        throw LittleBluetoothError.emptyData
-    }
-    return try ButtonState(from: data)
+        try characteristic.value()
 }
 .mapError { (error) -> LittleBluetoothError in
     if let er = error as? LittleBluetoothError {
@@ -409,13 +414,10 @@ littleBT.listenPublisher
 // Second publisher
 littleBT.listenPublisher
 .filter { charact -> Bool in
-        charact.uuid == charateristicTwo.characteristic
+        charact.id == charateristicOne.id
 }
 .tryMap { (characteristic) -> LedState in
-    guard let data = characteristic.value else {
-        throw LittleBluetoothError.emptyData
-    }
-    return try LedState(from: data)
+    try characteristic.value()
 }.mapError { (error) -> LittleBluetoothError in
     if let er = error as? LittleBluetoothError {
         return er
@@ -439,10 +441,10 @@ littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionA
     self.littleBT.connect(to: discovery)
 }
 .flatMap { periph in
-    self.littleBT.startListen(from: charateristicOne)
+    self.littleBT.enableListen(from: charateristicOne)
 }
 .flatMap { periph in
-    self.littleBT.startListen(from: charateristicTwo)
+    self.littleBT.enableListen(from: charateristicTwo)
 }
 .sink(receiveCompletion: { completion in
     print("Completion \(completion)")
@@ -469,9 +471,9 @@ _Connection event observer_:
 
 The `connectionEventPublisher` informs you about what happen while you are connected to a device.
 A connection event is defined by different states:
-* `.connected(CBPeripheral)`: when a peripheral is connected after a `connect` command
-* `.autoConnected(CBPeripheral)`: when a peripheral is connected automatically this event is triggered when you use the  `autoconnectionHandler`
-* `.ready(CBPeripheral)`: this state means that now you can send commands to a peripheral. Why ready and not just connected? because you could have been set some `connectionTasks` and ready means that, if they where present, they have been executed.
+* `.connected(CBPeripheral)`:  a peripheral was connected after a `connect` command
+* `.autoConnected(CBPeripheral)`:  a peripheral was connected automatically, this event is triggered when you use the  `autoconnectionHandler`
+* `.ready(CBPeripheral)`: this state means that now you can send commands to a peripheral. Why ready and not just connected? because you could have been set some `connectionTasks` and *ready* means that, if they where present, they have been executed.
 * `.connectionFailed(CBPeripheral, error: LittleBluetoothError?)`: when during a connection something goes wrong
 * `.disconnected(CBPeripheral, error: LittleBluetoothError?)`: when a peripheral ha been disconnected could be from an explicit disconnection or unexpected disconnection
 
@@ -481,14 +483,13 @@ It can be used for more fine grained control over peripheral states, they comes 
 
 ### Initialization operations
 Sometimes after a connection you need to perform some repetitive task, for instance an authetication by sending a key or a NONCE.
-This operations are stored inside the `connectionTasks` property and excuted after a connection normal or from an autoconnection. All other operations will be excuted after this has been done.
+This operations are stored inside the `connectionTasks` property and excuted after a  normal connection or from an autoconnection. All other operations will be excuted after this has been done.
 
 ### Autoconnection
 The autoconnection is managed by the `autoconnectionHandler` handler.
 You can inspect the error and decide if an automatic connection is necessary.
 If you return `true` the connection process will start, once the peripheral has been found a connection will be established. If you return `false` iOS will not try to establish a connection.
-Connection process will remain active also in background if the app has the right
-permission, to cancel just call `disconnect`.
+Connection process will remain active also in background if the app has the right permission, to cancel just call `disconnect`.
 When a connection will be established an `.autoConnected(PeripheralIdentifier)` event will be streamed to the `connectionEventPublisher`
 If you want to cancel it you have to send an explicit disconnection.
 
@@ -497,21 +498,22 @@ App Permission | Conditions
 ------------ | -------------
 App has no BT permission to run in bkg | Explicit disconnection, App killed by user/system, when suspended
 App has  BT permission to run in bkg | Explicit disconnection, App killed by user/system
+App has  BT permission to run in bkg and state restoration enable | Explicit disconnection, App killed by user
 
 ### State preservation and state restoration
 First read Apple documentation [here](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html), [here](https://developer.apple.com/library/archive/qa/qa1962/_index.html) and my article on [Medium](https://medium.com/@andrea.alessandro/core-bluetooh-state-preservation-and-restoration-f107031b32fa).
 
 To make state restoration/preservation work, first you must instantiate `LittleBluetTooth` with a dictionary that contains for the key `CBCentralManagerOptionRestoreIdentifierKey` a specific string identifier by using the `LittleBluetoothConfiguration` and you must add a handler that it will be called during state restoration. You MUST also opt-in for bluetooth LE accessories in background.
-Must be also noted that state restoration works *always* not only in background, for instance if you kill the application using the swipe, the next time you relaunch it the Central Manager will return the previous state, you must consider that. If you only want only some operations run in background, just ask the UIApplication state.
+Must be also noted that state restoration works *always* not only in background, for instance if you kill the application using the swipe, the next time you relaunch it the Central Manager will return the previous state, you must consider that. If you only want  some operations to be run in background, just ask the UIApplication state and apply your business logic.
 
 If your app is woken up by a bluetooh event in background it will call the `applicationDidFinishLauching` along with a dictionary. Using this key, `UIApplicationLaunchOptionsBluetoothCentralsKey`, you receive an array of identifiers of CBCentralManager instances that were working before the app was closed. You have a chance to restore the  `LittleBlueTooth` central manger by extracting the identifer from the launching option dictionary and passing it to the `LittleBlueToothConfiguration` (or you can simply instantiate using a constant).
 If an state restoration event is triggered the handler will receive a `Restored` object.  A restored object con be a `Peripheral` along with its instance or a scan along with the discovery publisher that will publish all the discovered peripherals. A peripheral will be ruturned even if it is has been disconnected.
-To be notified again about peripheral state please subscribe to the `connectionEventPublisher` only if the peripheral is in a ready state is possible to send other command.
+To be notified again about peripheral state please subscribe to the `connectionEventPublisher` only if the peripheral is in a *ready* state is possible to send other command.
 
 If you don't want LittleBluetooth to manage state restoration, you can subscribe to the `restoreStatePublisher` publisher, you will receive a `CentralRestorer` object that contains all the necessary information to manage state restoration by yourself.
 Note:
-* Restoration can happen in background
-* The Peripheral object returned can be in different state depending an what has been restored. If a peripheral has been disconnected and an  `autoconnectionHandler` is provided LittleBluetooth will try to re-establish a connection.
+* Restoration can happen in background and foreground
+* The Peripheral object returned can be in different state depending on what has been restored. If a peripheral has been disconnected and an  `autoconnectionHandler` is provided LittleBluetooth will try to re-establish a connection.
 
 ## ROADMAP
 - [x] SwiftPM support
@@ -522,6 +524,7 @@ Note:
 - [x] Add support to: **macOS**, **watchOS**, **tvOS**, **macOS catalyst**
 
 ## ISSUES
+Please use Gihub, explaining what you did, how you did, what you expect and what you get.
 
 ## CONTRIBUTING
 Since I'm working on this project in my spare time any help is appreciated.
