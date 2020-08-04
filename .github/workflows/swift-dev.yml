@@ -10,7 +10,6 @@ jobs:
   test:
     name: Test
     runs-on: macOS-latest
-  
     steps:
       - uses: actions/checkout@v2
         with:
@@ -28,4 +27,3 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run: swift build -v
- 
