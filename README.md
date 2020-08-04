@@ -5,7 +5,7 @@
 <p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13|macOS10.15|watchOS6.0|tvOS13&color=black"></p><p><img src="https://img.shields.io/static/v1?label=coverage&message=83%&color=yellowgreen"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"> <img src="https://img.shields.io/static/v1?label=SwiftPM&message=compatible&color=green"></p>
 
 ![Swift](https://github.com/DrAma999/LittleBlueTooth/workflows/Swift/badge.svg?branch=master)
-
+[![CodeFactor](https://www.codefactor.io/repository/github/drama999/littlebluetooth/badge)](https://www.codefactor.io/repository/github/drama999/littlebluetooth)
   
   
 # LITTLE BLUETOOTH
