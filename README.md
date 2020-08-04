@@ -25,7 +25,10 @@ Add the following to your Cartfile:
 github "DrAma999/LittleBlueTooth" ~> 0.3.0
 ```
 Since the framework supports most of the Apple devices, you probably want to to build for a specific platform by adding the option `--platform` after the `carthage update` command. For instance:
-`carthage update --platform iOS`
+```
+carthage update --platform iOS`
+```
+
 *This step is super-optional:*
 The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your Cartfile and use the `LittleBlueToothForTest` product instead of  `LittleBlueTooth`, note that this target is made only to run tests by using mocks.
 
@@ -54,7 +57,6 @@ Create a `LittleBluetoothConfiguration` object and pass to the init method of `L
 All `LittleBluetoothConfiguration` properties are optional.
 ```
     var littleBTConf = LittleBluetoothConfiguration()
-    littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
     littleBT = LittleBlueTooth(with: littleBTConf)
 ```
 ### Scan
@@ -339,6 +341,7 @@ anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
 
 
 **Note: if you stop listening to a characteristic, it doesn’t matter if you have more subscribers. The listen process will stop. It’ s up you to provide the business logic to avoid this behavior.**
+
 _Connectable listen_:
 
 After creating your `LittleCharacteristic` instance, then send the `connectableListenPublisher(for: valueType:)`. Of course the object you want to read must conform the `Readable` object.
