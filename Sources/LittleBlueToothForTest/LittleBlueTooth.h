@@ -1,1 +1,1 @@
-/Users/Andrea/Documents/GitHub/LittleBlueTooth/Sources/LittleBlueTooth/LittleBlueTooth.h
+../LittleBlueTooth/LittleBlueTooth.h
