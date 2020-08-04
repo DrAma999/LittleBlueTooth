@@ -1,1 +1,1 @@
-/Users/Andrea/Documents/GitHub/LittleBlueTooth/Sources/LittleBlueTooth/CoreBluetoothTypeAliases.swift
+../LittleBlueTooth/CoreBluetoothTypeAliases.swift
