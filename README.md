@@ -2,9 +2,11 @@
 <p align="center">
   <img width="200" height="200" src="README/Icon.png">
 </p>
-<p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13|macOS10.15|watchOS6.0|tvOS13&color=black"></p><p><img src="https://img.shields.io/static/v1?label=coverage&message=83%&color=yellowgreen"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"> <img src="https://img.shields.io/static/v1?label=SwiftPM&message=compatible&color=green"></p>
+<p><img src="https://img.shields.io/static/v1?label=platforms&message=iOS13|macOS10.15|watchOS6.0|tvOS13&color=black"></p> <p><img src="https://img.shields.io/static/v1?label=carthage&message=compatible&color=green"> <img src="https://img.shields.io/static/v1?label=SwiftPM&message=compatible&color=green"></p>
 
 ![Swift](https://github.com/DrAma999/LittleBlueTooth/workflows/Swift/badge.svg?branch=master)
+[![CodeFactor](https://www.codefactor.io/repository/github/drama999/littlebluetooth/badge)](https://www.codefactor.io/repository/github/drama999/littlebluetooth)
+[![codecov](https://codecov.io/gh/DrAma999/LittleBlueTooth/branch/master/graph/badge.svg)](https://codecov.io/gh/DrAma999/LittleBlueTooth)
 
   
   
@@ -23,7 +25,10 @@ Add the following to your Cartfile:
 github "DrAma999/LittleBlueTooth" ~> 0.3.0
 ```
 Since the framework supports most of the Apple devices, you probably want to to build for a specific platform by adding the option `--platform` after the `carthage update` command. For instance:
-`carthage update --platform iOS`
+```
+carthage update --platform iOS`
+```
+
 *This step is super-optional:*
 The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock) that helped me in creating unit tests, if you want to launch unit tests you must add this to your Cartfile and use the `LittleBlueToothForTest` product instead of  `LittleBlueTooth`, note that this target is made only to run tests by using mocks.
 
@@ -52,7 +57,6 @@ Create a `LittleBluetoothConfiguration` object and pass to the init method of `L
 All `LittleBluetoothConfiguration` properties are optional.
 ```
     var littleBTConf = LittleBluetoothConfiguration()
-    littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
     littleBT = LittleBlueTooth(with: littleBTConf)
 ```
 ### Scan
@@ -337,6 +341,7 @@ anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
 
 
 **Note: if you stop listening to a characteristic, it doesn’t matter if you have more subscribers. The listen process will stop. It’ s up you to provide the business logic to avoid this behavior.**
+
 _Connectable listen_:
 
 After creating your `LittleCharacteristic` instance, then send the `connectableListenPublisher(for: valueType:)`. Of course the object you want to read must conform the `Readable` object.
