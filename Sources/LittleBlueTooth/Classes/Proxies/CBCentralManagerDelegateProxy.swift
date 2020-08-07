@@ -67,7 +67,7 @@ class CBCentralManagerDelegateProxy: NSObject {
     let _centralStatePublisher = CurrentValueSubject<BluetoothState, Never>(BluetoothState.unknown)
     let _willRestoreStatePublisher = PassthroughSubject<CentralRestorer, Never>()
 
-    
+    var isLogEnabled: Bool = false
     var isAutoconnectionActive = false
     var stateRestorationCancellable: AnyCancellable!
     

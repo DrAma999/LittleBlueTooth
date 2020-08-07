@@ -35,6 +35,8 @@ class CBPeripheralDelegateProxy: NSObject {
     let peripheralUpdatedValueForDescriptor = PassthroughSubject<(CBDescriptor, LittleBluetoothError?), Never>()
     let peripheralWrittenValueForDescriptor = PassthroughSubject<(CBDescriptor, LittleBluetoothError?), Never>()
     
+    var isLogEnabled: Bool = false
+
 }
 
 extension CBPeripheralDelegateProxy: CBPeripheralDelegate {

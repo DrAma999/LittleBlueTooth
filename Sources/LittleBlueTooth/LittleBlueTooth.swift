@@ -79,7 +79,18 @@ public class LittleBlueTooth: Identifiable {
     public var restoreStatePublisher: AnyPublisher<CentralRestorer, Never> {
         return centralProxy.willRestoreStatePublisher
     }
-        
+    
+    /// Enable logging disabled by default
+    /// This will produce log in the device console it can be used also in release version.
+    public var isLogEnabled: Bool {
+        get {
+            return _isLogEnabled
+        }
+        set {
+            _isLogEnabled = newValue
+        }
+    }
+    
     // MARK: - Private variables
     /// Cancellable operation idendified by a `UUID` key
     private var disposeBag = [UUID : AnyCancellable]()
@@ -134,9 +145,8 @@ public class LittleBlueTooth: Identifiable {
     }()
     
     private var restoreStateCancellable: AnyCancellable?
-    
-    /// Used to inject error to ensure peripheral is connected before any operation, it buffers the last result and throw error if peripheral disconnect for a specific error
-    
+    private var _isLogEnabled: Bool = false
+
     var cbCentral: CBCentralManager
     var centralProxy = CBCentralManagerDelegateProxy()
     
@@ -884,7 +894,17 @@ public class LittleBlueTooth: Identifiable {
         self.peripheralChangesPublisherCancellable = nil
         self.peripheral = nil
     }
-
+    
+    /// Helper that prints log
+    private func log(_ type: OSLogType, log: OSLog, message: StaticString, arg: CVarArg...) {
+        guard isLogEnabled else {
+            return
+        }
+        #if !TEST
+        os_log(type, log: log, message, arg)
+        #endif
+    }
+    
 }
 
 extension AnyCancellable {
@@ -908,9 +928,16 @@ extension TimeInterval {
 }
 
 extension OSLog {
-    public static var Subsystem = Bundle.main.bundleIdentifier!
-    public static var General = "LittleBluetooth"
+    public static var Subsystem = "it.vanillagorilla.LittleBlueTooth"
+    public static var General = "General"
+    public static var CentralManager = "CentralManager"
+    public static var Peripheral = "Peripheral"
+
 
     public static let LittleBT_Log_General = OSLog(subsystem: Subsystem, category: General)
-
+    public static let LittleBT_Log_CentralManager = OSLog(subsystem: Subsystem, category: CentralManager)
+    public static let LittleBT_Log_Peripheral = OSLog(subsystem: Subsystem, category: Peripheral)
+    
+    
+   
 }

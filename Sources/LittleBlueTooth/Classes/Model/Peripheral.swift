@@ -59,7 +59,15 @@ public class Peripheral: Identifiable {
     public let cbPeripheral: CBPeripheral
     public var rssi: Int?
     
-    private let peripheralProxy = CBPeripheralDelegateProxy()
+
+    var isLogEnabled: Bool {
+        get {
+            return _isLogEnabled
+        }
+        set {
+            _isLogEnabled = newValue
+        }
+    }
     
     lazy var changesPublisher: AnyPublisher<PeripheralChanges, Never> =
                peripheralProxy.peripheralChangesPublisher
@@ -81,6 +89,9 @@ public class Peripheral: Identifiable {
             .eraseToAnyPublisher()
     
     let peripheralStatePublisher: AnyPublisher<PeripheralState, Never>
+    
+    private let peripheralProxy = CBPeripheralDelegateProxy()
+    private var _isLogEnabled: Bool = false
 
     init(_ peripheral: CBPeripheral) {
         self.cbPeripheral = peripheral
