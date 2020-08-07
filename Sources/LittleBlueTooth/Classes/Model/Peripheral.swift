@@ -66,6 +66,7 @@ public class Peripheral: Identifiable {
         }
         set {
             _isLogEnabled = newValue
+            peripheralProxy.isLogEnabled = newValue
         }
     }
     
@@ -342,3 +343,5 @@ extension Peripheral: CustomDebugStringConvertible {
         """
     }
 }
+
+extension Peripheral: Loggable {}

@@ -50,7 +50,7 @@ class ScanDiscoveryTest: LittleBlueToothTests {
         
         waitForExpectations(timeout: 10)
         XCTAssertNotNil(discovery)
-        let name = discovery!.name
+        _ = discovery!.name
         let peripheral = discovery!.cbPeripheral
         let advInfo = discovery!.advertisement
         XCTAssertEqual(discovery!.cbPeripheral.identifier, blinky.identifier)

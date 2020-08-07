@@ -284,7 +284,7 @@ class ListenTest: LittleBlueToothTests {
         wait(for: [firstListenExpectation, secondListenExpectation], timeout: 30)
         littleBT.disconnect()
         XCTAssert(sub1Event.count == sub2Event.count)
-        
+        scheduler.cancel()
     }
     
     func testPowerOffWhileListen() {
@@ -298,7 +298,7 @@ class ListenTest: LittleBlueToothTests {
         let scheduler: AnyCancellable = Timer.publish(every: 0.5, on: .main, in: .common)
         .autoconnect()
         .map {_ in
-            var data = UInt8.random(in: 0...1)
+            let data = UInt8.random(in: 0...1)
             blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
         }.sink { value in
             print("Led value:\(value)")
@@ -337,7 +337,7 @@ class ListenTest: LittleBlueToothTests {
         
         waitForExpectations(timeout: 10)
         XCTAssert(isPowerOff)
-        
+        scheduler.cancel()
     }
     
 }

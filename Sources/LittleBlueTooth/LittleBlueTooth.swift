@@ -49,7 +49,14 @@ public class LittleBlueTooth: Identifiable {
     public var autoconnectionHandler: AutoconnectionHandler?
     
     /// Connected peripheral. `nil` if not connected or a connection is not requested
-    public var peripheral: Peripheral?
+    public var peripheral: Peripheral? {
+        didSet {
+            guard let per = peripheral else {
+                return
+            }
+            per.isLogEnabled = isLogEnabled
+        }
+    }
     
     /// Publisher that streams peripheral state  available only when a connection is requested for fine grained control
     public var peripheralStatePublisher: AnyPublisher<PeripheralState, Never> {
@@ -81,13 +88,14 @@ public class LittleBlueTooth: Identifiable {
     }
     
     /// Enable logging disabled by default
-    /// This will produce log in the device console it can be used also in release version.
+    /// Enable logging, log is made using os_log and it exposes some information even in release configuration
     public var isLogEnabled: Bool {
         get {
             return _isLogEnabled
         }
         set {
             _isLogEnabled = newValue
+            centralProxy.isLogEnabled = newValue
         }
     }
     
@@ -165,12 +173,13 @@ public class LittleBlueTooth: Identifiable {
             print("If you want to use state preservation/restoration you should probablu want to implement the `restoreHandler`")
         }
         attachSubscribers(with: configuration.restoreHandler)
-//        os_log(
-//            "LBT init options %{public}@",
-//            log: OSLog.LittleBT_Log_General,
-//            type: .debug,
-//            configuration.centralManagerOptions?.description ?? ""
-//        )
+        self._isLogEnabled = configuration.isLogEnabled
+        log(
+            "LBT init options %{public}@",
+            log: OSLog.LittleBT_Log_General,
+            type: .debug,
+            arg: configuration.centralManagerOptions?.description ?? ""
+        )
     }
     
     func attachSubscribers(with restorehandler: ((Restored) -> Void)?) {
@@ -773,7 +782,10 @@ public class LittleBlueTooth: Identifiable {
               let restoreDiscoverServices = restorer.services
               let restoreScanOptions = restorer.scanOptions
               let restoreDiscoveryPublisher = self.startDiscovery(withServices: restoreDiscoverServices, options: restoreScanOptions)
-//            os_log("LBT Scan restore %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, restorer.centralManager.isScanning ? "true" : "false")
+              log("LBT Scan restore %{public}@",
+                  log: OSLog.LittleBT_Log_General,
+                  type: .debug,
+                  arg: restorer.centralManager.isScanning ? "true" : "false")
               return .scan(discoveryPublisher: restoreDiscoveryPublisher)
           }
           if let periph = restorer.peripherals.first, let cbPeripheral = periph.cbPeripheral {
@@ -803,9 +815,12 @@ public class LittleBlueTooth: Identifiable {
               @unknown default:
                   fatalError("Connection event in default not handled")
               }
-//            #if !TEST
-//              os_log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.LittleBT_Log_General, type: .debug, cbPeripheral.description, cbPeripheral.delegate != nil ? "true" : "false", cbPeripheral.state.rawValue)
-//            #endif
+              log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d",
+                  log: OSLog.LittleBT_Log_General,
+                  type: .debug,
+                  arg: cbPeripheral.description,
+                  cbPeripheral.delegate != nil ? "true" : "false",
+                  cbPeripheral.state.rawValue)
               return Restored.peripheral(self.peripheral!)
           }
           return Restored.nothing
@@ -895,17 +910,9 @@ public class LittleBlueTooth: Identifiable {
         self.peripheral = nil
     }
     
-    /// Helper that prints log
-    private func log(_ type: OSLogType, log: OSLog, message: StaticString, arg: CVarArg...) {
-        guard isLogEnabled else {
-            return
-        }
-        #if !TEST
-        os_log(type, log: log, message, arg)
-        #endif
-    }
-    
 }
+
+extension LittleBlueTooth: Loggable {}
 
 extension AnyCancellable {
   func store(in dictionary: inout [UUID : AnyCancellable],
@@ -941,3 +948,10 @@ extension OSLog {
     
    
 }
+#if TEST
+extension CBMPeripheral {
+    public var description: String {
+        return "Test peripheral"
+    }
+}
+#endif

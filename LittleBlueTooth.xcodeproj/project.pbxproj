@@ -26,6 +26,8 @@
 		658A75C224BB74FC00F874EF /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
 		658A75C524BB765C00F874EF /* LittleBlueTooth.h in Headers */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* LittleBlueTooth.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6590D38224D0030000BEE864 /* WriteWithoutResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */; };
+		65A6B35024DD29000068FE1C /* Loggable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A6B34F24DD29000068FE1C /* Loggable.swift */; };
+		65A6B35124DD29070068FE1C /* Loggable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A6B34F24DD29000068FE1C /* Loggable.swift */; };
 		65AD4BD424D437B700C0CBE6 /* LittleBlueTooth.h in Headers */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* LittleBlueTooth.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65AD4BD624D437B700C0CBE6 /* LittleBlueToothError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* LittleBlueToothError.swift */; };
 		65AD4BD724D437B700C0CBE6 /* AdvertisingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* AdvertisingData.swift */; };
@@ -89,6 +91,7 @@
 		655330DC24BF159D007D299B /* CentralRestorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralRestorer.swift; sourceTree = "<group>"; };
 		655330DE24BF5446007D299B /* StateRestoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRestoration.swift; sourceTree = "<group>"; };
 		6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteWithoutResponse.swift; sourceTree = "<group>"; };
+		65A6B34F24DD29000068FE1C /* Loggable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loggable.swift; sourceTree = "<group>"; };
 		65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LittleBlueToothForTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65AD4BEC24D437B700C0CBE6 /* LittleBlueTooth copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "LittleBlueTooth copy-Info.plist"; path = "/Users/Andrea/Documents/GitHub/LittleBlueTooth/LittleBlueTooth copy-Info.plist"; sourceTree = "<absolute>"; };
 		65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LittleBluetoothConfiguration.swift; sourceTree = "<group>"; };
@@ -185,6 +188,7 @@
 				OBJ_18 /* PeripheralDiscovery.swift */,
 				655330DC24BF159D007D299B /* CentralRestorer.swift */,
 				65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */,
+				65A6B34F24DD29000068FE1C /* Loggable.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -439,6 +443,7 @@
 				65AD4BD924D437B700C0CBE6 /* Peripheral.swift in Sources */,
 				65AD4BDA24D437B700C0CBE6 /* PeripheralDiscovery.swift in Sources */,
 				65AD4BDB24D437B700C0CBE6 /* CentralRestorer.swift in Sources */,
+				65A6B35124DD29070068FE1C /* Loggable.swift in Sources */,
 				65AD4BDC24D437B700C0CBE6 /* CBCentralManagerDelegateProxy.swift in Sources */,
 				65AD4BDD24D437B700C0CBE6 /* CBPeripheralProxy.swift in Sources */,
 				65AD4BDE24D437B700C0CBE6 /* ReplaySubject.swift in Sources */,
@@ -461,6 +466,7 @@
 				OBJ_55 /* Peripheral.swift in Sources */,
 				OBJ_56 /* PeripheralDiscovery.swift in Sources */,
 				655330DD24BF159D007D299B /* CentralRestorer.swift in Sources */,
+				65A6B35024DD29000068FE1C /* Loggable.swift in Sources */,
 				OBJ_57 /* CBCentralManagerDelegateProxy.swift in Sources */,
 				OBJ_58 /* CBPeripheralProxy.swift in Sources */,
 				OBJ_59 /* ReplaySubject.swift in Sources */,
@@ -1119,7 +1125,7 @@
 			repositoryURL = "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.9.0;
+				minimumVersion = 0.11.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
