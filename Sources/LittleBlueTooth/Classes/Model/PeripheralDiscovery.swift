@@ -79,7 +79,7 @@ extension PeripheralDiscovery: CustomDebugStringConvertible {
         return """
         Name: \(name ?? "not available")
         CB Peripheral: \(cbPeripheral)
-        Adv: \(advertisement)
+        Adv: \(advertisement.debugDescription)
         RSSI: \(rssi)
         """
     }

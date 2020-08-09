@@ -182,6 +182,25 @@ public class Peripheral: Identifiable {
         return discovery
     }
     
+    func readRSSI() -> AnyPublisher<Int, LittleBluetoothError> {
+        let readRSSI =
+            peripheralProxy.peripheralRSSIPublisher
+            .tryMap { (value) -> Int in
+                switch value {
+                case let (_, error?):
+                    throw error
+                case let (rssi, _):
+                    return rssi
+                }
+            }
+            .mapError {$0 as! LittleBluetoothError}
+            .eraseToAnyPublisher()
+        defer {
+            cbPeripheral.readRSSI()
+        }
+        return readRSSI
+    }
+    
     func read(from charateristicUUID: CBUUID, of serviceUUID: CBUUID) -> AnyPublisher<Data?, LittleBluetoothError> {
         let read = discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
         .flatMap { characteristic -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in

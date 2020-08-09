@@ -34,17 +34,17 @@ class ScanDiscoveryTest: LittleBlueToothTests {
         var discovery: PeripheralDiscovery?
         
         littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
-            .sink(receiveCompletion: { completion in
-                print("Completion \(completion)")
-            }) { (discov) in
-                print("Discovery \(discov)")
-                discovery = discov
-                self.littleBT.stopDiscovery()
-                .sink(receiveCompletion: {_ in
-                }) { () in
-                    discoveryExpectation.fulfill()
-                }
-                .store(in: &self.disposeBag)
+        .sink(receiveCompletion: { completion in
+            print("Completion \(completion)")
+        }) { (discov) in
+            print("Discovery \(discov)")
+            discovery = discov
+            self.littleBT.stopDiscovery()
+            .sink(receiveCompletion: {_ in
+            }) { () in
+                discoveryExpectation.fulfill()
+            }
+            .store(in: &self.disposeBag)
         }
         .store(in: &disposeBag)
         

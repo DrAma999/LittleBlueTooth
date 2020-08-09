@@ -21,6 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		654BCE8B24E03544002FC7A4 /* Extraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654BCE8A24E03544002FC7A4 /* Extraction.swift */; };
+		654BCE8E24E077DC002FC7A4 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654BCE8D24E077DC002FC7A4 /* Helper.swift */; };
+		654BCE8F24E07804002FC7A4 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654BCE8D24E077DC002FC7A4 /* Helper.swift */; };
 		655330DD24BF159D007D299B /* CentralRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DC24BF159D007D299B /* CentralRestorer.swift */; };
 		655F49E224CF3DA400C24461 /* StateRestoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DE24BF5446007D299B /* StateRestoration.swift */; };
 		658A75C224BB74FC00F874EF /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
@@ -88,6 +91,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		654BCE8A24E03544002FC7A4 /* Extraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extraction.swift; sourceTree = "<group>"; };
+		654BCE8D24E077DC002FC7A4 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		655330DC24BF159D007D299B /* CentralRestorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralRestorer.swift; sourceTree = "<group>"; };
 		655330DE24BF5446007D299B /* StateRestoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRestoration.swift; sourceTree = "<group>"; };
 		6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteWithoutResponse.swift; sourceTree = "<group>"; };
@@ -153,6 +158,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		654BCE8C24E077B3002FC7A4 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				654BCE8D24E077DC002FC7A4 /* Helper.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
 		65AD4BEF24D438AD00C0CBE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -163,6 +176,7 @@
 		OBJ_11 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				654BCE8C24E077B3002FC7A4 /* Extension */,
 				OBJ_12 /* Error */,
 				OBJ_14 /* Model */,
 				OBJ_19 /* Proxies */,
@@ -242,6 +256,7 @@
 				OBJ_40 /* WriteReadTest.swift */,
 				655330DE24BF5446007D299B /* StateRestoration.swift */,
 				6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */,
+				654BCE8A24E03544002FC7A4 /* Extraction.swift */,
 			);
 			name = LittleBlueToothTests;
 			path = Tests/LittleBlueToothTests;
@@ -445,6 +460,7 @@
 				65AD4BDB24D437B700C0CBE6 /* CentralRestorer.swift in Sources */,
 				65A6B35124DD29070068FE1C /* Loggable.swift in Sources */,
 				65AD4BDC24D437B700C0CBE6 /* CBCentralManagerDelegateProxy.swift in Sources */,
+				654BCE8F24E07804002FC7A4 /* Helper.swift in Sources */,
 				65AD4BDD24D437B700C0CBE6 /* CBPeripheralProxy.swift in Sources */,
 				65AD4BDE24D437B700C0CBE6 /* ReplaySubject.swift in Sources */,
 				65AD4BDF24D437B700C0CBE6 /* ReplaySubjectSubscription.swift in Sources */,
@@ -468,6 +484,7 @@
 				655330DD24BF159D007D299B /* CentralRestorer.swift in Sources */,
 				65A6B35024DD29000068FE1C /* Loggable.swift in Sources */,
 				OBJ_57 /* CBCentralManagerDelegateProxy.swift in Sources */,
+				654BCE8E24E077DC002FC7A4 /* Helper.swift in Sources */,
 				OBJ_58 /* CBPeripheralProxy.swift in Sources */,
 				OBJ_59 /* ReplaySubject.swift in Sources */,
 				OBJ_60 /* ReplaySubjectSubscription.swift in Sources */,
@@ -494,6 +511,7 @@
 				OBJ_82 /* ConnectionTest.swift in Sources */,
 				655F49E224CF3DA400C24461 /* StateRestoration.swift in Sources */,
 				OBJ_83 /* ListenTest.swift in Sources */,
+				654BCE8B24E03544002FC7A4 /* Extraction.swift in Sources */,
 				OBJ_84 /* LittleBlueToothTests.swift in Sources */,
 				OBJ_85 /* MockPeripherals.swift in Sources */,
 				6590D38224D0030000BEE864 /* WriteWithoutResponse.swift in Sources */,

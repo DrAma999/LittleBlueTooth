@@ -54,6 +54,40 @@ class ConnectionTest: LittleBlueToothTests {
 
     }
     
+    func testPeripheralConnectionReadRSSI() {
+         disposeBag.removeAll()
+         
+         blinky.simulateProximityChange(.near)
+         let readRSSIExpectation = expectation(description: "Read RSSI expectation")
+         
+         var rssiRead: Int?
+         
+         littleBT.startDiscovery(withServices: nil)
+         .flatMap { discovery in
+             self.littleBT.connect(to: discovery)
+         }
+         .flatMap{ _ in
+            self.littleBT.readRSSI()
+         }
+         .sink(receiveCompletion: { completion in
+             print("Completion \(completion)")
+         }) { (rssi) in
+             print("RSSI \(rssi)")
+             rssiRead = rssi
+             self.littleBT.disconnect().sink(receiveCompletion: { _ in
+             }) { _ in
+                 readRSSIExpectation.fulfill()
+             }
+             .store(in: &self.disposeBag)
+         }
+         .store(in: &disposeBag)
+         
+         waitForExpectations(timeout: 15)
+         XCTAssertNotNil(rssiRead)
+         XCTAssert(rssiRead! < 70)
+
+     }
+    
 
     func testMultipleConnection() {
         disposeBag.removeAll()
