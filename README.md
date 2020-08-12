@@ -520,6 +520,19 @@ Note:
 * Restoration can happen in background and foreground
 * The Peripheral object returned can be in different state depending on what has been restored. If a peripheral has been disconnected and an  `autoconnectionHandler` is provided LittleBluetooth will try to re-establish a connection.
 
+### CBCentralManager CBPeripheral extraction
+Sometimes it could be uselful to extract an already connected peripheral and a central manger and pass them to another framework. For instance if you need to make an OTA firmware update using the nordic library this would be required.
+The extraction is made exaclty for this purpuse.
+```
+let extractedState = littleBT.extract() 
+```
+Before extraction you need to stop listen to all the characteristics you where listening to.
+The extracted state is a tuple `(central: CBCentralManager, peripheral: CBPeripheral?)`  that contains the used `CBCentralManger` and a `CBPeripheral` if connected.
+You can also *restart* LittleBlueTooth instance by passing the same object that you have extracted.
+```
+self.littleBT.restart(with: extractedState.central, peripheral: extractedState.peripheral)
+```
+
 ## ROADMAP
 - [x] SwiftPM support
 - [x] State preservation and state restoration
