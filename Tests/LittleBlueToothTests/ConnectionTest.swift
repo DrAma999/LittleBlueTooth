@@ -339,6 +339,45 @@ class ConnectionTest: LittleBlueToothTests {
         XCTAssertNotNil(ledState)
         XCTAssert(!ledState!.isOn)
         XCTAssertEqual(connectedPeripheral!.cbPeripheral.identifier, blinky.identifier)
+    }
+    
+    func testConnectionFailed() {
+        disposeBag.removeAll()
+        
+        blinky.simulateProximityChange(.immediate)
+        blinky.simulateReset()
 
+        let foundExpectation = XCTestExpectation(description: "Device found expectation")
+        
+        var discovery: PeripheralDiscovery?
+        
+        littleBT.startDiscovery(withServices: nil)
+            .sink(receiveCompletion: { completion in
+                print("Completion \(completion)")
+            }) { (disc) in
+                print("Discovery \(disc)")
+                discovery = disc
+                foundExpectation.fulfill()
+        }
+        .store(in: &disposeBag)
+        wait(for: [foundExpectation], timeout: 3)
+        XCTAssertNotNil(discovery)
+        
+        blinky.simulateProximityChange(.outOfRange)
+        // Should never happen
+        let connected = XCTestExpectation(description: "Connected expectation")
+        connected.isInverted = true
+        
+        littleBT.connect(to: discovery!)
+        .sink(receiveCompletion: { (completion) in
+            print("Completion \(completion)")
+        }) { (periph) in
+            print("Peripheral \(periph)")
+            connected.fulfill()
+        }
+        .store(in: &disposeBag)
+        
+        wait(for: [connected], timeout: 3)
+        littleBT.disconnect()
     }
 }

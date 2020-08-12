@@ -58,6 +58,12 @@ class UtilityTest: LittleBlueToothTests {
         XCTAssert(characteristicOne == characteristicTwo)
     }
     
+    func testCharacteristicEqualityFail() {
+          let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+          let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD127")
+          XCTAssertFalse(characteristicOne == characteristicTwo)
+      }
+    
     func testCharacteristicHash() {
         let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
         let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD123")
