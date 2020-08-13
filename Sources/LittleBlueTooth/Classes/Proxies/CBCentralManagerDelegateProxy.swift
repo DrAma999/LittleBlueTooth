@@ -142,7 +142,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
         log("CBCMD WillRestoreState %{public}@",
-            log: OSLog.LittleBT_Log_CentralManager,
+            log: OSLog.LittleBT_Log_Restore,
             type: .debug,
             arg: dict.description)
         _willRestoreStatePublisher.send(CentralRestorer(centralManager: central, restoredInfo: dict))

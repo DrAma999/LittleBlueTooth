@@ -857,7 +857,7 @@ public class LittleBlueTooth: Identifiable {
               let restoreScanOptions = restorer.scanOptions
               let restoreDiscoveryPublisher = self.startDiscovery(withServices: restoreDiscoverServices, options: restoreScanOptions)
               log("LBT Scan restore %{public}@",
-                  log: OSLog.LittleBT_Log_General,
+                  log: OSLog.LittleBT_Log_Restore,
                   type: .debug,
                   arg: restorer.centralManager.isScanning ? "true" : "false")
               return .scan(discoveryPublisher: restoreDiscoveryPublisher)
@@ -890,7 +890,7 @@ public class LittleBlueTooth: Identifiable {
                   fatalError("Connection event in default not handled")
               }
               log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d",
-                  log: OSLog.LittleBT_Log_General,
+                  log: OSLog.LittleBT_Log_Restore,
                   type: .debug,
                   arg: cbPeripheral.description,
                   cbPeripheral.delegate != nil ? "true" : "false",

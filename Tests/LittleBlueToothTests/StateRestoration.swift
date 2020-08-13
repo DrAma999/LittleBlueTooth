@@ -65,6 +65,9 @@ class StateRestoration: LittleBlueToothTests {
         }
 
         littleBTConf = LittleBluetoothConfiguration()
+        littleBTConf.restoreHandler = { restore in
+            print("Restorer \(restore)")
+        }
         littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
         littleBT = LittleBlueTooth(with: littleBTConf)
         
@@ -78,6 +81,8 @@ class StateRestoration: LittleBlueToothTests {
         }
         .store(in: &disposeBag)
         
+        waitForExpectations(timeout: 10)
+
         XCTAssertNotNil(periph)
         XCTAssertNotNil(scanOptions)
         XCTAssertNotNil(scanServices)

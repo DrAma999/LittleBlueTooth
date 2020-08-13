@@ -39,11 +39,13 @@ extension OSLog {
     public static var General = "General"
     public static var CentralManager = "CentralManager"
     public static var Peripheral = "Peripheral"
-
+    public static var Restore = "Restore"
 
     public static let LittleBT_Log_General = OSLog(subsystem: Subsystem, category: General)
     public static let LittleBT_Log_CentralManager = OSLog(subsystem: Subsystem, category: CentralManager)
     public static let LittleBT_Log_Peripheral = OSLog(subsystem: Subsystem, category: Peripheral)
+    public static let LittleBT_Log_Restore = OSLog(subsystem: Subsystem, category: Restore)
+
 }
 #if TEST
 extension CBMPeripheral {
