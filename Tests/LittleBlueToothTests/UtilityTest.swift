@@ -8,6 +8,7 @@
 
 import XCTest
 import CoreBluetoothMock
+import Combine
 @testable import LittleBlueToothForTest
 
 class UtilityTest: LittleBlueToothTests {
@@ -58,6 +59,12 @@ class UtilityTest: LittleBlueToothTests {
         XCTAssert(characteristicOne == characteristicTwo)
     }
     
+    func testCharacteristicEqualityFail() {
+          let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+          let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD127")
+          XCTAssertFalse(characteristicOne == characteristicTwo)
+      }
+    
     func testCharacteristicHash() {
         let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
         let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD123")
@@ -104,6 +111,37 @@ class UtilityTest: LittleBlueToothTests {
         
         periphId = try? PeripheralIdentifier(string: "")
         XCTAssertNil(periphId)
+    }
+    
+    func testShareReplay() {
+        var event1: Set<String> = []
+        var event2: Set<String> = []
+
+        let cvs = CurrentValueSubject<String, Never>("Hello")
+        
+        let shareTest =
+            cvs
+                .shareReplay(1)
+                .eraseToAnyPublisher()
+        
+        let sub1 = shareTest.sink(receiveValue: { value in
+            event1.insert(value)
+            print("subscriber1: \(value)\n")
+        })
+        print("Sub1: \(sub1)")
+
+        let sub2 = shareTest.sink(receiveValue: { value in
+            event2.insert(value)
+            print("subscriber2: \(value)\n")
+        })
+        print("Sub2: \(sub2)")
+
+        cvs.send("World")
+        cvs.send(completion: .finished)
+        cvs.send("Huge")
+        
+        XCTAssert(event1.count == 2)
+        XCTAssert(event1 == event2)
     }
 
 }
