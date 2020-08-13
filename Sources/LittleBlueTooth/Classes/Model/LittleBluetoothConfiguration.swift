@@ -29,6 +29,8 @@ public struct LittleBluetoothConfiguration {
     /// Handler used to manage state restoration. `Restored` object will contain the restored information
     /// could be a peripheral, a scan or nothing
     public var restoreHandler: ((Restored) -> Void)?
+    /// Enable logging, log is made using os_log and it exposes some information even in release configuration
+    public var isLogEnabled = false
     
     public init() {}
 }

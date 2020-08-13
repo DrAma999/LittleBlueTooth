@@ -49,7 +49,14 @@ public class LittleBlueTooth: Identifiable {
     public var autoconnectionHandler: AutoconnectionHandler?
     
     /// Connected peripheral. `nil` if not connected or a connection is not requested
-    public var peripheral: Peripheral?
+    public var peripheral: Peripheral? {
+        didSet {
+            guard let per = peripheral else {
+                return
+            }
+            per.isLogEnabled = isLogEnabled
+        }
+    }
     
     /// Publisher that streams peripheral state  available only when a connection is requested for fine grained control
     public var peripheralStatePublisher: AnyPublisher<PeripheralState, Never> {
@@ -79,7 +86,19 @@ public class LittleBlueTooth: Identifiable {
     public var restoreStatePublisher: AnyPublisher<CentralRestorer, Never> {
         return centralProxy.willRestoreStatePublisher
     }
-        
+    
+    /// Enable logging disabled by default
+    /// Enable logging, log is made using os_log and it exposes some information even in release configuration
+    public var isLogEnabled: Bool {
+        get {
+            return _isLogEnabled
+        }
+        set {
+            _isLogEnabled = newValue
+            centralProxy.isLogEnabled = newValue
+        }
+    }
+    
     // MARK: - Private variables
     /// Cancellable operation idendified by a `UUID` key
     private var disposeBag = [UUID : AnyCancellable]()
@@ -95,8 +114,8 @@ public class LittleBlueTooth: Identifiable {
     private var connectionEventSubscriber: AnyCancellable?
     private var connectionEventSubscriberPeri: AnyCancellable?
 
-    private lazy var _listenPublisher: Publishers.Multicast<AnyPublisher<CBCharacteristic, LittleBluetoothError>, PassthroughSubject<CBCharacteristic, LittleBluetoothError>>
-        = {  [unowned self] in
+    private var _listenPublisher: Publishers.Multicast<AnyPublisher<CBCharacteristic, LittleBluetoothError>, PassthroughSubject<CBCharacteristic, LittleBluetoothError>> {
+        if _listenPublisher_ == nil {
             let pub =
                 ensureBluetoothState()
                 .flatMap { [unowned self] _ in
@@ -107,36 +126,53 @@ public class LittleBlueTooth: Identifiable {
                 }
                 .share()
                 .eraseToAnyPublisher()
-            return Publishers.Multicast(upstream: pub, createSubject:{ PassthroughSubject() })
-    }()
-    /// Peripheral state connectable publisher. It will be connected after `Peripheral` instance creation.
-    private lazy var _peripheralStatePublisher: Publishers.MakeConnectable<AnyPublisher<PeripheralState, Never>> = { [unowned self] in
-        let statePublisher =
-        Just(())
-        .flatMap {
-            self.peripheral!.peripheralStatePublisher
+            
+            _listenPublisher_ = Publishers.Multicast(upstream: pub, createSubject:{ PassthroughSubject() })
+            return _listenPublisher_!
         }
-        .eraseToAnyPublisher()
-        .makeConnectable()
-       return statePublisher
-    }()
+        return _listenPublisher_!
+    }
+    
+    private var _listenPublisher_: Publishers.Multicast<AnyPublisher<CBCharacteristic, LittleBluetoothError>, PassthroughSubject<CBCharacteristic, LittleBluetoothError>>?
+    
+    /// Peripheral state connectable publisher. It will be connected after `Peripheral` instance creation.
+    private var _peripheralStatePublisher: Publishers.MakeConnectable<AnyPublisher<PeripheralState, Never>> {
+        if _peripheralStatePublisher_ == nil {
+            _peripheralStatePublisher_ =  Just(())
+            .flatMap {
+                self.peripheral!.peripheralStatePublisher
+            }
+            .eraseToAnyPublisher()
+            .makeConnectable()
+            return _peripheralStatePublisher_!
+        }
+        return _peripheralStatePublisher_!
+    }
+    
+    private var _peripheralStatePublisher_: Publishers.MakeConnectable<AnyPublisher<PeripheralState, Never>>?
+
 
     /// Peripheral changes connectable publisher. It will be connected after `Peripheral` instance creation.
-    private lazy var _peripheralChangesPublisher: Publishers.MakeConnectable<AnyPublisher<PeripheralChanges, Never>> = { [unowned self] in
-        let changesPublisher =
-        Just(())
-        .flatMap {
-            self.peripheral!.changesPublisher
+    private var _peripheralChangesPublisher: Publishers.MakeConnectable<AnyPublisher<PeripheralChanges, Never>> {
+        if _peripheralChangesPublisher_ == nil {
+            _peripheralChangesPublisher_ =
+                Just(())
+                .flatMap {
+                    self.peripheral!.changesPublisher
+                }
+                .eraseToAnyPublisher()
+                .makeConnectable()
+            return _peripheralChangesPublisher_!
+            
         }
-        .eraseToAnyPublisher()
-        .makeConnectable()
-        return changesPublisher
-    }()
+        return _peripheralChangesPublisher_!
+    }
+    
+    private var _peripheralChangesPublisher_: Publishers.MakeConnectable<AnyPublisher<PeripheralChanges, Never>>?
     
     private var restoreStateCancellable: AnyCancellable?
-    
-    /// Used to inject error to ensure peripheral is connected before any operation, it buffers the last result and throw error if peripheral disconnect for a specific error
-    
+    private var _isLogEnabled: Bool = false
+
     var cbCentral: CBCentralManager
     var centralProxy = CBCentralManagerDelegateProxy()
     
@@ -155,12 +191,13 @@ public class LittleBlueTooth: Identifiable {
             print("If you want to use state preservation/restoration you should probablu want to implement the `restoreHandler`")
         }
         attachSubscribers(with: configuration.restoreHandler)
-//        os_log(
-//            "LBT init options %{public}@",
-//            log: OSLog.LittleBT_Log_General,
-//            type: .debug,
-//            configuration.centralManagerOptions?.description ?? ""
-//        )
+        self._isLogEnabled = configuration.isLogEnabled
+        log(
+            "LBT init options %{public}@",
+            log: OSLog.LittleBT_Log_General,
+            type: .debug,
+            arg: configuration.centralManagerOptions?.description ?? ""
+        )
     }
     
     func attachSubscribers(with restorehandler: ((Restored) -> Void)?) {
@@ -240,6 +277,36 @@ public class LittleBlueTooth: Identifiable {
         }
         cbCentral.cancelPeripheralConnection(peri.cbPeripheral)
         
+    }
+    // MARK: - RSSI
+    public func readRSSI() -> AnyPublisher<Int, LittleBluetoothError> {
+        let rssiSubject = PassthroughSubject<Int, LittleBluetoothError>()
+        let key = UUID()
+        
+        self.ensureBluetoothState()
+        .print("Read RSSI")
+        .flatMap { [unowned self] _ in
+            self.ensurePeripheralReady()
+        }
+        .flatMap { [unowned self] _ in
+            self.peripheral!.readRSSI()
+        }
+        .sink(receiveCompletion: { [unowned self, key] (completion) in
+            switch completion {
+            case .finished:
+                break
+            case .failure(let error):
+                rssiSubject.send(completion: .failure(error))
+                self.removeAndCancelSubscriber(for: key)
+            }
+        }) { [unowned self, key] (rssi) in
+            rssiSubject.send(rssi)
+            rssiSubject.send(completion: .finished)
+            self.removeAndCancelSubscriber(for: key)
+        }
+        .store(in: &disposeBag, for: key)
+        
+        return rssiSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Listen
@@ -603,8 +670,22 @@ public class LittleBlueTooth: Identifiable {
     /// Starts connection for `PeripheralIdentifier`
     /// - parameter options: Connecting options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with the just connected `Peripheral`.
-    private func connect(to peripheralIdentifier: PeripheralIdentifier, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<Peripheral, LittleBluetoothError> {
+    func connect(to peripheralIdentifier: PeripheralIdentifier, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         return connect(to: peripheralIdentifier, options: options, queue: queue, autoreconnect: false)
+    }
+    
+    /// Starts connection for `PeripheralDiscovery`
+    /// - parameter options: Connecting options same as  CoreBluetooth  central manager option.
+    /// - returns: A publisher with the just connected `Peripheral`.
+    func connect(to discovery: PeripheralDiscovery, timeout: TimeInterval? = nil, options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
+        if cbCentral.isScanning {
+            scanning?.cancel()
+            scanning = nil
+            cbCentral.stopScan()
+        }
+        let peripheralIdentifier = PeripheralIdentifier(peripheral: discovery.cbPeripheral)
+        
+        return connect(to: peripheralIdentifier, timeout: timeout, options: options)
     }
     
     private func connect(to peripheralIdentifier: PeripheralIdentifier, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main, autoreconnect: Bool) -> AnyPublisher<Peripheral, LittleBluetoothError> {
@@ -700,20 +781,6 @@ public class LittleBlueTooth: Identifiable {
         
         return connectSubject.eraseToAnyPublisher()
     }
-
-    /// Starts connection for `PeripheralDiscovery`
-    /// - parameter options: Connecting options same as  CoreBluetooth  central manager option.
-    /// - returns: A publisher with the just connected `Peripheral`.
-    public func connect(to discovery: PeripheralDiscovery, timeout: TimeInterval? = nil, options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
-        if cbCentral.isScanning {
-            scanning?.cancel()
-            scanning = nil
-            cbCentral.stopScan()
-        }
-        let peripheralIdentifier = PeripheralIdentifier(peripheral: discovery.cbPeripheral)
-        
-        return connect(to: peripheralIdentifier, timeout: timeout, options: options)
-    }
     
     // MARK: - Disconnect
 
@@ -755,6 +822,32 @@ public class LittleBlueTooth: Identifiable {
         return disconnectionSubject.eraseToAnyPublisher()
     }
     
+    // MARK: - Extraction and restart
+    /// Sometimes you may need to extract `CBCentralManager` and `CBPeripheral`
+    /// During this operation everything is stopped, delegates are set to nil current operation cancelled
+    /// - returns: A tuple with the central and the peripheral if connected
+    public func extract() -> (central: CBCentralManager, peripheral: CBPeripheral?) {
+        let cbCentral = self.cbCentral
+        let cbPeripheral = self.peripheral?.cbPeripheral
+        cbCentral.delegate = nil
+        cbPeripheral?.delegate = nil
+        // Clean operation
+        cleanUpForExtraction()
+        return (central: cbCentral, peripheral: cbPeripheral)
+    }
+    
+    public func restart(with central: CBCentralManager, peripheral: CBPeripheral? = nil) {
+        cbCentral = central
+        cbCentral.delegate = centralProxy
+        if let periph = peripheral {
+            self.peripheral = Peripheral(periph)
+            listenPublisherCancellable = _listenPublisher.connect()
+            peripheralStatePublisherCancellable = _peripheralStatePublisher.connect()
+            peripheralChangesPublisherCancellable = _peripheralChangesPublisher.connect()
+        }
+        
+    }
+    
     
     // MARK: - Private
     private func restore(_ restorer: CentralRestorer) -> Restored {
@@ -763,7 +856,10 @@ public class LittleBlueTooth: Identifiable {
               let restoreDiscoverServices = restorer.services
               let restoreScanOptions = restorer.scanOptions
               let restoreDiscoveryPublisher = self.startDiscovery(withServices: restoreDiscoverServices, options: restoreScanOptions)
-//            os_log("LBT Scan restore %{public}@", log: OSLog.LittleBT_Log_General, type: .debug, restorer.centralManager.isScanning ? "true" : "false")
+              log("LBT Scan restore %{public}@",
+                  log: OSLog.LittleBT_Log_Restore,
+                  type: .debug,
+                  arg: restorer.centralManager.isScanning ? "true" : "false")
               return .scan(discoveryPublisher: restoreDiscoveryPublisher)
           }
           if let periph = restorer.peripherals.first, let cbPeripheral = periph.cbPeripheral {
@@ -793,9 +889,12 @@ public class LittleBlueTooth: Identifiable {
               @unknown default:
                   fatalError("Connection event in default not handled")
               }
-//            #if !TEST
-//              os_log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d", log: OSLog.LittleBT_Log_General, type: .debug, cbPeripheral.description, cbPeripheral.delegate != nil ? "true" : "false", cbPeripheral.state.rawValue)
-//            #endif
+              log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d",
+                  log: OSLog.LittleBT_Log_Restore,
+                  type: .debug,
+                  arg: cbPeripheral.description,
+                  cbPeripheral.delegate != nil ? "true" : "false",
+                  cbPeripheral.state.rawValue)
               return Restored.peripheral(self.peripheral!)
           }
           return Restored.nothing
@@ -876,41 +975,25 @@ public class LittleBlueTooth: Identifiable {
     }
     
     private func cleanUpForDisconnection() {
-        self.listenPublisherCancellable?.cancel()
-        self.listenPublisherCancellable = nil
-        self.peripheralStatePublisherCancellable?.cancel()
-        self.peripheralStatePublisherCancellable = nil
-        self.peripheralChangesPublisherCancellable?.cancel()
-        self.peripheralChangesPublisherCancellable = nil
-        self.peripheral = nil
+        listenPublisherCancellable?.cancel()
+        listenPublisherCancellable = nil
+        _listenPublisher_ = nil
+        peripheralStatePublisherCancellable?.cancel()
+        peripheralStatePublisherCancellable = nil
+        _peripheralStatePublisher_ = nil
+        peripheralChangesPublisherCancellable?.cancel()
+        peripheralChangesPublisherCancellable = nil
+        _peripheralChangesPublisher_ = nil
+        peripheral = nil
     }
-
-}
-
-extension AnyCancellable {
-  func store(in dictionary: inout [UUID : AnyCancellable],
-             for key: UUID) {
-    dictionary[key] = self
-  }
-}
-extension Publisher {
-
-   func flatMapLatest<T: Publisher>(_ transform: @escaping (Self.Output) -> T) -> AnyPublisher<T.Output, T.Failure> where T.Failure == Self.Failure {
-       return map(transform).switchToLatest().eraseToAnyPublisher()
-   }
-}
-
-extension TimeInterval {
-    var dispatchInterval: DispatchTimeInterval {
-        let microseconds = Int64(self * TimeInterval(USEC_PER_SEC)) // perhaps use nanoseconds, though would more often be > Int.max
-        return microseconds < Int.max ? DispatchTimeInterval.microseconds(Int(microseconds)) : DispatchTimeInterval.seconds(Int(self))
+    
+    private func cleanUpForExtraction() {
+        cbCentral.stopScan()
+        scanning?.cancel()
+        scanning = nil
+        cleanUpForDisconnection()
     }
+    
 }
 
-extension OSLog {
-    public static var Subsystem = Bundle.main.bundleIdentifier!
-    public static var General = "LittleBluetooth"
-
-    public static let LittleBT_Log_General = OSLog(subsystem: Subsystem, category: General)
-
-}
+extension LittleBlueTooth: Loggable {}

@@ -22,7 +22,7 @@ The library is still on development so use at own you risk.
 Add the following to your Cartfile:
 
 ```
-github "DrAma999/LittleBlueTooth" ~> 0.3.0
+github "DrAma999/LittleBlueTooth" ~> 0.4.0
 ```
 Since the framework supports most of the Apple devices, you probably want to to build for a specific platform by adding the option `--platform` after the `carthage update` command. For instance:
 ```
@@ -35,7 +35,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 ### Swift Package Manager
 Add the following dependency to your Package.swift file:
 ```
-.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.3.0")
+.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.4.0")
 ```
 Or simply add the URL from XCode menu Swift packages.
 
@@ -520,13 +520,26 @@ Note:
 * Restoration can happen in background and foreground
 * The Peripheral object returned can be in different state depending on what has been restored. If a peripheral has been disconnected and an  `autoconnectionHandler` is provided LittleBluetooth will try to re-establish a connection.
 
+### CBCentralManager CBPeripheral extraction
+Sometimes it could be uselful to extract an already connected peripheral and a central manger and pass them to another framework. For instance if you need to make an OTA firmware update using the nordic library this would be required.
+The extraction is made exaclty for this purpuse.
+```
+let extractedState = littleBT.extract() 
+```
+Before extraction you need to stop listen to all the characteristics you where listening to.
+The extracted state is a tuple `(central: CBCentralManager, peripheral: CBPeripheral?)`  that contains the used `CBCentralManger` and a `CBPeripheral` if connected.
+You can also *restart* LittleBlueTooth instance by passing the same object that you have extracted.
+```
+self.littleBT.restart(with: extractedState.central, peripheral: extractedState.peripheral)
+```
+
 ## ROADMAP
 - [x] SwiftPM support
 - [x] State preservation and state restoration
 - [ ] Improve code coverage
-- [ ] `CBManager` and `CBPeripheral` extraction
-- [ ] Add multiple peripheral support
+- [x] `CBManager` and `CBPeripheral` extraction
 - [x] Add support to: **macOS**, **watchOS**, **tvOS**, **macOS catalyst**
+- [] Implement custom operator
 
 ## ISSUES
 Please use Gihub, explaining what you did, how you did, what you expect and what you get.

@@ -59,7 +59,16 @@ public class Peripheral: Identifiable {
     public let cbPeripheral: CBPeripheral
     public var rssi: Int?
     
-    private let peripheralProxy = CBPeripheralDelegateProxy()
+
+    var isLogEnabled: Bool {
+        get {
+            return _isLogEnabled
+        }
+        set {
+            _isLogEnabled = newValue
+            peripheralProxy.isLogEnabled = newValue
+        }
+    }
     
     lazy var changesPublisher: AnyPublisher<PeripheralChanges, Never> =
                peripheralProxy.peripheralChangesPublisher
@@ -81,6 +90,9 @@ public class Peripheral: Identifiable {
             .eraseToAnyPublisher()
     
     let peripheralStatePublisher: AnyPublisher<PeripheralState, Never>
+    
+    private let peripheralProxy = CBPeripheralDelegateProxy()
+    private var _isLogEnabled: Bool = false
 
     init(_ peripheral: CBPeripheral) {
         self.cbPeripheral = peripheral
@@ -168,6 +180,25 @@ public class Peripheral: Identifiable {
         .mapError{$0 as! LittleBluetoothError}
         .eraseToAnyPublisher()
         return discovery
+    }
+    
+    func readRSSI() -> AnyPublisher<Int, LittleBluetoothError> {
+        let readRSSI =
+            peripheralProxy.peripheralRSSIPublisher
+            .tryMap { (value) -> Int in
+                switch value {
+                case let (_, error?):
+                    throw error
+                case let (rssi, _):
+                    return rssi
+                }
+            }
+            .mapError {$0 as! LittleBluetoothError}
+            .eraseToAnyPublisher()
+        defer {
+            cbPeripheral.readRSSI()
+        }
+        return readRSSI
     }
     
     func read(from charateristicUUID: CBUUID, of serviceUUID: CBUUID) -> AnyPublisher<Data?, LittleBluetoothError> {
@@ -331,3 +362,5 @@ extension Peripheral: CustomDebugStringConvertible {
         """
     }
 }
+
+extension Peripheral: Loggable {}
