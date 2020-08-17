@@ -539,10 +539,10 @@ self.littleBT.restart(with: extractedState.central, peripheral: extractedState.p
 - [ ] Improve code coverage
 - [x] `CBManager` and `CBPeripheral` extraction
 - [x] Add support to: **macOS**, **watchOS**, **tvOS**, **macOS catalyst**
-- [] Implement custom operator
+- [ ] Implement custom operators
 
 ## ISSUES
-Please use Gihub, explaining what you did, how you did, what you expect and what you get.
+Please use Github, explaining what you did, how you did, what you expect and what you get.
 
 ## CONTRIBUTING
 Since I'm working on this project in my spare time any help is appreciated.
