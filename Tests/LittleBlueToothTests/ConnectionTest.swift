@@ -140,8 +140,8 @@ class ConnectionTest: LittleBlueToothTests {
         }
         
         littleBT.startDiscovery(withServices: nil)
-            .flatMap { discovery in
-                self.littleBT.connect(to: discovery)
+        .flatMap { discovery in
+            self.littleBT.connect(to: discovery)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")

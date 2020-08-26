@@ -86,3 +86,17 @@ extension PeripheralDiscovery: CustomDebugStringConvertible {
     
     
 }
+
+extension PeripheralIdentifier: Equatable, Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        if lhs.id == rhs.id  {
+            return true
+        }
+        return false
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+}
