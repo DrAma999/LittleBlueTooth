@@ -14,16 +14,9 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
-func applyDelayAndRetry<Upstream:Publisher>(upstream:Upstream)
-    -> AnyPublisher<Upstream.Output, Upstream.Failure> {
-        let share = Publishers.Share(upstream: upstream)
-        return share
-            .catch { _ in
-                share.delay(for: 3, scheduler: DispatchQueue.main)
-            }.retry(3)
-            .eraseToAnyPublisher()
-}
+extension LittleBlueTooth {
 
-func connect<Upstream:Publisher>(upstream:Upstream) {
-    
+func connect<Upstream: Publisher>(upstream: Upstream, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<Peripheral, LittleBluetoothError> where Upstream.Output == PeripheralIdentifier, Upstream.Failure == LittleBluetoothError {
+    return connect(to: Upstream.Output., options: options, queue: queue)
+}
 }
