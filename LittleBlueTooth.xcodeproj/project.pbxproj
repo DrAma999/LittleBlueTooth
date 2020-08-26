@@ -26,6 +26,7 @@
 		654BCE8F24E07804002FC7A4 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654BCE8D24E077DC002FC7A4 /* Helper.swift */; };
 		655330DD24BF159D007D299B /* CentralRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DC24BF159D007D299B /* CentralRestorer.swift */; };
 		655F49E224CF3DA400C24461 /* StateRestoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DE24BF5446007D299B /* StateRestoration.swift */; };
+		6574671624F631F700E08B47 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6574671524F631F700E08B47 /* Connection.swift */; };
 		658A75C224BB74FC00F874EF /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
 		658A75C524BB765C00F874EF /* LittleBlueTooth.h in Headers */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* LittleBlueTooth.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6590D38224D0030000BEE864 /* WriteWithoutResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */; };
@@ -95,6 +96,7 @@
 		654BCE8D24E077DC002FC7A4 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		655330DC24BF159D007D299B /* CentralRestorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralRestorer.swift; sourceTree = "<group>"; };
 		655330DE24BF5446007D299B /* StateRestoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRestoration.swift; sourceTree = "<group>"; };
+		6574671524F631F700E08B47 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteWithoutResponse.swift; sourceTree = "<group>"; };
 		65A6B34F24DD29000068FE1C /* Loggable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loggable.swift; sourceTree = "<group>"; };
 		65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LittleBlueToothForTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,6 +168,14 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
+		6574671424F6318B00E08B47 /* CustomOperator */ = {
+			isa = PBXGroup;
+			children = (
+				6574671524F631F700E08B47 /* Connection.swift */,
+			);
+			path = CustomOperator;
+			sourceTree = "<group>";
+		};
 		65AD4BEF24D438AD00C0CBE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -176,6 +186,7 @@
 		OBJ_11 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				6574671424F6318B00E08B47 /* CustomOperator */,
 				654BCE8C24E077B3002FC7A4 /* Extension */,
 				OBJ_12 /* Error */,
 				OBJ_14 /* Model */,
@@ -477,6 +488,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_52 /* LittleBlueToothError.swift in Sources */,
+				6574671624F631F700E08B47 /* Connection.swift in Sources */,
 				OBJ_53 /* AdvertisingData.swift in Sources */,
 				OBJ_54 /* LittleBlueToothCharacteristic.swift in Sources */,
 				OBJ_55 /* Peripheral.swift in Sources */,

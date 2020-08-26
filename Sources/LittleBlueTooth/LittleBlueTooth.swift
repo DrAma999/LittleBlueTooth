@@ -121,7 +121,7 @@ public class LittleBlueTooth: Identifiable {
                 .flatMap { [unowned self] _ in
                     self.ensurePeripheralReady()
                 }
-                .flatMap { [unowned self] _ in
+                .flatMapLatest { [unowned self] _ in
                     self.peripheral!.listenPublisher
                 }
                 .share()
@@ -139,7 +139,7 @@ public class LittleBlueTooth: Identifiable {
     private var _peripheralStatePublisher: Publishers.MakeConnectable<AnyPublisher<PeripheralState, Never>> {
         if _peripheralStatePublisher_ == nil {
             _peripheralStatePublisher_ =  Just(())
-            .flatMap {
+            .flatMapLatest {
                 self.peripheral!.peripheralStatePublisher
             }
             .eraseToAnyPublisher()
@@ -157,7 +157,7 @@ public class LittleBlueTooth: Identifiable {
         if _peripheralChangesPublisher_ == nil {
             _peripheralChangesPublisher_ =
                 Just(())
-                .flatMap {
+                .flatMapLatest {
                     self.peripheral!.changesPublisher
                 }
                 .eraseToAnyPublisher()
@@ -670,14 +670,14 @@ public class LittleBlueTooth: Identifiable {
     /// Starts connection for `PeripheralIdentifier`
     /// - parameter options: Connecting options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with the just connected `Peripheral`.
-    func connect(to peripheralIdentifier: PeripheralIdentifier, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<Peripheral, LittleBluetoothError> {
+    public func connect(to peripheralIdentifier: PeripheralIdentifier, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         return connect(to: peripheralIdentifier, options: options, queue: queue, autoreconnect: false)
     }
     
     /// Starts connection for `PeripheralDiscovery`
     /// - parameter options: Connecting options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with the just connected `Peripheral`.
-    func connect(to discovery: PeripheralDiscovery, timeout: TimeInterval? = nil, options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
+    public func connect(to discovery: PeripheralDiscovery, timeout: TimeInterval? = nil, options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         if cbCentral.isScanning {
             scanning?.cancel()
             scanning = nil

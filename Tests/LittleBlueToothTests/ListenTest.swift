@@ -42,12 +42,14 @@ class ListenTest: LittleBlueToothTests {
         let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
         let listenExpectation = expectation(description: "Listen expectation")
         
-        var counter = 0
-        
-        let scheduler: AnyCancellable = Timer.publish(every: 0.5, on: .main, in: .common)
-        .autoconnect()
+        var listenCounter = 0
+        var timerCounter = 0
+        let timer = Timer.publish(every: 1, on: .main, in: .common)
+        let scheduler: AnyCancellable =
+        timer
         .map {_ in
             blinky.simulateValueUpdate(Data([0x01]), for: CBMCharacteristicMock.buttonCharacteristic)
+            timerCounter += 1
         }.sink { value in
             print("Led value:\(value)")
         }
@@ -66,9 +68,9 @@ class ListenTest: LittleBlueToothTests {
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
         }) { (answer) in
-            counter += 1
+            listenCounter += 1
             print("Answer \(answer)")
-            if counter > 10 {
+            if listenCounter > 10 {
                 scheduler.cancel()
                 self.littleBT.disconnect().sink(receiveCompletion: {_ in
                 }) { (_) in
@@ -78,9 +80,10 @@ class ListenTest: LittleBlueToothTests {
             }
         }
         .store(in: &disposeBag)
-        
+        _ = timer.connect()
+
         waitForExpectations(timeout: 20)
-        XCTAssert(counter > 10)
+        XCTAssert(listenCounter == timerCounter)
     }
     
     
@@ -97,13 +100,14 @@ class ListenTest: LittleBlueToothTests {
         var sub2Event = [Bool]()
         var firstCounter = 0
         var secondCounter = 0
-        
         // Simulate notification
-        let scheduler: AnyCancellable = Timer.publish(every: 0.5, on: .main, in: .common)
-            .autoconnect()
+        var timerCounter = 0
+        let timer = Timer.publish(every: 1, on: .main, in: .common)
+        let scheduler: AnyCancellable = timer
             .map {_ -> UInt8 in
                 let data = UInt8.random(in: 0...1)
                 blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
+                timerCounter += 1
                 return data
         }.sink { value in
             print("Led value:\(value)")
@@ -163,11 +167,13 @@ class ListenTest: LittleBlueToothTests {
             print("Answer \(answer)")
         }
         .store(in: &disposeBag)
+        _ = timer.connect()
         
-        
-        waitForExpectations(timeout: 40)
+        waitForExpectations(timeout: 20)
         XCTAssert(sub1Event.count == sub2Event.count)
         XCTAssert(sub1Event == sub2Event)
+        XCTAssert(timerCounter == sub2Event.count)
+
     }
     
  
@@ -185,18 +191,19 @@ class ListenTest: LittleBlueToothTests {
         var sub2Event = [Bool]()
         var firstCounter = 0
         var secondCounter = 0
-        
         // Simulate notification
-        let scheduler: AnyCancellable = Timer.publish(every: 0.5, on: .main, in: .common)
-            .autoconnect()
+        var timerCounter = 0
+        let timer = Timer.publish(every: 1, on: .main, in: .common)
+        let scheduler: AnyCancellable = timer
             .map {_ -> UInt8 in
                 var data = UInt8.random(in: 0...1)
                 blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
                 data = UInt8.random(in: 0...1)
                 blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.ledCharacteristic)
+                timerCounter += 1
                 return data
         }.sink { value in
-            print(" value:\(value)")
+            print("Sink from timer value:\(value)")
         }
         
         // First publisher
@@ -218,6 +225,7 @@ class ListenTest: LittleBlueToothTests {
             }) { (answer) in
                 print("Sub1: \(answer)")
                 if firstCounter == 10 {
+                    scheduler.cancel()
                     return
                 } else {
                     sub1Event.append(answer.isOn)
@@ -280,11 +288,12 @@ class ListenTest: LittleBlueToothTests {
             firstListenExpectation.fulfill()
         }
         .store(in: &disposeBag)
+        _ = timer.connect()
         
         wait(for: [firstListenExpectation, secondListenExpectation], timeout: 30)
         littleBT.disconnect()
         XCTAssert(sub1Event.count == sub2Event.count)
-        scheduler.cancel()
+        XCTAssert(timerCounter - 1 == sub1Event.count)
     }
     
     func testPowerOffWhileListen() {
