@@ -111,6 +111,12 @@ class UtilityTest: LittleBlueToothTests {
         
         periphId = try? PeripheralIdentifier(string: "")
         XCTAssertNil(periphId)
+        
+        var periphIdTwo = PeripheralIdentifier(uuid: uuid)
+        XCTAssertTrue(periphId == periphIdTwo)
+
+        periphIdTwo = PeripheralIdentifier(uuid: UUID())
+        XCTAssertFalse(periphId == periphIdTwo)
     }
     
     func testShareReplay() {

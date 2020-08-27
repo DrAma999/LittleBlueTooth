@@ -22,7 +22,7 @@ The library is still on development so use at own you risk.
 Add the following to your Cartfile:
 
 ```
-github "DrAma999/LittleBlueTooth" ~> 0.4.0
+github "DrAma999/LittleBlueTooth" ~> 0.5.0
 ```
 Since the framework supports most of the Apple devices, you probably want to to build for a specific platform by adding the option `--platform` after the `carthage update` command. For instance:
 ```
@@ -35,7 +35,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 ### Swift Package Manager
 Add the following dependency to your Package.swift file:
 ```
-.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.4.0")
+.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.5.0")
 ```
 Or simply add the URL from XCode menu Swift packages.
 
@@ -470,7 +470,6 @@ Unexpected can be due for different reasons: device reset, device out of range e
 
 Indipendently if it is unexpected or explicit `LittleBlueTooth` will clean up everything after registering a disconnection.
 
-
 ### Connection event observer
 _Connection event observer_:
 
@@ -533,13 +532,18 @@ You can also *restart* LittleBlueTooth instance by passing the same object that 
 self.littleBT.restart(with: extractedState.central, peripheral: extractedState.peripheral)
 ```
 
+## CUSTOM COMBINE OPERATOR
+Most of the functionalities are also wrapped inside custom operators. I'm not very happy about the implemetation: you must be very sure that you are passing the correct type of data or some inner forced casts will make your application crash, read the documentation above each custom operator. to know the correct types I hope to find a more reliable solution that will involve type checking using the compilator.
+
+### Connect
+
 ## ROADMAP
 - [x] SwiftPM support
 - [x] State preservation and state restoration
 - [ ] Improve code coverage
 - [x] `CBManager` and `CBPeripheral` extraction
 - [x] Add support to: **macOS**, **watchOS**, **tvOS**, **macOS catalyst**
-- [] Implement custom operator
+- [x] Implement custom operator
 
 ## ISSUES
 Please use Gihub, explaining what you did, how you did, what you expect and what you get.

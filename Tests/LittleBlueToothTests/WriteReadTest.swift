@@ -126,6 +126,7 @@ class ReadWriteTest: LittleBlueToothTests {
     }
     
     func testReadLedOFF() {
+        blinky.simulateReset()
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
@@ -254,6 +255,7 @@ class ReadWriteTest: LittleBlueToothTests {
     }
     
     func testMultipleRead() {
+        blinky.simulateReset()
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)

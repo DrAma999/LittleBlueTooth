@@ -118,7 +118,7 @@ public class LittleBlueTooth: Identifiable {
         if _listenPublisher_ == nil {
             let pub =
                 ensureBluetoothState()
-                .flatMap { [unowned self] _ in
+                .flatMapLatest { [unowned self] _ in
                     self.ensurePeripheralReady()
                 }
                 .flatMapLatest { [unowned self] _ in
@@ -316,7 +316,7 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter valueType: The type of the value you want the raw `Data` be converted
     /// - returns: A multicast publisher that will send out values of the type you choose.
     /// - important: The type of the value must be conform to `Readable`
-    public func connectableListenPublisher<T: Readable>(for characteristic: LittleBlueToothCharacteristic, valueType: T.Type) -> Publishers.Multicast<AnyPublisher<T, LittleBluetoothError>, PassthroughSubject<T, LittleBluetoothError>> {
+    public func connectableListenPublisher<T: Readable>(for characteristic: LittleBlueToothCharacteristic, valueType: T.Type) -> Publishers.MakeConnectable<AnyPublisher<T, LittleBluetoothError>> {
         
            let listen = ensureBluetoothState()
            .print("ConnectableListenPublisher")
@@ -349,7 +349,8 @@ public class LittleBlueTooth: Identifiable {
            }
            .share()
            .eraseToAnyPublisher()
-        return Publishers.Multicast(upstream: listen, createSubject:{ PassthroughSubject() })
+           
+        return  Publishers.MakeConnectable(upstream: listen)
        }
     
        
@@ -439,6 +440,7 @@ public class LittleBlueTooth: Identifiable {
         
         let key = UUID()
         ensureBluetoothState()
+        .prefix(1)
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
         }
@@ -476,6 +478,7 @@ public class LittleBlueTooth: Identifiable {
         let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
         
         ensureBluetoothState()
+        .prefix(1)
         .print("ReadPublisher")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
@@ -530,6 +533,7 @@ public class LittleBlueTooth: Identifiable {
         let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
 
         ensureBluetoothState()
+        .prefix(1)
         .print("WritePublisher")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
@@ -569,6 +573,7 @@ public class LittleBlueTooth: Identifiable {
         let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
 
         ensureBluetoothState()
+        .prefix(1)
         .print("WriteAndListePublisher")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
@@ -623,6 +628,7 @@ public class LittleBlueTooth: Identifiable {
 
         scanning =
         ensureBluetoothState()
+        .prefix(1)
         .print("DiscoverPublisher")
         .map { [unowned self] _  -> Void in
             if self.cbCentral.isScanning {
@@ -698,6 +704,11 @@ public class LittleBlueTooth: Identifiable {
         let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
         
         ensureBluetoothState()
+        .prefix(1)
+        .map { state -> BluetoothState in
+            print("BT STATE FROM CONN")
+            return state
+        }
         .print("ConnectPublisher")
         .tryMap { [unowned self] _ -> Void in
             let filtered = self.cbCentral.retrievePeripherals(withIdentifiers: [peripheralIdentifier.id]).filter { (periph) -> Bool in
@@ -970,8 +981,8 @@ public class LittleBlueTooth: Identifiable {
     
     private func removeAndCancelSubscriber(for key: UUID) {
         let sub = disposeBag[key]
-        disposeBag.removeValue(forKey: key)
         sub?.cancel()
+        disposeBag.removeValue(forKey: key)
     }
     
     private func cleanUpForDisconnection() {

@@ -22,10 +22,10 @@
 
 /* Begin PBXBuildFile section */
 		650F378924F6B9B600C35395 /* ReadAndWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650F378824F6B9B600C35395 /* ReadAndWrite.swift */; };
-		650F378B24F6BED200C35395 /* CustomOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650F378A24F6BED200C35395 /* CustomOperator.swift */; };
 		650F378C24F6BEF100C35395 /* ReadAndWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650F378824F6B9B600C35395 /* ReadAndWrite.swift */; };
 		650F378E24F6C33200C35395 /* Listen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650F378D24F6C33200C35395 /* Listen.swift */; };
 		650F378F24F6C33900C35395 /* Listen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650F378D24F6C33200C35395 /* Listen.swift */; };
+		650F379124F7A82100C35395 /* CustomOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650F379024F7A82100C35395 /* CustomOperator.swift */; };
 		654BCE8B24E03544002FC7A4 /* Extraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654BCE8A24E03544002FC7A4 /* Extraction.swift */; };
 		654BCE8E24E077DC002FC7A4 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654BCE8D24E077DC002FC7A4 /* Helper.swift */; };
 		654BCE8F24E07804002FC7A4 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654BCE8D24E077DC002FC7A4 /* Helper.swift */; };
@@ -99,8 +99,8 @@
 
 /* Begin PBXFileReference section */
 		650F378824F6B9B600C35395 /* ReadAndWrite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadAndWrite.swift; sourceTree = "<group>"; };
-		650F378A24F6BED200C35395 /* CustomOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomOperator.swift; sourceTree = "<group>"; };
 		650F378D24F6C33200C35395 /* Listen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Listen.swift; sourceTree = "<group>"; };
+		650F379024F7A82100C35395 /* CustomOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomOperator.swift; sourceTree = "<group>"; };
 		654BCE8A24E03544002FC7A4 /* Extraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extraction.swift; sourceTree = "<group>"; };
 		654BCE8D24E077DC002FC7A4 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		655330DC24BF159D007D299B /* CentralRestorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralRestorer.swift; sourceTree = "<group>"; };
@@ -279,7 +279,7 @@
 				655330DE24BF5446007D299B /* StateRestoration.swift */,
 				6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */,
 				654BCE8A24E03544002FC7A4 /* Extraction.swift */,
-				650F378A24F6BED200C35395 /* CustomOperator.swift */,
+				650F379024F7A82100C35395 /* CustomOperator.swift */,
 			);
 			name = LittleBlueToothTests;
 			path = Tests/LittleBlueToothTests;
@@ -539,7 +539,7 @@
 			files = (
 				OBJ_82 /* ConnectionTest.swift in Sources */,
 				655F49E224CF3DA400C24461 /* StateRestoration.swift in Sources */,
-				650F378B24F6BED200C35395 /* CustomOperator.swift in Sources */,
+				650F379124F7A82100C35395 /* CustomOperator.swift in Sources */,
 				OBJ_83 /* ListenTest.swift in Sources */,
 				654BCE8B24E03544002FC7A4 /* Extraction.swift in Sources */,
 				OBJ_84 /* LittleBlueToothTests.swift in Sources */,
@@ -638,7 +638,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -DTEST";
@@ -729,7 +729,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
@@ -763,7 +763,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -DTEST";
@@ -797,7 +797,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
@@ -936,7 +936,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
@@ -970,7 +970,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";

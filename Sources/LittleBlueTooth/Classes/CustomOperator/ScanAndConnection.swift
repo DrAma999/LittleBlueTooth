@@ -14,7 +14,7 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
-extension Publisher {
+extension Publisher where Self.Failure == LittleBluetoothError {
     
     public func startDiscovery(for littleBluetooth: LittleBlueTooth, withServices services: [CBUUID]?, timeout: TimeInterval? = nil, options: [String : Any]? = nil) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> {
         func startDiscovery<Upstream: Publisher>(upstream: Upstream,
@@ -27,15 +27,17 @@ extension Publisher {
                     littleBluetooth.startDiscovery(withServices: services, timeout: timeout, options: options)
             }
         }
-        let head = self.mapError { $0 as! LittleBluetoothError}
-        return startDiscovery(upstream: head,
+        return startDiscovery(upstream: self,
                               for: littleBluetooth,
                               withServices: services,
                               timeout: timeout,
                               options: options)
     }
+}
+
+extension Publisher where Self.Output == PeripheralDiscovery, Self.Failure == LittleBluetoothError {
     
-    public func connectToDiscovery(for littleBluetooth: LittleBlueTooth,
+    public func connect(for littleBluetooth: LittleBlueTooth,
                  timeout: TimeInterval? = nil,
                  options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         
@@ -45,18 +47,20 @@ extension Publisher {
                                           options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> where Upstream.Output == PeripheralDiscovery, Upstream.Failure == LittleBluetoothError {
             return upstream
             .flatMapLatest { (periph) in
-                littleBluetooth.connect(to: PeripheralIdentifier(peripheral: periph.cbPeripheral), options: options)
+                littleBluetooth.connect(to: periph, options: options)
             }.eraseToAnyPublisher()
         }
         
-        let head = self.mapError { $0 as! LittleBluetoothError}.map{$0 as! PeripheralDiscovery}
-        return connect(upstream: head,
+        return connect(upstream: self,
                        for: littleBluetooth,
                        timeout: timeout,
                        options: options)
     }
-    
-    public func connectToIdentifier(for littleBluetooth: LittleBlueTooth,
+}
+
+extension Publisher where Self.Output == PeripheralIdentifier, Self.Failure == LittleBluetoothError {
+
+    public func connect(for littleBluetooth: LittleBlueTooth,
                  timeout: TimeInterval? = nil,
                  options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         
@@ -70,13 +74,15 @@ extension Publisher {
             }.eraseToAnyPublisher()
         }
         
-        let head = self.mapError { $0 as! LittleBluetoothError}.map{$0 as! PeripheralIdentifier}
-        return connect(upstream: head,
+        return connect(upstream: self,
                        for: littleBluetooth,
                        timeout: timeout,
                        options: options)
     }
-    // Disconnect
+}
+
+extension Publisher where Self.Failure == LittleBluetoothError {
+    
     @discardableResult
     public func disconnect(for littleBluetooth: LittleBlueTooth) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         func disconnect<Upstream: Publisher>(upstream: Upstream,
@@ -86,11 +92,11 @@ extension Publisher {
                 littleBluetooth.disconnect()
             }
         }
-        let head = self.mapError { $0 as! LittleBluetoothError}
-        return disconnect(upstream: head,
+        return disconnect(upstream: self,
                           for: littleBluetooth)
     }
-    // STOP Discovery
+
+
     public func stopDiscovery(for littleBluetooth: LittleBlueTooth) -> AnyPublisher<Void, LittleBluetoothError> {
         func stopDiscovery<Upstream: Publisher>(upstream: Upstream,
                                                 for littleBluetooth: LittleBlueTooth) -> AnyPublisher<Void, LittleBluetoothError>where  Upstream.Failure == LittleBluetoothError {
@@ -99,8 +105,7 @@ extension Publisher {
                 littleBluetooth.stopDiscovery()
             }
         }
-        let head = self.mapError { $0 as! LittleBluetoothError}
-               return stopDiscovery(upstream: head,
+        return stopDiscovery(upstream: self,
                                  for: littleBluetooth)
     }
 }

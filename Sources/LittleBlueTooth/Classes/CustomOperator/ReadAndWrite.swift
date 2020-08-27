@@ -14,7 +14,22 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
-extension Publisher {
+extension Publisher where Self.Failure == LittleBluetoothError {
+    
+    public func readRSSI(for littleBluetooth: LittleBlueTooth) -> AnyPublisher<Int, LittleBluetoothError> {
+        
+        func readRSSI<Upstream: Publisher>(upstream: Upstream,
+                                           for littleBluetooth: LittleBlueTooth) -> AnyPublisher<Int, LittleBluetoothError> where Upstream.Failure == LittleBluetoothError {
+            return upstream
+                .flatMapLatest { _ in
+                    littleBluetooth.readRSSI()
+            }
+        }
+        return readRSSI(upstream: self,
+                        for: littleBluetooth)
+    }
+    
+    
     public func read<T: Readable>(for littleBluetooth: LittleBlueTooth,
                                   from characteristic: LittleBlueToothCharacteristic,
                                   timeout: TimeInterval? = nil) -> AnyPublisher<T, LittleBluetoothError> {
@@ -29,8 +44,7 @@ extension Publisher {
             }
         }
         
-        let head = self.mapError {$0 as! LittleBluetoothError}
-        return read(upstream: head,
+        return read(upstream: self,
                     for: littleBluetooth,
                     from: characteristic,
                     timeout: timeout)
@@ -55,13 +69,34 @@ extension Publisher {
             }
         }
         
-        let head = self.mapError {$0 as! LittleBluetoothError}
-        return write(upstream: head,
+        return write(upstream: self,
                      for: littleBluetooth,
                      from: characteristic,
                      value: value,
                      response: response,
                      timeout: timeout)
+    }
+    
+    public func writeAndListen<W: Writable, R: Readable>(for littleBluetooth: LittleBlueTooth,
+                                                         from characteristic: LittleBlueToothCharacteristic,
+                                                         timeout: TimeInterval? = nil,
+                                                         value: W) -> AnyPublisher<R, LittleBluetoothError> {
+        func writeAndListen<W: Writable, R: Readable, Upstream: Publisher>(upstream: Upstream,
+                                                                           for littleBluetooth: LittleBlueTooth,
+                                                                           from characteristic: LittleBlueToothCharacteristic,
+                                                                           timeout: TimeInterval? = nil,
+                                                                           value: W) -> AnyPublisher<R, LittleBluetoothError> where  Upstream.Failure == LittleBluetoothError {
+           return upstream
+                .flatMapLatest { _ in
+                    littleBluetooth.writeAndListen(from: characteristic,
+                                                   timeout: timeout,
+                                                   value: value)
+            }
+        }
+        return writeAndListen(upstream: self,
+                              for: littleBluetooth,
+                              from: characteristic,
+                              value: value)
     }
     
 }

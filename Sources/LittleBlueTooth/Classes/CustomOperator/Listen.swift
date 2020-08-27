@@ -14,24 +14,8 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
-extension Publisher {
-    public func startListen<T: Readable>(for littleBluetooth: LittleBlueTooth,
-                                         from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
-        
-        func startListen<T: Readable, Upstream: Publisher>(upstream: Upstream,
-                                                           for littleBluetooth: LittleBlueTooth,
-                                                           from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> where Upstream.Failure == LittleBluetoothError {
-            return upstream
-                .flatMapLatest { _ in
-                    littleBluetooth.startListen(from: charact)
-            }
-        }
-        
-        let head = self.mapError {$0 as! LittleBluetoothError}
-        return startListen(upstream: head,
-                           for: littleBluetooth,
-                           from: charact)
-    }
+extension Publisher where Self.Failure == LittleBluetoothError {
+
     
     public func enableListen(for littleBluetooth: LittleBlueTooth,
                              from characteristic: LittleBlueToothCharacteristic) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
@@ -45,11 +29,48 @@ extension Publisher {
             }
         }
         
-        let head = self.mapError {$0 as! LittleBluetoothError}
-        return enableListen(upstream: head,
+        return enableListen(upstream: self,
                             for: littleBluetooth,
                             from: characteristic)
     }
+    
+    public func startListen<T: Readable>(for littleBluetooth: LittleBlueTooth,
+                                         from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
+        
+        func startListen<T: Readable, Upstream: Publisher>(upstream: Upstream,
+                                                           for littleBluetooth: LittleBlueTooth,
+                                                           from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> where Upstream.Failure == LittleBluetoothError {
+            return upstream
+                .flatMapLatest { _ in
+                    littleBluetooth.startListen(from: charact)
+            }
+        }
+        
+        return startListen(upstream: self,
+                           for: littleBluetooth,
+                           from: charact)
+    }
+    
+//    public func connectableListenPublisher<T: Readable>(for littleBluetooth: LittleBlueTooth,
+//                                                        for characteristic: LittleBlueToothCharacteristic,
+//                                                        valueType: T.Type) ->  Publishers.MakeConnectable<AnyPublisher<T, LittleBluetoothError>> {
+//        
+//        func connectableListenPublisher<T: Readable, Upstream: Publisher>(upstream: Upstream,
+//                                                                          for littleBluetooth: LittleBlueTooth, for characteristic: LittleBlueToothCharacteristic, valueType: T.Type) ->  Publishers.MakeConnectable<AnyPublisher<T, LittleBluetoothError>> where Upstream.Failure == LittleBluetoothError {
+//            let up = upstream
+//                .flatMapLatest { _ in
+//                    littleBluetooth.connectableListenPublisher(for: characteristic,
+//                                                               valueType: valueType)
+//            }.eraseToAnyPublisher()
+//            return Publishers.MakeConnectable(upstream: up)
+//            
+//        }
+//        return connectableListenPublisher(upstream: self,
+//                                          for: littleBluetooth,
+//                                          for: characteristic,
+//                                          valueType: valueType)
+//
+//    }
 
     
     public func disableListen(for littleBluetooth: LittleBlueTooth,
@@ -62,8 +83,7 @@ extension Publisher {
                     littleBluetooth.disableListen(from: characteristic)
             }
         }
-        let head = self.mapError {$0 as! LittleBluetoothError}
-        return disableListen(upstream: head,
+        return disableListen(upstream: self,
                              for: littleBluetooth,
                              from: characteristic)
     }
