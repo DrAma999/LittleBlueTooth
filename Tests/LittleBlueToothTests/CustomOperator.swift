@@ -31,7 +31,7 @@ class CustomOperator: LittleBlueToothTests {
         
         var connectedPeripheral: Peripheral?
         
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .sink(receiveCompletion: { completion in
@@ -63,7 +63,7 @@ class CustomOperator: LittleBlueToothTests {
         
         var connectedPeripheral: Peripheral?
         
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .prefix(1)
         .map{ PeripheralIdentifier(peripheral: $0.cbPeripheral)}
@@ -98,7 +98,7 @@ class CustomOperator: LittleBlueToothTests {
         var isStopped = false
         var periphCounter = 0
         
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .map { periph in
            periphCounter += 1
@@ -131,7 +131,7 @@ class CustomOperator: LittleBlueToothTests {
         
         var rssiRead: Int?
         
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .readRSSI(for: self.littleBT)
@@ -163,7 +163,7 @@ class CustomOperator: LittleBlueToothTests {
         let disconnectionExpectation = expectation(description: "Disconnection expectation")
         var isDisconnected = false
         
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: littleBT)
         .delay(for: .seconds(5), scheduler: DispatchQueue.global())
@@ -192,7 +192,7 @@ class CustomOperator: LittleBlueToothTests {
         
         var ledState: LedState?
         
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .read(for: self.littleBT, from: charateristic)
@@ -224,7 +224,7 @@ class CustomOperator: LittleBlueToothTests {
 
         var isWrong = false
         
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .read(for: self.littleBT, from: charateristic)
@@ -262,7 +262,7 @@ class CustomOperator: LittleBlueToothTests {
         
         var ledState: LedState?
         
-        Start
+        StartLittleBlueTooth
             .startDiscovery(for: self.littleBT, withServices: nil)
             .connect(for: self.littleBT)
             .write(for: self.littleBT, from: charateristic, value: Data([0x01]))
@@ -305,7 +305,7 @@ class CustomOperator: LittleBlueToothTests {
         }
         .store(in: &self.disposeBag)
         
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .prefix(1)
         .connect(for: self.littleBT)
@@ -347,7 +347,7 @@ class CustomOperator: LittleBlueToothTests {
             print("Led value:\(value)")
         }
         
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .startListen(for: self.littleBT, from: charateristic)
@@ -454,7 +454,7 @@ class CustomOperator: LittleBlueToothTests {
         }
         .store(in: &self.disposeBag)
 
-        Start
+        StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .enableListen(for: self.littleBT, from: charateristicOne)

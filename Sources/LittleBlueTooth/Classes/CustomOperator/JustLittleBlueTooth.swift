@@ -8,4 +8,4 @@
 import Foundation
 import Combine
 
-public let Start = Just(()).setFailureType(to: LittleBluetoothError.self)
+public let StartLittleBlueTooth = Just(()).setFailureType(to: LittleBluetoothError.self)
