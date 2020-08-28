@@ -14,9 +14,18 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
+
+// MARK: - Listen
+
 extension Publisher where Self.Failure == LittleBluetoothError {
 
-    
+    /// Returns a  publisher with the `LittleBlueToothCharacteristic` where the notify command has been activated.
+    /// After starting the listen command you should subscribe to the `listenPublisher` to be notified.
+    /// - parameter littleBluetooth: the `LittleBlueTooth` instance
+    /// - parameter characteristic: Characteristc you want to be notified.
+    /// - returns: A  publisher with the `LittleBlueToothCharacteristic` where the notify command has been activated.
+    /// - important: This publisher only activate the notification on a specific characteristic, it will not send notified values.
+    /// After starting the listen command you should subscribe to the `listenPublisher` to be notified.
     public func enableListen(for littleBluetooth: LittleBlueTooth,
                              from characteristic: LittleBlueToothCharacteristic) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
         
@@ -34,6 +43,11 @@ extension Publisher where Self.Failure == LittleBluetoothError {
                             from: characteristic)
     }
     
+    /// Returns a shared publisher for listening to a specific characteristic.
+    /// - parameter littleBluetooth: the `LittleBlueTooth` instance
+    /// - parameter characteristic: Characteristc you want to be notified.
+    /// - returns: A shared publisher that will send out values of the type defined by the generic type.
+    /// - important: The type of the value must be conform to `Readable`
     public func startListen<T: Readable>(for littleBluetooth: LittleBlueTooth,
                                          from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
         
@@ -50,29 +64,10 @@ extension Publisher where Self.Failure == LittleBluetoothError {
                            for: littleBluetooth,
                            from: charact)
     }
-    
-//    public func connectableListenPublisher<T: Readable>(for littleBluetooth: LittleBlueTooth,
-//                                                        for characteristic: LittleBlueToothCharacteristic,
-//                                                        valueType: T.Type) ->  Publishers.MakeConnectable<AnyPublisher<T, LittleBluetoothError>> {
-//        
-//        func connectableListenPublisher<T: Readable, Upstream: Publisher>(upstream: Upstream,
-//                                                                          for littleBluetooth: LittleBlueTooth, for characteristic: LittleBlueToothCharacteristic, valueType: T.Type) ->  Publishers.MakeConnectable<AnyPublisher<T, LittleBluetoothError>> where Upstream.Failure == LittleBluetoothError {
-//            let up = upstream
-//                .flatMapLatest { _ in
-//                    littleBluetooth.connectableListenPublisher(for: characteristic,
-//                                                               valueType: valueType)
-//            }.eraseToAnyPublisher()
-//            return Publishers.MakeConnectable(upstream: up)
-//            
-//        }
-//        return connectableListenPublisher(upstream: self,
-//                                          for: littleBluetooth,
-//                                          for: characteristic,
-//                                          valueType: valueType)
-//
-//    }
 
-    
+    /// Disable listen from a specific characteristic
+    /// - parameter characteristic: characteristic you want to stop listen
+    /// - returns: A publisher with that informs you about the successful or failed task
     public func disableListen(for littleBluetooth: LittleBlueTooth,
                               from characteristic: LittleBlueToothCharacteristic) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
         func disableListen<Upstream: Publisher>(upstream: Upstream,

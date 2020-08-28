@@ -23,6 +23,7 @@ public enum LittleBluetoothError: Error {
     case writeAndListenTimeout
     case readTimeout
     case writeTimeout
+    case operationTimeout
     case invalidUUID(String)
     case serviceNotFound(Error?)
     case characteristicNotFound(Error?)

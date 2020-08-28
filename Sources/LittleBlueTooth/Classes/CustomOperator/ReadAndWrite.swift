@@ -15,7 +15,10 @@ import CoreBluetooth
 #endif
 
 extension Publisher where Self.Failure == LittleBluetoothError {
-    
+    // MARK: - RSSI
+    /// Returns a  publisher with the `Int`value of the RSSI.
+    /// - parameter littleBluetooth: the `LittleBlueTooth` instance
+    /// - returns: A  publisher with the `Int` value of the RSSI..
     public func readRSSI(for littleBluetooth: LittleBlueTooth) -> AnyPublisher<Int, LittleBluetoothError> {
         
         func readRSSI<Upstream: Publisher>(upstream: Upstream,
@@ -29,7 +32,13 @@ extension Publisher where Self.Failure == LittleBluetoothError {
                         for: littleBluetooth)
     }
     
+    // MARK: - Read
     
+    /// Read a value from a specific charteristic
+    /// - parameter littleBluetooth: the `LittleBlueTooth` instance
+    /// - parameter characteristic: characteristic where you want to read
+    /// - returns: A publisher with the value you want to read.
+    /// - important: The type of the value must be conform to `Readable`
     public func read<T: Readable>(for littleBluetooth: LittleBlueTooth,
                                   from characteristic: LittleBlueToothCharacteristic,
                                   timeout: TimeInterval? = nil) -> AnyPublisher<T, LittleBluetoothError> {
@@ -50,7 +59,15 @@ extension Publisher where Self.Failure == LittleBluetoothError {
                     timeout: timeout)
     }
     
-    
+    // MARK: - Write
+
+    /// Write a value to a specific charteristic
+    /// - parameter littleBluetooth: the `LittleBlueTooth` instance
+    /// - parameter characteristic: characteristic where you want to write
+    /// - parameter value: The value you want to write
+    /// - parameter response: An optional `Bool` value that will look for error after write operation
+    /// - returns: A publisher with that informs you about eventual error
+    /// - important: The type of the value must be conform to `Writable`
     public func write<T: Writable>(for littleBluetooth: LittleBlueTooth,
                                    from characteristic: LittleBlueToothCharacteristic,
                                    value: T,
@@ -77,6 +94,12 @@ extension Publisher where Self.Failure == LittleBluetoothError {
                      timeout: timeout)
     }
     
+    /// Write a value to a specific charteristic and wait for a response
+    /// - parameter littleBluetooth: the `LittleBlueTooth` instance
+    /// - parameter characteristic: characteristic where you want to write and listen
+    /// - parameter value: The value you want to write must conform to `Writable`
+    /// - returns: A publisher with that post and error or the response of the write requests.
+    /// - important: Written value must conform to `Writable`, response must conform to `Readable`
     public func writeAndListen<W: Writable, R: Readable>(for littleBluetooth: LittleBlueTooth,
                                                          from characteristic: LittleBlueToothCharacteristic,
                                                          timeout: TimeInterval? = nil,
