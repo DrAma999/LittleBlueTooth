@@ -128,8 +128,9 @@ class ScanDiscoveryTest: LittleBlueToothTests {
         let discoveryExpectation = expectation(description: "Discovery Expectation")
 
         var isScanTimeout = false
-        
-        littleBT.startDiscovery(withServices: nil, timeout: 3, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        let timeout = TimeInterval(3)
+        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout.dispatchInterval), scheduler: DispatchQueue.main, options: nil, error: .scanTimeout)
         .flatMap { discovery in
             self.littleBT.connect(to: discovery)
         }

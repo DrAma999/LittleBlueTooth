@@ -21,21 +21,19 @@ extension Publisher where Self.Failure == LittleBluetoothError {
     /// - parameter services: Services for peripheral you are looking for
     /// - parameter options: Scanning options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with stream of disovered peripherals.
-    public func startDiscovery(for littleBluetooth: LittleBlueTooth, withServices services: [CBUUID]?, timeout: TimeInterval? = nil, options: [String : Any]? = nil) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> {
+    public func startDiscovery(for littleBluetooth: LittleBlueTooth, withServices services: [CBUUID]?, options: [String : Any]? = nil) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> {
         func startDiscovery<Upstream: Publisher>(upstream: Upstream,
                                                  for littleBluetooth: LittleBlueTooth,
                                                  withServices services: [CBUUID]?,
-                                                 timeout: TimeInterval? = nil,
                                                  options: [String : Any]? = nil) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> where Upstream.Failure == LittleBluetoothError {
             return upstream
                 .flatMapLatest { _ in
-                    littleBluetooth.startDiscovery(withServices: services, timeout: timeout, options: options)
+                    littleBluetooth.startDiscovery(withServices: services, options: options)
             }
         }
         return startDiscovery(upstream: self,
                               for: littleBluetooth,
                               withServices: services,
-                              timeout: timeout,
                               options: options)
     }
     
@@ -63,12 +61,10 @@ extension Publisher where Self.Output == PeripheralDiscovery, Self.Failure == Li
     /// - parameter options: Connecting options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with the just connected `Peripheral`.
     public func connect(for littleBluetooth: LittleBlueTooth,
-                 timeout: TimeInterval? = nil,
                  options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         
         func connect<Upstream: Publisher>(upstream: Upstream,
                                           for littleBluetooth: LittleBlueTooth,
-                                          timeout: TimeInterval? = nil,
                                           options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> where Upstream.Output == PeripheralDiscovery, Upstream.Failure == LittleBluetoothError {
             return upstream
             .flatMapLatest { (periph) in
@@ -78,7 +74,6 @@ extension Publisher where Self.Output == PeripheralDiscovery, Self.Failure == Li
         
         return connect(upstream: self,
                        for: littleBluetooth,
-                       timeout: timeout,
                        options: options)
     }
 }
@@ -90,12 +85,10 @@ extension Publisher where Self.Output == PeripheralIdentifier, Self.Failure == L
     /// - parameter options: Connecting options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with the just connected `Peripheral`.
     public func connect(for littleBluetooth: LittleBlueTooth,
-                 timeout: TimeInterval? = nil,
                  options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         
         func connect<Upstream: Publisher>(upstream: Upstream,
                                           for littleBluetooth: LittleBlueTooth,
-                                          timeout: TimeInterval? = nil,
                                           options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> where Upstream.Output == PeripheralIdentifier, Upstream.Failure == LittleBluetoothError {
             return upstream
             .flatMapLatest { (periph) in
@@ -105,7 +98,6 @@ extension Publisher where Self.Output == PeripheralIdentifier, Self.Failure == L
         
         return connect(upstream: self,
                        for: littleBluetooth,
-                       timeout: timeout,
                        options: options)
     }
 }

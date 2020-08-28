@@ -60,7 +60,13 @@ All `LittleBluetoothConfiguration` properties are optional.
     littleBT = LittleBlueTooth(with: littleBTConf)
 ```
 ### Scan
-You can scan with or without a timeout, after a timeout you receive a `.scanTimeout` error. Note that each peripheral found is published to the subscribers chain until you stop the scan request or you connect to a device (when you connect scan is automatically suspended.
+You can scan with or without a timeout, after a timeout you receive a `.scanTimeout` error. 
+You can set up your timeout for each sort of operation, for instance for a scan:
+```
+anycanc = littleBT.startDiscovery(withServices: [littleChar.service])
+.timeout(DispatchQueue.SchedulerTimeType.Stride(timeout.dispatchInterval), scheduler: DispatchQueue.main, options: nil, error: .scanTimeout)
+```
+Note that each peripheral found is published to the subscribers chain until you stop the scan request or you connect to a device (when you connect scan is automatically suspended.
 
 _Scan and stop_:
 
