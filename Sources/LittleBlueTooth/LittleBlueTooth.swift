@@ -892,38 +892,54 @@ public class LittleBlueTooth: Identifiable {
       }
     
     private func ensureBluetoothState() -> AnyPublisher<BluetoothState, LittleBluetoothError> {
-        let centralState =
-            self.centralProxy.centralStatePublisher
-            .print("CentralStatePublisher")
-            .tryFilter { [unowned self] (state) -> Bool in
-                switch state {
-                case .poweredOff:
-                    if let periph = self.peripheral {
-                        let connEvent = ConnectionEvent.disconnected(periph.cbPeripheral, error: .bluetoothPoweredOff)
-                        self.centralProxy.connectionEventPublisher.send(connEvent)
-                    }
-                    throw LittleBluetoothError.bluetoothPoweredOff
-                case .unauthorized:
-                    throw LittleBluetoothError.bluetoothUnauthorized
-                case .unsupported:
-                    throw LittleBluetoothError.bluetoothUnsupported
-                case .unknown, .resetting:
-                    return false
-                case .poweredOn:
-                    return true
-                }
-            }
-            .mapError { (error) -> LittleBluetoothError in
-                error as! LittleBluetoothError
-            }
-            .map { state -> BluetoothState in
-                print("CBManager state: \(state)")
-                return state
-            }
-            
-        .eraseToAnyPublisher()
 
-        return centralState
+        let futKey = UUID()
+        let future = Deferred {
+            Future<BluetoothState, LittleBluetoothError> { [unowned self] prom in
+                self.centralProxy.centralStatePublisher
+                .print("CentralStatePublisher")
+                .tryFilter { [unowned self] (state) -> Bool in
+                    switch state {
+                    case .poweredOff:
+                        if let periph = self.peripheral {
+                            let connEvent = ConnectionEvent.disconnected(periph.cbPeripheral, error: .bluetoothPoweredOff)
+                            self.centralProxy.connectionEventPublisher.send(connEvent)
+                        }
+                        throw LittleBluetoothError.bluetoothPoweredOff
+                    case .unauthorized:
+                        throw LittleBluetoothError.bluetoothUnauthorized
+                    case .unsupported:
+                        throw LittleBluetoothError.bluetoothUnsupported
+                    case .unknown, .resetting:
+                        return false
+                    case .poweredOn:
+                        return true
+                    }
+                }
+                .mapError { (error) -> LittleBluetoothError in
+                    error as! LittleBluetoothError
+                }
+                .map { state -> BluetoothState in
+                    print("CBManager state: \(state)")
+                    return state
+                }
+                .sink(receiveCompletion: { [unowned self, futKey] (completion) in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        prom(.failure(error))
+                        self.removeAndCancelSubscriber(for: futKey)
+                    }
+                }) { [unowned self] (state) in
+                    prom(.success(state))
+                    self.removeAndCancelSubscriber(for: futKey)
+                }
+                .store(in: &self.disposeBag, for: futKey)
+            }
+        }
+        return future.eraseToAnyPublisher()
+
     }
    
     private func ensurePeripheralReady() -> AnyPublisher<Peripheral, LittleBluetoothError> {
@@ -931,6 +947,7 @@ public class LittleBlueTooth: Identifiable {
             let state = peripheral?.state
             return Result<Peripheral, LittleBluetoothError>.Publisher(.failure(.peripheralNotConnected(state: state ?? .disconnected))).eraseToAnyPublisher()
         }
+        
         return self.centralProxy.connectionEventPublisher
         .print("EnsurePeripheralReadyPublisher")
         .tryFilter { (event) -> Bool in
