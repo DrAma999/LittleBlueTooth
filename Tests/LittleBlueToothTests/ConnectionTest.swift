@@ -291,7 +291,7 @@ class ConnectionTest: LittleBlueToothTests {
         }
         .store(in: &disposeBag)
         
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: 100)
         self.littleBT.autoconnectionHandler = nil
         self.littleBT.disconnect()
         print("Autoconn event \(connectionEvent.count)")

@@ -47,9 +47,6 @@
 		65AD4BDB24D437B700C0CBE6 /* CentralRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655330DC24BF159D007D299B /* CentralRestorer.swift */; };
 		65AD4BDC24D437B700C0CBE6 /* CBCentralManagerDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_20 /* CBCentralManagerDelegateProxy.swift */; };
 		65AD4BDD24D437B700C0CBE6 /* CBPeripheralProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_21 /* CBPeripheralProxy.swift */; };
-		65AD4BDE24D437B700C0CBE6 /* ReplaySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* ReplaySubject.swift */; };
-		65AD4BDF24D437B700C0CBE6 /* ReplaySubjectSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* ReplaySubjectSubscription.swift */; };
-		65AD4BE024D437B700C0CBE6 /* ShareReplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* ShareReplay.swift */; };
 		65AD4BE124D437B700C0CBE6 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_27 /* Utilities.swift */; };
 		65AD4BE224D437B700C0CBE6 /* LittleBluetoothConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */; };
 		65AD4BE324D437B700C0CBE6 /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
@@ -57,6 +54,14 @@
 		65AD4BF024D438AD00C0CBE6 /* LittleBlueToothForTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */; };
 		65BA2D0F24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */; };
 		65ED540124D85EFC00558C2C /* CoreBluetoothMock in Frameworks */ = {isa = PBXBuildFile; productRef = 65ED540024D85EFC00558C2C /* CoreBluetoothMock */; };
+		65F63EDF24F8EA73000E3474 /* JustLittleBlueTooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F63EDE24F8EA73000E3474 /* JustLittleBlueTooth.swift */; };
+		65F63EE024F8ED8E000E3474 /* JustLittleBlueTooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F63EDE24F8EA73000E3474 /* JustLittleBlueTooth.swift */; };
+		65F63EE124F92164000E3474 /* ShareReplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* ShareReplay.swift */; };
+		65F63EE224F92165000E3474 /* ShareReplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* ShareReplay.swift */; };
+		65F63EE324F92169000E3474 /* ReplaySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* ReplaySubject.swift */; };
+		65F63EE424F9216A000E3474 /* ReplaySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* ReplaySubject.swift */; };
+		65F63EE524F9216E000E3474 /* ReplaySubjectSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* ReplaySubjectSubscription.swift */; };
+		65F63EE624F9216E000E3474 /* ReplaySubjectSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* ReplaySubjectSubscription.swift */; };
 		OBJ_52 /* LittleBlueToothError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* LittleBlueToothError.swift */; };
 		OBJ_53 /* AdvertisingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* AdvertisingData.swift */; };
 		OBJ_54 /* LittleBlueToothCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* LittleBlueToothCharacteristic.swift */; };
@@ -64,9 +69,6 @@
 		OBJ_56 /* PeripheralDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_18 /* PeripheralDiscovery.swift */; };
 		OBJ_57 /* CBCentralManagerDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_20 /* CBCentralManagerDelegateProxy.swift */; };
 		OBJ_58 /* CBPeripheralProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_21 /* CBPeripheralProxy.swift */; };
-		OBJ_59 /* ReplaySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* ReplaySubject.swift */; };
-		OBJ_60 /* ReplaySubjectSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* ReplaySubjectSubscription.swift */; };
-		OBJ_61 /* ShareReplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* ShareReplay.swift */; };
 		OBJ_62 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_27 /* Utilities.swift */; };
 		OBJ_63 /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
 		OBJ_64 /* LittleBlueTooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_29 /* LittleBlueTooth.swift */; };
@@ -111,6 +113,7 @@
 		65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LittleBlueToothForTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65AD4BEC24D437B700C0CBE6 /* LittleBlueTooth copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "LittleBlueTooth copy-Info.plist"; path = "/Users/Andrea/Documents/GitHub/LittleBlueTooth/LittleBlueTooth copy-Info.plist"; sourceTree = "<absolute>"; };
 		65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LittleBluetoothConfiguration.swift; sourceTree = "<group>"; };
+		65F63EDE24F8EA73000E3474 /* JustLittleBlueTooth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustLittleBlueTooth.swift; sourceTree = "<group>"; };
 		"LittleBlueTooth::LittleBlueTooth::Product" /* LittleBlueTooth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LittleBlueTooth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"LittleBlueTooth::LittleBlueToothTests::Product" /* LittleBlueToothTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = LittleBlueToothTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -183,6 +186,7 @@
 				6574671524F631F700E08B47 /* ScanAndConnection.swift */,
 				650F378824F6B9B600C35395 /* ReadAndWrite.swift */,
 				650F378D24F6C33200C35395 /* Listen.swift */,
+				65F63EDE24F8EA73000E3474 /* JustLittleBlueTooth.swift */,
 			);
 			path = CustomOperator;
 			sourceTree = "<group>";
@@ -476,20 +480,21 @@
 			buildActionMask = 0;
 			files = (
 				65AD4BD624D437B700C0CBE6 /* LittleBlueToothError.swift in Sources */,
+				65F63EE024F8ED8E000E3474 /* JustLittleBlueTooth.swift in Sources */,
 				6574671724F684E600E08B47 /* ScanAndConnection.swift in Sources */,
+				65F63EE424F9216A000E3474 /* ReplaySubject.swift in Sources */,
 				65AD4BD724D437B700C0CBE6 /* AdvertisingData.swift in Sources */,
 				650F378C24F6BEF100C35395 /* ReadAndWrite.swift in Sources */,
 				65AD4BD824D437B700C0CBE6 /* LittleBlueToothCharacteristic.swift in Sources */,
 				65AD4BD924D437B700C0CBE6 /* Peripheral.swift in Sources */,
 				65AD4BDA24D437B700C0CBE6 /* PeripheralDiscovery.swift in Sources */,
+				65F63EE624F9216E000E3474 /* ReplaySubjectSubscription.swift in Sources */,
 				65AD4BDB24D437B700C0CBE6 /* CentralRestorer.swift in Sources */,
 				65A6B35124DD29070068FE1C /* Loggable.swift in Sources */,
+				65F63EE224F92165000E3474 /* ShareReplay.swift in Sources */,
 				65AD4BDC24D437B700C0CBE6 /* CBCentralManagerDelegateProxy.swift in Sources */,
 				654BCE8F24E07804002FC7A4 /* Helper.swift in Sources */,
 				65AD4BDD24D437B700C0CBE6 /* CBPeripheralProxy.swift in Sources */,
-				65AD4BDE24D437B700C0CBE6 /* ReplaySubject.swift in Sources */,
-				65AD4BDF24D437B700C0CBE6 /* ReplaySubjectSubscription.swift in Sources */,
-				65AD4BE024D437B700C0CBE6 /* ShareReplay.swift in Sources */,
 				65AD4BE124D437B700C0CBE6 /* Utilities.swift in Sources */,
 				65AD4BE224D437B700C0CBE6 /* LittleBluetoothConfiguration.swift in Sources */,
 				65AD4BE324D437B700C0CBE6 /* CoreBluetoothTypeAliases.swift in Sources */,
@@ -503,20 +508,21 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_52 /* LittleBlueToothError.swift in Sources */,
+				65F63EDF24F8EA73000E3474 /* JustLittleBlueTooth.swift in Sources */,
 				6574671624F631F700E08B47 /* ScanAndConnection.swift in Sources */,
+				65F63EE324F92169000E3474 /* ReplaySubject.swift in Sources */,
 				OBJ_53 /* AdvertisingData.swift in Sources */,
 				650F378924F6B9B600C35395 /* ReadAndWrite.swift in Sources */,
 				OBJ_54 /* LittleBlueToothCharacteristic.swift in Sources */,
 				OBJ_55 /* Peripheral.swift in Sources */,
 				OBJ_56 /* PeripheralDiscovery.swift in Sources */,
+				65F63EE524F9216E000E3474 /* ReplaySubjectSubscription.swift in Sources */,
 				655330DD24BF159D007D299B /* CentralRestorer.swift in Sources */,
 				65A6B35024DD29000068FE1C /* Loggable.swift in Sources */,
+				65F63EE124F92164000E3474 /* ShareReplay.swift in Sources */,
 				OBJ_57 /* CBCentralManagerDelegateProxy.swift in Sources */,
 				654BCE8E24E077DC002FC7A4 /* Helper.swift in Sources */,
 				OBJ_58 /* CBPeripheralProxy.swift in Sources */,
-				OBJ_59 /* ReplaySubject.swift in Sources */,
-				OBJ_60 /* ReplaySubjectSubscription.swift in Sources */,
-				OBJ_61 /* ShareReplay.swift in Sources */,
 				OBJ_62 /* Utilities.swift in Sources */,
 				65BA2D0F24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift in Sources */,
 				OBJ_63 /* CoreBluetoothTypeAliases.swift in Sources */,

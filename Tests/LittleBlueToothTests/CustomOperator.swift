@@ -31,7 +31,8 @@ class CustomOperator: LittleBlueToothTests {
         
         var connectedPeripheral: Peripheral?
         
-        littleBT.startDiscovery(withServices: nil)
+        Start
+        .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -62,7 +63,8 @@ class CustomOperator: LittleBlueToothTests {
         
         var connectedPeripheral: Peripheral?
         
-        littleBT.startDiscovery(withServices: nil)
+        Start
+        .startDiscovery(for: self.littleBT, withServices: nil)
         .prefix(1)
         .map{ PeripheralIdentifier(peripheral: $0.cbPeripheral)}
         .connect(for: self.littleBT)
@@ -95,7 +97,8 @@ class CustomOperator: LittleBlueToothTests {
         scanExpectation.expectedFulfillmentCount = 2
         var isStopped = false
         var periphCounter = 0
-        Just(()).setFailureType(to: LittleBluetoothError.self)
+        
+        Start
         .startDiscovery(for: self.littleBT, withServices: nil)
         .map { periph in
            periphCounter += 1
@@ -128,7 +131,8 @@ class CustomOperator: LittleBlueToothTests {
         
         var rssiRead: Int?
         
-        littleBT.startDiscovery(withServices: nil)
+        Start
+        .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .readRSSI(for: self.littleBT)
         .sink(receiveCompletion: { completion in
@@ -159,7 +163,8 @@ class CustomOperator: LittleBlueToothTests {
         let disconnectionExpectation = expectation(description: "Disconnection expectation")
         var isDisconnected = false
         
-        littleBT.startDiscovery(withServices: nil)
+        Start
+        .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: littleBT)
         .delay(for: .seconds(5), scheduler: DispatchQueue.global())
         .disconnect(for: littleBT)
@@ -187,7 +192,8 @@ class CustomOperator: LittleBlueToothTests {
         
         var ledState: LedState?
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        Start
+        .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .read(for: self.littleBT, from: charateristic)
         .sink(receiveCompletion: { completion in
@@ -218,7 +224,8 @@ class CustomOperator: LittleBlueToothTests {
 
         var isWrong = false
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        Start
+        .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .read(for: self.littleBT, from: charateristic)
         .sink(receiveCompletion: { completion in
@@ -255,7 +262,8 @@ class CustomOperator: LittleBlueToothTests {
         
         var ledState: LedState?
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        Start
+            .startDiscovery(for: self.littleBT, withServices: nil)
             .connect(for: self.littleBT)
             .write(for: self.littleBT, from: charateristic, value: Data([0x01]))
             .read(for: self.littleBT, from: charateristic)
@@ -297,7 +305,8 @@ class CustomOperator: LittleBlueToothTests {
         }
         .store(in: &self.disposeBag)
         
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+        Start
+        .startDiscovery(for: self.littleBT, withServices: nil)
         .prefix(1)
         .connect(for: self.littleBT)
         .writeAndListen(for: self.littleBT, from: charateristic, value: Data([0x01]))
@@ -338,7 +347,8 @@ class CustomOperator: LittleBlueToothTests {
             print("Led value:\(value)")
         }
         
-        littleBT.startDiscovery(withServices: nil)
+        Start
+        .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .startListen(for: self.littleBT, from: charateristic)
         .sink(receiveCompletion: { completion in
@@ -444,7 +454,8 @@ class CustomOperator: LittleBlueToothTests {
         }
         .store(in: &self.disposeBag)
 
-        littleBT.startDiscovery(withServices: nil)
+        Start
+        .startDiscovery(for: self.littleBT, withServices: nil)
         .connect(for: self.littleBT)
         .enableListen(for: self.littleBT, from: charateristicOne)
         .enableListen(for: self.littleBT, from: charateristicTwo)

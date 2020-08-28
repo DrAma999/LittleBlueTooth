@@ -59,14 +59,16 @@ class CBCentralManagerDelegateProxy: NSObject {
     
     let centralDiscoveriesPublisher = PassthroughSubject<PeripheralDiscovery, Never>()
     let connectionEventPublisher = PassthroughSubject<ConnectionEvent, Never>()
-    lazy var centralStatePublisher: AnyPublisher<BluetoothState, Never> = {
-        _centralStatePublisher.shareReplay(1).eraseToAnyPublisher()
+    lazy var centralStatePublisher: AnyPublisher<BluetoothState, Never>
+        = {
+            self._centralStatePublisher.eraseToAnyPublisher()
     }()
+
     lazy var willRestoreStatePublisher: AnyPublisher<CentralRestorer, Never> = {
         _willRestoreStatePublisher.shareReplay(1).eraseToAnyPublisher()
     }()
     
-    let _centralStatePublisher = CurrentValueSubject<BluetoothState, Never>(BluetoothState.unknown)
+    let _centralStatePublisher = CurrentValueSubject<BluetoothState, Never>(.unknown)
     let _willRestoreStatePublisher = PassthroughSubject<CentralRestorer, Never>()
 
     var isLogEnabled: Bool = false

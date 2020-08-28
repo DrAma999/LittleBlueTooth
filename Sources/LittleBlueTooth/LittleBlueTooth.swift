@@ -284,7 +284,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         self.ensureBluetoothState()
-        .prefix(1)
         .print("Read RSSI")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
@@ -320,7 +319,6 @@ public class LittleBlueTooth: Identifiable {
     public func connectableListenPublisher<T: Readable>(for characteristic: LittleBlueToothCharacteristic, valueType: T.Type) -> Publishers.MakeConnectable<AnyPublisher<T, LittleBluetoothError>> {
         
            let listen = ensureBluetoothState()
-           .prefix(1)
            .print("ConnectableListenPublisher")
            .flatMap { [unowned self] _ in
                self.ensurePeripheralReady()
@@ -362,7 +360,6 @@ public class LittleBlueTooth: Identifiable {
     /// - important: The type of the value must be conform to `Readable`
     public func startListen<T: Readable>(from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
         let lis = ensureBluetoothState()
-        .prefix(1)
         .print("StartListenPublisher")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
@@ -408,7 +405,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         self.ensureBluetoothState()
-        .prefix(1)
         .print("StartListenPublisher no Value")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
@@ -444,7 +440,6 @@ public class LittleBlueTooth: Identifiable {
         
         let key = UUID()
         ensureBluetoothState()
-        .prefix(1)
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
         }
@@ -481,7 +476,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         ensureBluetoothState()
-        .prefix(1)
         .print("ReadPublisher")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
@@ -534,7 +528,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
 
         ensureBluetoothState()
-        .prefix(1)
         .print("WritePublisher")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
@@ -572,7 +565,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
 
         ensureBluetoothState()
-        .prefix(1)
         .print("WriteAndListePublisher")
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
@@ -625,7 +617,6 @@ public class LittleBlueTooth: Identifiable {
 
         scanning =
         ensureBluetoothState()
-        .prefix(1)
         .print("DiscoverPublisher")
         .map { [unowned self] _  -> Void in
             if self.cbCentral.isScanning {
@@ -699,7 +690,6 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         ensureBluetoothState()
-        .prefix(1)
         .print("ConnectPublisher")
         .tryMap { [unowned self] _ -> Void in
             let filtered = self.cbCentral.retrievePeripherals(withIdentifiers: [peripheralIdentifier.id]).filter { (periph) -> Bool in
