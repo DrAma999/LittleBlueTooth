@@ -118,7 +118,7 @@ public class LittleBlueTooth: Identifiable {
         if _listenPublisher_ == nil {
             let pub =
                 ensureBluetoothState()
-                .flatMap { [unowned self] _ in
+                .flatMapLatest { [unowned self] _ in
                     self.ensurePeripheralReady()
                 }
                 .flatMapLatest { [unowned self] _ in
@@ -244,9 +244,9 @@ public class LittleBlueTooth: Identifiable {
                 print("Sinking event \(event)")
                 if case ConnectionEvent.disconnected( let peripheral, let error) = event {
                     self.cleanUpForDisconnection()
-                    if let autoCon = self.autoconnectionHandler {
+                    if let autoCon = self.autoconnectionHandler, let er = error {
                         let periph = PeripheralIdentifier(peripheral: peripheral)
-                        if autoCon(periph, error) == true {
+                        if autoCon(periph, er) == true {
                             _ = self.connect(to: periph, autoreconnect: true)
                         }
                     }
@@ -316,7 +316,7 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter valueType: The type of the value you want the raw `Data` be converted
     /// - returns: A multicast publisher that will send out values of the type you choose.
     /// - important: The type of the value must be conform to `Readable`
-    public func connectableListenPublisher<T: Readable>(for characteristic: LittleBlueToothCharacteristic, valueType: T.Type, queue: DispatchQueue = DispatchQueue.main) -> Publishers.Multicast<AnyPublisher<T, LittleBluetoothError>, PassthroughSubject<T, LittleBluetoothError>> {
+    public func connectableListenPublisher<T: Readable>(for characteristic: LittleBlueToothCharacteristic, valueType: T.Type) -> Publishers.MakeConnectable<AnyPublisher<T, LittleBluetoothError>> {
         
            let listen = ensureBluetoothState()
            .print("ConnectableListenPublisher")
@@ -349,7 +349,8 @@ public class LittleBlueTooth: Identifiable {
            }
            .share()
            .eraseToAnyPublisher()
-        return Publishers.Multicast(upstream: listen, createSubject:{ PassthroughSubject() })
+           
+        return  Publishers.MakeConnectable(upstream: listen)
        }
     
        
@@ -357,7 +358,7 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter characteristic: Characteristc you want to be notified.
     /// - returns: A shared publisher that will send out values of the type defined by the generic type.
     /// - important: The type of the value must be conform to `Readable`
-    public func startListen<T: Readable>(from charact: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
+    public func startListen<T: Readable>(from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
         let lis = ensureBluetoothState()
         .print("StartListenPublisher")
         .flatMap { [unowned self] _ in
@@ -398,7 +399,7 @@ public class LittleBlueTooth: Identifiable {
     /// - returns: A  publisher with the `LittleBlueToothCharacteristic` where the notify command has been activated.
     /// - important: This publisher only activate the notification on a specific characteristic, it will not send notified values.
     /// After starting the listen command you should subscribe to the `listenPublisher` to be notified.
-    public func enableListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
+    public func enableListen(from characteristic: LittleBlueToothCharacteristic) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
         
         let startListenSubject = PassthroughSubject<LittleBlueToothCharacteristic, LittleBluetoothError>()
         let key = UUID()
@@ -433,7 +434,7 @@ public class LittleBlueTooth: Identifiable {
     /// Disable listen from a specific characteristic
     /// - parameter characteristic: characteristic you want to stop listen
     /// - returns: A publisher with that informs you about the successful or failed task
-    public func disableListen(from characteristic: LittleBlueToothCharacteristic, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
+    public func disableListen(from characteristic: LittleBlueToothCharacteristic) -> AnyPublisher<LittleBlueToothCharacteristic, LittleBluetoothError> {
         
         let stopSubject = PassthroughSubject<LittleBlueToothCharacteristic, LittleBluetoothError>()
         
@@ -469,11 +470,10 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter characteristic: characteristic where you want to read
     /// - returns: A publisher with the value you want to read.
     /// - important: The type of the value must be conform to `Readable`
-    public func read<T: Readable>(from characteristic: LittleBlueToothCharacteristic, timeout: TimeInterval? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<T, LittleBluetoothError> {
+    public func read<T: Readable>(from characteristic: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
         
         let readSubject = PassthroughSubject<T, LittleBluetoothError>()
         let key = UUID()
-        let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
         
         ensureBluetoothState()
         .print("ReadPublisher")
@@ -495,7 +495,6 @@ public class LittleBlueTooth: Identifiable {
             }
             return .couldNotReadFromCharacteristic(characteristic: characteristic.id, error: error)
         }
-        .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout), scheduler: DispatchQueue.main, customError: {.readTimeout})
         .sink(receiveCompletion: { [unowned self, key] (completion) in
             switch completion {
             case .finished:
@@ -523,11 +522,10 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter response: An optional `Bool` value that will look for error after write operation
     /// - returns: A publisher with that informs you about eventual error
     /// - important: The type of the value must be conform to `Writable`
-    public func write<T: Writable>(to characteristic: LittleBlueToothCharacteristic, timeout: TimeInterval? = nil, value: T, response: Bool = true, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<Void, LittleBluetoothError> {
+    public func write<T: Writable>(to characteristic: LittleBlueToothCharacteristic, value: T, response: Bool = true) -> AnyPublisher<Void, LittleBluetoothError> {
         
         let writeSubject = PassthroughSubject<Void, LittleBluetoothError>()
         let key = UUID()
-        let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
 
         ensureBluetoothState()
         .print("WritePublisher")
@@ -537,7 +535,6 @@ public class LittleBlueTooth: Identifiable {
         .flatMap { periph in
             periph.write(to: characteristic.id, of: characteristic.service, data: value.data, response: response)
         }
-        .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout), scheduler: DispatchQueue.main, customError: {.writeTimeout})
         .sink(receiveCompletion: { [unowned self, key] (completion) in
             switch completion {
             case .finished:
@@ -562,11 +559,10 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter value: The value you want to write must conform to `Writable`
     /// - returns: A publisher with that post and error or the response of the write requests.
     /// - important: Written value must conform to `Writable`, response must conform to `Readable`
-    public func writeAndListen<W: Writable, R: Readable>(from characteristic: LittleBlueToothCharacteristic, timeout: TimeInterval? = nil, value: W, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<R, LittleBluetoothError> {
+    public func writeAndListen<W: Writable, R: Readable>(from characteristic: LittleBlueToothCharacteristic, value: W) -> AnyPublisher<R, LittleBluetoothError> {
 
         let writeListenSubject = PassthroughSubject<R, LittleBluetoothError>()
         let key = UUID()
-        let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
 
         ensureBluetoothState()
         .print("WriteAndListePublisher")
@@ -587,7 +583,6 @@ public class LittleBlueTooth: Identifiable {
             }
             return .couldNotReadFromCharacteristic(characteristic: characteristic.id, error: error)
         }
-        .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout), scheduler: DispatchQueue.main, customError: {.writeAndListenTimeout})
         .sink(receiveCompletion: { [unowned self, key] (completion) in
             switch completion {
             case .finished:
@@ -612,14 +607,13 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter services: Services for peripheral you are looking for
     /// - parameter options: Scanning options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with stream of disovered peripherals.
-    public func startDiscovery(withServices services: [CBUUID]?, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> {
+    public func startDiscovery(withServices services: [CBUUID]?, options: [String : Any]? = nil) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> {
         if self.cbCentral.isScanning {
             self.cbCentral.stopScan()
 //            return Result<PeripheralDiscovery, LittleBluetoothError>.Publisher(.failure(.alreadyScanning)).eraseToAnyPublisher()
         }
         
         let scanSubject = PassthroughSubject<PeripheralDiscovery, LittleBluetoothError>()
-        let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
 
         scanning =
         ensureBluetoothState()
@@ -634,7 +628,6 @@ public class LittleBlueTooth: Identifiable {
             self.cbCentral.scanForPeripherals(withServices: services, options: options)
             return self.centralProxy.centralDiscoveriesPublisher.setFailureType(to: LittleBluetoothError.self)
         }
-        .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout), scheduler: DispatchQueue.main, customError: {.scanTimeout})
         .sink(receiveCompletion: { [unowned self] (completion) in
             switch completion {
             case .finished:
@@ -670,14 +663,14 @@ public class LittleBlueTooth: Identifiable {
     /// Starts connection for `PeripheralIdentifier`
     /// - parameter options: Connecting options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with the just connected `Peripheral`.
-    public func connect(to peripheralIdentifier: PeripheralIdentifier, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<Peripheral, LittleBluetoothError> {
-        return connect(to: peripheralIdentifier, options: options, queue: queue, autoreconnect: false)
+    public func connect(to peripheralIdentifier: PeripheralIdentifier, options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
+        return connect(to: peripheralIdentifier, options: options, autoreconnect: false)
     }
     
     /// Starts connection for `PeripheralDiscovery`
     /// - parameter options: Connecting options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with the just connected `Peripheral`.
-    public func connect(to discovery: PeripheralDiscovery, timeout: TimeInterval? = nil, options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
+    public func connect(to discovery: PeripheralDiscovery, options: [String : Any]? = nil) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         if cbCentral.isScanning {
             scanning?.cancel()
             scanning = nil
@@ -685,17 +678,16 @@ public class LittleBlueTooth: Identifiable {
         }
         let peripheralIdentifier = PeripheralIdentifier(peripheral: discovery.cbPeripheral)
         
-        return connect(to: peripheralIdentifier, timeout: timeout, options: options)
+        return connect(to: peripheralIdentifier, options: options)
     }
     
-    private func connect(to peripheralIdentifier: PeripheralIdentifier, timeout: TimeInterval? = nil, options: [String : Any]? = nil, queue: DispatchQueue = DispatchQueue.main, autoreconnect: Bool) -> AnyPublisher<Peripheral, LittleBluetoothError> {
+    private func connect(to peripheralIdentifier: PeripheralIdentifier, options: [String : Any]? = nil, autoreconnect: Bool) -> AnyPublisher<Peripheral, LittleBluetoothError> {
         if let periph = peripheral, periph.state == .connecting || periph.state == .connected {
             return Result<Peripheral, LittleBluetoothError>.Publisher(.failure(.peripheralAlreadyConnectedOrConnecting(periph))).eraseToAnyPublisher()
         }
         
         let connectSubject = PassthroughSubject<Peripheral, LittleBluetoothError>()
         let key = UUID()
-        let timeout: DispatchTimeInterval = (timeout != nil) ? timeout!.dispatchInterval : .never
         
         ensureBluetoothState()
         .print("ConnectPublisher")
@@ -762,7 +754,6 @@ public class LittleBlueTooth: Identifiable {
         .map { [unowned self] peripheral -> Peripheral in
             return self.peripheral!
         }
-        .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout), scheduler: DispatchQueue.main, customError: {.connectTimeout})
         .sink(receiveCompletion: { [unowned self, key] (completion) in
             switch completion {
             case .finished:
@@ -787,7 +778,7 @@ public class LittleBlueTooth: Identifiable {
     /// Disconnect the connected `Peripheral`
     /// - returns: A publisher with the just disconnected `Peripheral` or a `LittleBluetoothError`
     @discardableResult
-    public func disconnect(queue: DispatchQueue = DispatchQueue.main) -> AnyPublisher<Peripheral, LittleBluetoothError> {
+    public func disconnect() -> AnyPublisher<Peripheral, LittleBluetoothError> {
         
         guard let periph = self.peripheral else {
             return Result<Peripheral, LittleBluetoothError>.Publisher(.failure(.peripheralNotConnectedOrAlreadyDisconnected)).eraseToAnyPublisher()
@@ -901,38 +892,54 @@ public class LittleBlueTooth: Identifiable {
       }
     
     private func ensureBluetoothState() -> AnyPublisher<BluetoothState, LittleBluetoothError> {
-        let centralState =
-            self.centralProxy.centralStatePublisher
-            .print("CentralStatePublisher")
-            .tryFilter { [unowned self] (state) -> Bool in
-                switch state {
-                case .poweredOff:
-                    if let periph = self.peripheral {
-                        let connEvent = ConnectionEvent.disconnected(periph.cbPeripheral, error: .bluetoothPoweredOff)
-                        self.centralProxy.connectionEventPublisher.send(connEvent)
-                    }
-                    throw LittleBluetoothError.bluetoothPoweredOff
-                case .unauthorized:
-                    throw LittleBluetoothError.bluetoothUnauthorized
-                case .unsupported:
-                    throw LittleBluetoothError.bluetoothUnsupported
-                case .unknown, .resetting:
-                    return false
-                case .poweredOn:
-                    return true
-                }
-            }
-            .mapError { (error) -> LittleBluetoothError in
-                error as! LittleBluetoothError
-            }
-            .map { state -> BluetoothState in
-                print("CBManager state: \(state)")
-                return state
-            }
-            
-        .eraseToAnyPublisher()
 
-        return centralState
+        let futKey = UUID()
+        let future = Deferred {
+            Future<BluetoothState, LittleBluetoothError> { [unowned self] prom in
+                self.centralProxy.centralStatePublisher
+                .print("CentralStatePublisher")
+                .tryFilter { [unowned self] (state) -> Bool in
+                    switch state {
+                    case .poweredOff:
+                        if let periph = self.peripheral {
+                            let connEvent = ConnectionEvent.disconnected(periph.cbPeripheral, error: .bluetoothPoweredOff)
+                            self.centralProxy.connectionEventPublisher.send(connEvent)
+                        }
+                        throw LittleBluetoothError.bluetoothPoweredOff
+                    case .unauthorized:
+                        throw LittleBluetoothError.bluetoothUnauthorized
+                    case .unsupported:
+                        throw LittleBluetoothError.bluetoothUnsupported
+                    case .unknown, .resetting:
+                        return false
+                    case .poweredOn:
+                        return true
+                    }
+                }
+                .mapError { (error) -> LittleBluetoothError in
+                    error as! LittleBluetoothError
+                }
+                .map { state -> BluetoothState in
+                    print("CBManager state: \(state)")
+                    return state
+                }
+                .sink(receiveCompletion: { [unowned self, futKey] (completion) in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        prom(.failure(error))
+                        self.removeAndCancelSubscriber(for: futKey)
+                    }
+                }) { [unowned self] (state) in
+                    prom(.success(state))
+                    self.removeAndCancelSubscriber(for: futKey)
+                }
+                .store(in: &self.disposeBag, for: futKey)
+            }
+        }
+        return future.eraseToAnyPublisher()
+
     }
    
     private func ensurePeripheralReady() -> AnyPublisher<Peripheral, LittleBluetoothError> {
@@ -940,6 +947,7 @@ public class LittleBlueTooth: Identifiable {
             let state = peripheral?.state
             return Result<Peripheral, LittleBluetoothError>.Publisher(.failure(.peripheralNotConnected(state: state ?? .disconnected))).eraseToAnyPublisher()
         }
+        
         return self.centralProxy.connectionEventPublisher
         .print("EnsurePeripheralReadyPublisher")
         .tryFilter { (event) -> Bool in
@@ -970,17 +978,17 @@ public class LittleBlueTooth: Identifiable {
     
     private func removeAndCancelSubscriber(for key: UUID) {
         let sub = disposeBag[key]
-        disposeBag.removeValue(forKey: key)
         sub?.cancel()
+        disposeBag.removeValue(forKey: key)
     }
     
     private func cleanUpForDisconnection() {
         listenPublisherCancellable?.cancel()
         listenPublisherCancellable = nil
         _listenPublisher_ = nil
-        peripheralStatePublisherCancellable?.cancel()
-        peripheralStatePublisherCancellable = nil
-        _peripheralStatePublisher_ = nil
+//        peripheralStatePublisherCancellable?.cancel()
+//        peripheralStatePublisherCancellable = nil
+//        _peripheralStatePublisher_ = nil
         peripheralChangesPublisherCancellable?.cancel()
         peripheralChangesPublisherCancellable = nil
         _peripheralChangesPublisher_ = nil

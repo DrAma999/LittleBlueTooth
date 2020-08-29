@@ -48,26 +48,26 @@ class UtilityTest: LittleBlueToothTests {
     
     struct WritableMock: Writable {
         var data: Data {
-            return LittleBlueTooth.ensemble([UInt8(0x01), UInt8(0x02)])
+            return LittleBlueTooth.assemble([UInt8(0x01), UInt8(0x02)])
         }
         
     }
     
     func testCharacteristicEquality() {
-        let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
-        let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD123")
+        let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+        let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD123", properties: [.read, .notify])
         XCTAssert(characteristicOne == characteristicTwo)
     }
     
     func testCharacteristicEqualityFail() {
-          let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
-          let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD127")
+          let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+          let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD127", properties: [.read, .notify])
           XCTAssertFalse(characteristicOne == characteristicTwo)
       }
     
     func testCharacteristicHash() {
-        let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
-        let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD123")
+        let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+        let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD123", properties: [.read, .notify])
         XCTAssert(characteristicOne.hashValue == characteristicTwo.hashValue)
      }
     
@@ -108,6 +108,14 @@ class UtilityTest: LittleBlueToothTests {
         periphId = try? PeripheralIdentifier(string: uuid.uuidString)
         XCTAssertNotNil(periphId)
         XCTAssertTrue(periphId!.id == uuid)
+        
+       
+        
+        var periphIdTwo = PeripheralIdentifier(uuid: periphId!.id)
+        XCTAssertTrue(periphId == periphIdTwo)
+
+        periphIdTwo = PeripheralIdentifier(uuid: UUID())
+        XCTAssertFalse(periphId == periphIdTwo)
         
         periphId = try? PeripheralIdentifier(string: "")
         XCTAssertNil(periphId)

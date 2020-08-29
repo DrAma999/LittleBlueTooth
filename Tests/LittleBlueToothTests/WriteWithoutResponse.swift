@@ -27,7 +27,7 @@ class WriteWithoutResponse: LittleBlueToothTests {
        disposeBag.removeAll()
        blinky.simulateProximityChange(.outOfRange)
        blinkyWOR.simulateProximityChange(.immediate)
-       let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+       let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
        let writeWOResp = expectation(description: "Write without response expectation")
 
        var data = Data()
@@ -60,7 +60,7 @@ class WriteWithoutResponse: LittleBlueToothTests {
         disposeBag.removeAll()
         blinky.simulateProximityChange(.outOfRange)
         blinkyWOR.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
         let writeWOResp = expectation(description: "Write without response expectation")
 
         var data = Data()

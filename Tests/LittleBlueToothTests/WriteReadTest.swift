@@ -38,7 +38,8 @@ class ReadWriteTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: "10001523-1212-EFDE-1523-785FEABCD123")
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: "10001523-1212-EFDE-1523-785FEABCD123", properties: [.notify, .read, .write])
+
         let wrongServiceExpectation = expectation(description: "Wrong service expectation")
         
         var isWrong = false
@@ -85,7 +86,7 @@ class ReadWriteTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: "00001525-1212-EFDE-1523-785FEABCD133", for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: "00001525-1212-EFDE-1523-785FEABCD133", for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
         let wrongCharacteristicExpectation = expectation(description: "Wrong characteristic expectation")
 
         var isWrong = false
@@ -126,10 +127,11 @@ class ReadWriteTest: LittleBlueToothTests {
     }
     
     func testReadLedOFF() {
+        blinky.simulateReset()
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
         let readExpectation = expectation(description: "Read expectation")
         
         var ledState: LedState?
@@ -167,7 +169,7 @@ class ReadWriteTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
         let readExpectation = expectation(description: "Read expectation")
 
         var ledState: LedState?
@@ -209,7 +211,7 @@ class ReadWriteTest: LittleBlueToothTests {
         disposeBag.removeAll()
                
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
         let writeAndListenExpectation = expectation(description: "Write and Listen")
         
         var ledState: LedState?
@@ -254,11 +256,12 @@ class ReadWriteTest: LittleBlueToothTests {
     }
     
     func testMultipleRead() {
+        blinky.simulateReset()
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let ledCharateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
-         let buttonCharateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let ledCharateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
+        let buttonCharateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
         let multipleReadExpectation = expectation(description: "Multiple read")
         
         var ledIsOff = false
@@ -302,7 +305,7 @@ class ReadWriteTest: LittleBlueToothTests {
         disposeBag.removeAll()
 
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
         let disconnectionExpectation = expectation(description: "Disconnection before read")
         
         var isDisconnected = false
