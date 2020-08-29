@@ -244,9 +244,9 @@ public class LittleBlueTooth: Identifiable {
                 print("Sinking event \(event)")
                 if case ConnectionEvent.disconnected( let peripheral, let error) = event {
                     self.cleanUpForDisconnection()
-                    if let autoCon = self.autoconnectionHandler {
+                    if let autoCon = self.autoconnectionHandler, let er = error {
                         let periph = PeripheralIdentifier(peripheral: peripheral)
-                        if autoCon(periph, error) == true {
+                        if autoCon(periph, er) == true {
                             _ = self.connect(to: periph, autoreconnect: true)
                         }
                     }
@@ -986,9 +986,9 @@ public class LittleBlueTooth: Identifiable {
         listenPublisherCancellable?.cancel()
         listenPublisherCancellable = nil
         _listenPublisher_ = nil
-        peripheralStatePublisherCancellable?.cancel()
-        peripheralStatePublisherCancellable = nil
-        _peripheralStatePublisher_ = nil
+//        peripheralStatePublisherCancellable?.cancel()
+//        peripheralStatePublisherCancellable = nil
+//        _peripheralStatePublisher_ = nil
         peripheralChangesPublisherCancellable?.cancel()
         peripheralChangesPublisherCancellable = nil
         _peripheralChangesPublisher_ = nil
