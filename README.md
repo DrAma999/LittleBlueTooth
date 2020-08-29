@@ -552,7 +552,7 @@ Most of the functionalities are also wrapped inside custom operators. I'm not ve
 - [x] Implement custom operator
 
 ## ISSUES
-Please use Gihub, explaining what you did, how you did, what you expect and what you get.
+Please use Github, explaining what you did, how you did, what you expect and what you get.
 
 ## CONTRIBUTING
 Since I'm working on this project in my spare time any help is appreciated.
