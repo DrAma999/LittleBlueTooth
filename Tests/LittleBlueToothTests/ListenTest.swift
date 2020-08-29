@@ -39,7 +39,7 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read])
         let listenExpectation = expectation(description: "Listen expectation")
         
         var listenCounter = 0
@@ -91,7 +91,7 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
 
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read])
 
         // Expectation
         let firstListenExpectation = expectation(description: "First sub expectation")

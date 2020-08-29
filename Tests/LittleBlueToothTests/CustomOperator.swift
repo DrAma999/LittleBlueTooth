@@ -265,7 +265,7 @@ class CustomOperator: LittleBlueToothTests {
         StartLittleBlueTooth
             .startDiscovery(for: self.littleBT, withServices: nil)
             .connect(for: self.littleBT)
-            .write(for: self.littleBT, from: charateristic, value: Data([0x01]))
+            .write(for: self.littleBT, to: charateristic, value: Data([0x01]))
             .read(for: self.littleBT, from: charateristic)
             .sink(receiveCompletion: { completion in
                 print("Completion \(completion)")
