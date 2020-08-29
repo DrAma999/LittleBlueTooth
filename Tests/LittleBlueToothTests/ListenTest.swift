@@ -39,7 +39,7 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
         let listenExpectation = expectation(description: "Listen expectation")
         
         var listenCounter = 0
@@ -91,8 +91,8 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
 
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
-        
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+
         // Expectation
         let firstListenExpectation = expectation(description: "First sub expectation")
         let secondListenExpectation = expectation(description: "Second sub expectation")
@@ -182,8 +182,8 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
-        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read])
+        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
         // Expectation
         let firstListenExpectation = XCTestExpectation(description: "First sub more expectation")
         let secondListenExpectation = XCTestExpectation(description: "Second sub more expectation")
@@ -300,7 +300,7 @@ class ListenTest: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
         let listenExpectation = expectation(description: "Listen while powering off expectation")
         var isPowerOff = false
         

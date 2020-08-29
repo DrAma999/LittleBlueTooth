@@ -187,7 +187,7 @@ class CustomOperator: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
         let readExpectation = expectation(description: "Read expectation")
         
         var ledState: LedState?
@@ -219,7 +219,7 @@ class CustomOperator: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: "00001525-1212-EFDE-1523-785FEABCD133", for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: "00001525-1212-EFDE-1523-785FEABCD133", for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
         let wrongCharacteristicExpectation = expectation(description: "Wrong characteristic expectation")
 
         var isWrong = false
@@ -257,7 +257,7 @@ class CustomOperator: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
         let readExpectation = expectation(description: "Read expectation")
         
         var ledState: LedState?
@@ -290,7 +290,7 @@ class CustomOperator: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
         let writeAndListenExpectation = expectation(description: "Write and Listen")
         
         var ledState: LedState?
@@ -332,7 +332,7 @@ class CustomOperator: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
         let listenExpectation = expectation(description: "Listen expectation")
         
         var listenCounter = 0
@@ -376,8 +376,8 @@ class CustomOperator: LittleBlueToothTests {
         disposeBag.removeAll()
         
         blinky.simulateProximityChange(.immediate)
-        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
-        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
         // Expectation
         let firstListenExpectation = XCTestExpectation(description: "First sub more expectation")
         let secondListenExpectation = XCTestExpectation(description: "Second sub more expectation")

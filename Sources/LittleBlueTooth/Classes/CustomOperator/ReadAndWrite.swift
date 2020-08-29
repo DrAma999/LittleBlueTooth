@@ -66,13 +66,13 @@ extension Publisher where Self.Failure == LittleBluetoothError {
     /// - returns: A publisher with that informs you about eventual error
     /// - important: The type of the value must be conform to `Writable`
     public func write<T: Writable>(for littleBluetooth: LittleBlueTooth,
-                                   from characteristic: LittleBlueToothCharacteristic,
+                                   to characteristic: LittleBlueToothCharacteristic,
                                    value: T,
                                    response: Bool = true) -> AnyPublisher<Void, LittleBluetoothError> {
         
         func write<T: Writable, Upstream: Publisher>(upstream: Upstream,
                                                      for littleBluetooth: LittleBlueTooth,
-                                                     from characteristic: LittleBlueToothCharacteristic,
+                                                     to characteristic: LittleBlueToothCharacteristic,
                                                      value: T,
                                                      response: Bool = true) -> AnyPublisher<Void, LittleBluetoothError> where  Upstream.Failure == LittleBluetoothError {
             return upstream
@@ -83,7 +83,7 @@ extension Publisher where Self.Failure == LittleBluetoothError {
         
         return write(upstream: self,
                      for: littleBluetooth,
-                     from: characteristic,
+                     to: characteristic,
                      value: value,
                      response: response)
     }

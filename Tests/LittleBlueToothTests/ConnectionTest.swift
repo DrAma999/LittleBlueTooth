@@ -182,7 +182,7 @@ class ConnectionTest: LittleBlueToothTests {
             blinky.simulateServiceChange(newName: "pippo",
                                          newServices: [.blinkyService])
         }
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
 
 
         littleBT.startDiscovery(withServices: nil)
@@ -303,7 +303,7 @@ class ConnectionTest: LittleBlueToothTests {
         
         blinky.simulateProximityChange(.immediate)
         let connectionExpectation = expectation(description: "Connection expectation")
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
 
         var ledState: LedState?
 
