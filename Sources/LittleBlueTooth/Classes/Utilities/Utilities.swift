@@ -39,7 +39,7 @@ extension UInt8: Writable, Readable {
 }
 
 public extension LittleBlueTooth {
-    static func ensemble(_ writables: [Writable]) -> Data {
+    static func assemble(_ writables: [Writable]) -> Data {
         var data = Data()
         
         writables.forEach { (bite) in
@@ -47,5 +47,25 @@ public extension LittleBlueTooth {
         }
         
         return data
+    }
+}
+
+extension OptionSet where RawValue: FixedWidthInteger {
+
+    func elements() -> AnySequence<Self> {
+        var remainingBits = rawValue
+        var bitMask: RawValue = 1
+        return AnySequence {
+            return AnyIterator {
+                while remainingBits != 0 {
+                    defer { bitMask = bitMask &* 2 }
+                    if remainingBits & bitMask != 0 {
+                        remainingBits = remainingBits & ~bitMask
+                        return Self(rawValue: bitMask)
+                    }
+                }
+                return nil
+            }
+        }
     }
 }

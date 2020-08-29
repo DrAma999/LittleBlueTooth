@@ -140,8 +140,8 @@ class ConnectionTest: LittleBlueToothTests {
         }
         
         littleBT.startDiscovery(withServices: nil)
-            .flatMap { discovery in
-                self.littleBT.connect(to: discovery)
+        .flatMap { discovery in
+            self.littleBT.connect(to: discovery)
         }
         .sink(receiveCompletion: { completion in
             print("Completion \(completion)")
@@ -165,6 +165,7 @@ class ConnectionTest: LittleBlueToothTests {
         .store(in: &disposeBag)
 
         waitForExpectations(timeout: 30)
+        print("Connection disconnection event \(connectionEvent.count)")
         XCTAssert(connectionEvent.count == 3)
 
     }
@@ -181,7 +182,7 @@ class ConnectionTest: LittleBlueToothTests {
             blinky.simulateServiceChange(newName: "pippo",
                                          newServices: [.blinkyService])
         }
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
 
 
         littleBT.startDiscovery(withServices: nil)
@@ -290,9 +291,10 @@ class ConnectionTest: LittleBlueToothTests {
         }
         .store(in: &disposeBag)
         
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: 100)
         self.littleBT.autoconnectionHandler = nil
         self.littleBT.disconnect()
+        print("Autoconn event \(connectionEvent.count)")
         XCTAssert(connectionEvent.count == 5)
     }
     
@@ -301,7 +303,7 @@ class ConnectionTest: LittleBlueToothTests {
         
         blinky.simulateProximityChange(.immediate)
         let connectionExpectation = expectation(description: "Connection expectation")
-        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString)
+        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
 
         var ledState: LedState?
 
