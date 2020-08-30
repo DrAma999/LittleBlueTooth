@@ -83,7 +83,7 @@ class ListenTest: LittleBlueToothTests {
         _ = timer.connect()
 
         waitForExpectations(timeout: 20)
-        let contingencyRange = (timerCounter - 1)...timerCounter
+        let contingencyRange = (timerCounter - 2)...timerCounter
         print("Timer counter: \(timerCounter) Listen counter \(listenCounter) ")
         XCTAssert(contingencyRange.contains(listenCounter))
     }
@@ -174,7 +174,7 @@ class ListenTest: LittleBlueToothTests {
         waitForExpectations(timeout: 20)
         XCTAssert(sub1Event.count == sub2Event.count)
         XCTAssert(sub1Event == sub2Event)
-        let contingencyRange = (timerCounter - 1)...timerCounter
+        let contingencyRange = (timerCounter - 2)...timerCounter
         print("Timer counter: \(timerCounter) Event counter \(sub2Event.count) ")
 
         XCTAssert(contingencyRange.contains(sub2Event.count))
@@ -298,7 +298,7 @@ class ListenTest: LittleBlueToothTests {
         wait(for: [firstListenExpectation, secondListenExpectation], timeout: 30)
         littleBT.disconnect()
         XCTAssert(sub1Event.count == sub2Event.count)
-        let contingencyRange = (timerCounter - 1)...timerCounter
+        let contingencyRange = (timerCounter - 2)...timerCounter
         print("Timer counter: \(timerCounter) Event counter \(sub2Event.count) ")
         XCTAssert(contingencyRange.contains(sub2Event.count))
         
