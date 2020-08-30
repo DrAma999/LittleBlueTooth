@@ -298,7 +298,10 @@ class ListenTest: LittleBlueToothTests {
         wait(for: [firstListenExpectation, secondListenExpectation], timeout: 30)
         littleBT.disconnect()
         XCTAssert(sub1Event.count == sub2Event.count)
-        XCTAssert(timerCounter - 1 == sub1Event.count)
+        let contingencyRange = (timerCounter - 1)...timerCounter
+        print("Timer counter: \(timerCounter) Event counter \(sub2Event.count) ")
+        XCTAssert(contingencyRange.contains(sub2Event.count))
+        
     }
     
     func testPowerOffWhileListen() {
