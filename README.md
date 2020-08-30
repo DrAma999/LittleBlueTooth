@@ -22,7 +22,7 @@ The library is still on development so use at own you risk.
 Add the following to your Cartfile:
 
 ```
-github "DrAma999/LittleBlueTooth" ~> 0.5.0
+github "DrAma999/LittleBlueTooth" ~> 0.5.1
 ```
 Since the framework supports most of the Apple devices, you probably want to to build for a specific platform by adding the option `--platform` after the `carthage update` command. For instance:
 ```
@@ -35,7 +35,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 ### Swift Package Manager
 Add the following dependency to your Package.swift file:
 ```
-.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.5.0")
+.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.5.1")
 ```
 Or simply add the URL from XCode menu Swift packages.
 
@@ -541,7 +541,100 @@ self.littleBT.restart(with: extractedState.central, peripheral: extractedState.p
 ## CUSTOM COMBINE OPERATOR
 Most of the functionalities are also wrapped inside custom operators. I'm not very happy about the implemetation: you must be very sure that you are passing the correct type of data or some inner forced casts will make your application crash, read the documentation above each custom operator. to know the correct types I hope to find a more reliable solution that will involve type checking using the compilator.
 
+### Scan
+The constant `StartLittleBlueTooth` is a syntatic sugar that helps you prepare the pipeline with correct error type:
+```
+StartLittleBlueTooth
+.startDiscovery(for: self.littleBT, withServices: [CBUUID(string: HRMCostants.HRMService)])
+.prefix(1)
+// ...
+```
+The `.startDiscovery` operator can return multiple return at different times its up to you to take the correct results, by collecting, filtering, prefixing discoveries it you want to connect at the next step.
+
 ### Connect
+After getting a `PeripheralDiscovery` or a `PeripheralIdentifier` you can connect to that deveice.
+```
+StartLittleBlueTooth
+.startDiscovery(for: self.littleBT, withServices: [CBUUID(string: HRMCostants.HRMService)])
+.prefix(1)
+.connect(for: self.littleBT)
+// .sink( ...
+```
+
+### Read
+To read is simple as:
+```
+StartLittleBlueTooth
+           .read(for: self.littleBT, from: hrmSensorChar)
+           .sink(receiveCompletion: { (result) in
+               print("Result: \(result)")
+               switch result {
+               case .finished:
+                   break
+               case .failure(let error):
+                   print("Error while changing sensor position: \(error)")
+                   break
+               }
+               
+           }) { (value: HeartRateSensorPositionResponse) in // Specify the concrete type
+               print("Value: \(value)")
+       }
+       .store(in: &disposeBag)
+```
+Note that to make the compiler understand the generic type of the function at the next step you probably need to specify the concrete type.
+### Write
+```
+StartLittleBlueTooth
+          .write(for: self.littleBT, to: hrmControlPointChar, value: UInt8(0x01))
+          .sink(receiveCompletion: { (result) in
+              print("Result: \(result)")
+              switch result {
+              case .finished:
+                  break
+              case .failure(let error):
+                  print("Error while writing control point: \(error)")
+                  break
+              }
+              
+          }) {}
+      .store(in: &disposeBag)
+```
+
+### Listen
+To listen directly (enable and get results) from a characteristic:
+```
+StartLittleBlueTooth
+.startListen(for: self.littleBT, from: hrmRateChar)
+.sink(receiveCompletion: { (result) in
+        print("Result: \(result)")
+        switch result {
+        case .finished:
+            break
+        case .failure(let error):
+            print("Error while trying to listen: \(error)")
+        }
+}) { (value: HeartRateMeasurementResponse) in
+    self.hrmRateLabel.text = String(value.value)
+}
+.store(in: &disposeBag)
+```
+To enable listen on a characteristic and attach before or later on  the `littleBT.listenPublisher` 
+```
+.enableListen(for: self.littleBT, from: charateristicOne)
+```
+To stop:
+```
+.disableListen(for: self.littleBT, from: hrmRateChar)
+```
+
+### Disconnect
+To disconnect from a device simply call:
+```
+.disconnect(for: self.littleBT)
+```
+### Note
+To start operations using a publisher or a custom operator you **must attach a subscriber**.
+And the result `AnyCancellable` must be store in a property or in a disposebag, you must guarantee the existance of the pipeline untill the end.
 
 ## ROADMAP
 - [x] SwiftPM support
