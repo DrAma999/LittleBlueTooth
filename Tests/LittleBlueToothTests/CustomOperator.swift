@@ -100,7 +100,7 @@ class CustomOperator: LittleBlueToothTests {
         
         StartLittleBlueTooth
         .startDiscovery(for: self.littleBT, withServices: nil)
-        .map { periph in
+        .map { _ in
            periphCounter += 1
         }
         .delay(for: .seconds(5), scheduler: DispatchQueue.global())
@@ -367,9 +367,10 @@ class CustomOperator: LittleBlueToothTests {
         }
         .store(in: &disposeBag)
         _ = timer.connect()
-
         waitForExpectations(timeout: 20)
-        XCTAssert(listenCounter == timerCounter)
+        let contingencyRange = (timerCounter - 1)...timerCounter
+        print("Timer counter: \(timerCounter) Listen counter \(listenCounter) ")
+        XCTAssert(contingencyRange.contains(listenCounter))
     }
     /// Enable Listen custom operator test
     func testListenToMoreCharacteristicOperator() {
