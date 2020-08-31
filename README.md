@@ -42,8 +42,11 @@ The library is still on development so use at own you risk.
 
 ## TOC
 [Features](#features)
+
 [Installation](#installation)
+
 [How to use it](#how-to-use-it)
+
 * [Instantiate](#instantiate)
 * [Scan](#scan)
 * [Connect](#connect)
@@ -56,8 +59,11 @@ The library is still on development so use at own you risk.
 * [Autoconnection](#Autoconnection)
 * [State preservation and restoration](#state-preservation-and-state-restoration)
 * [Central manager extraction](#cbcentralmanager-cbperipheral-extraction)
+
 [Custom operators](#custom-combine-operator)
+
 [Sample application](#sample-application)
+
 [License](#license)
 
 ## FEATURES
