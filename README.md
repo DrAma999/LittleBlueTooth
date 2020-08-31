@@ -636,6 +636,9 @@ To disconnect from a device simply call:
 To start operations using a publisher or a custom operator you **must attach a subscriber**.
 And the result `AnyCancellable` must be store in a property or in a disposebag, you must guarantee the existance of the pipeline untill the end.
 
+## SAMPLE APPLICATION
+A sample application can be download [here](https://github.com/DrAma999/LittleBlueToothTestApp). It requires also to adownload an application for macOS or iOS to simulate a heart rate monitor.
+
 ## ROADMAP
 - [x] SwiftPM support
 - [x] State preservation and state restoration
