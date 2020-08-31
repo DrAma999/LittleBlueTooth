@@ -14,8 +14,63 @@
 ## INTRODUCTION
 LittleBluetooth is a library that helps you developing applications that need to work with a bluetooth low energy device.
 It is written using `Swift` and the `Combine` framework thus is only compatible from iOS 13, macOS 10.15, watchOS 6.0 to upper version.
+It will make pretty easy to work with CoreBlueTooth connecting to a peripherala and reading a characteristic can be mabe with just these lines of code:
+```
+StartLittleBlueTooth
+.startDiscovery(for: self.littleBT, withServices: [CBUUID(string: HRMCostants.HRMService)])
+.prefix(1)
+.connect(for: self.littleBT)
+.read(for: self.littleBT, from: hrmSensorChar)
+.sink(receiveCompletion: { (result) in
+    print("Result: \(result)")
+    switch result {
+    case .finished:
+        break
+    case .failure(let error):
+        print("Error while changing sensor position: \(error)")
+        break
+    }
+        
+}) { (value: HeartRateSensorPositionResponse) in // Specify the concrete type
+    print("Value: \(value)")
+}
+.store(in: &disposeBag)
+```
 An instance of LittleBluetooth can control only one peripheral, you can use more instances as many peripheral you need, but first read this [answer](https://developer.apple.com/forums/thread/20810) on Apple forums to understand the impact of having more `CBCentralManager` instances.
+
 The library is still on development so use at own you risk.
+
+## TOC
+[Features](#features)
+[Installation](#installation)
+[How to use it](#how-to-use-it)
+* [Instantiate](#instantiate)
+* [Scan](#scan)
+* [Connect](#connect)
+* [Read](#read)
+* [Write](#write)
+* [Listen](#listen)
+* [Disconnection](#disconnection)
+* [Connection event observer](#connection-event-observer)
+* [Initialization operation](#initialization-operations)
+* [Autoconnection](#Autoconnection)
+* [State preservation and restoration](#state-preservation-and-state-restoration)
+* [Central manager extraction](#cbcentralmanager-cbperipheral-extraction)
+[Custom operators](#custom-combine-operator)
+[Sample application](#sample-application)
+[License](#license)
+
+## FEATURES
+* Built on top of Combine
+* Deploys on **iOS, macOS, macOS (Catalyst), tvOS, watchOS**
+* Chainable operations: scan, connect, enable listen, disable listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
+* Peripheral state and bluetooth state observation. You can watch the bluetooth state and also the peripheral states for a more fine grained control in the UI. Those information are also checked before starting any operation.
+* Single notification channel: you can subscribe to the notification channel to receive all the data of the enabled characteristics. You have also single and connectable publishers.
+* Write and listen (or better listen and write): sometimes you need to write a command and get a “response” right away
+* Initialization operations: sometimes you want to perform some bluetooth commands right after a connection, for instance an authentication, and you want to perform that before another operation have access to the peripheral.
+* Readable and Writable characteristics: basically those two protocols will deal in reading a `Data` object to the concrete type you want or writing your concrete type into a `Data` object.
+* Simplified `Error` normalization and if you want more you can always access the inner `CBError`
+* Code coverage > 90%
 
 ## INSTALLATION
 ### Carthage
@@ -39,17 +94,6 @@ Add the following dependency to your Package.swift file:
 ```
 Or simply add the URL from XCode menu Swift packages.
 
-## FEATURES
-* Built on top of combine
-* Deploys on **iOS, macOS, macOS (Catalyst), tvOS, watchOS**
-* Chainable operations: scan, connect, enable listen, disable listen and read/write . Each operation is executed serially without having to worry in dealing with delegates
-* Peripheral state and bluetooth state observation. You can watch the bluetooth state and also the peripheral states for a more fine grained control in the UI. Those information are also checked before starting any operation.
-* Single notification channel: you can subscribe to the notification channel to receive all the data of the enabled characteristics. You have also single and connectable publishers.
-* Write and listen (or better listen and write): sometimes you need to write a command and get a “response” right away
-* Initialization operations: sometimes you want to perform some bluetooth commands right after a connection, for instance an authentication, and you want to perform that before another operation have access to the peripheral.
-* Readable and Writable characteristics: basically those two protocols will deal in reading a `Data` object to the concrete type you want or writing your concrete type into a `Data` object.
-* Simplified `Error` normalization and if you want more you can always access the inner `CBError`
-* Code coverage > 80%
 
 ## HOW TO USE IT
 ### Instantiate
@@ -539,7 +583,7 @@ self.littleBT.restart(with: extractedState.central, peripheral: extractedState.p
 ```
 
 ## CUSTOM COMBINE OPERATOR
-Most of the functionalities are also wrapped inside custom operators. I'm not very happy about the implemetation: you must be very sure that you are passing the correct type of data or some inner forced casts will make your application crash, read the documentation above each custom operator. to know the correct types I hope to find a more reliable solution that will involve type checking using the compilator.
+Most of the functionalities are also wrapped inside custom operators. 
 
 ### Scan
 The constant `StartLittleBlueTooth` is a syntatic sugar that helps you prepare the pipeline with correct error type:
@@ -549,7 +593,7 @@ StartLittleBlueTooth
 .prefix(1)
 // ...
 ```
-The `.startDiscovery` operator can return multiple return at different times its up to you to take the correct results, by collecting, filtering, prefixing discoveries it you want to connect at the next step.
+The `.startDiscovery` operator can return multiple discoveries at different times it's up to you to take the correct results, by collecting, filtering, prefixing  before connecting at the next step.
 
 ### Connect
 After getting a `PeripheralDiscovery` or a `PeripheralIdentifier` you can connect to that deveice.
