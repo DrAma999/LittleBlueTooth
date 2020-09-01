@@ -100,6 +100,7 @@ public class LittleBlueTooth: Identifiable {
     }
     
     // MARK: - Private variables
+    static var sharedCentralManager: CBCentralManager?
     /// Cancellable operation idendified by a `UUID` key
     private var disposeBag = [UUID : AnyCancellable]()
     /// Scan cancellable operation
@@ -178,11 +179,8 @@ public class LittleBlueTooth: Identifiable {
     
     // MARK: - Init
     public init(with configuration: LittleBluetoothConfiguration) {
-        #if TEST
-        self.cbCentral = CBCentralManagerFactory.instance(delegate: self.centralProxy, queue: configuration.centralManagerQueue, options: configuration.centralManagerOptions, forceMock: true)
-        #else
-        self.cbCentral = CBCentralManager(delegate: self.centralProxy, queue: configuration.centralManagerQueue, options: configuration.centralManagerOptions)
-        #endif
+        //CEntral Poxy must have a WeakBOx or something
+        self.cbCentral = Self.getCentralManager(with: configuration, proxy: self.centralProxy)
         self.autoconnectionHandler = configuration.autoconnectionHandler
         if (configuration.restoreHandler == nil &&
             configuration.centralManagerOptions?[CBCentralManagerOptionRestoreIdentifierKey] != nil) ||
@@ -200,9 +198,39 @@ public class LittleBlueTooth: Identifiable {
         )
     }
     
-    func attachSubscribers(with restorehandler: ((Restored) -> Void)?) {
+    private static func getCentralManager(with configuration: LittleBluetoothConfiguration, proxy: CBCentralManagerDelegateProxy) -> CBCentralManager {
+        let central: CBCentralManager
+        if configuration.mode == .shared {
+            if let centr = Self.sharedCentralManager {
+                central = centr
+            } else {
+                Self.sharedCentralManager = Self.buildCentralManager(with: configuration, proxy: proxy)
+                central = Self.sharedCentralManager!
+            }
+        } else {
+            central = Self.buildCentralManager(with: configuration, proxy: proxy)
+        }
+        return central
+    }
+    
+    private static func buildCentralManager(with configuration: LittleBluetoothConfiguration, proxy: CBCentralManagerDelegateProxy) -> CBCentralManager {
+        #if TEST
+        let central = CBCentralManagerFactory.instance(delegate: proxy, queue: configuration.centralManagerQueue, options: configuration.centralManagerOptions, forceMock: true)
+        #else
+        let central = CBCentralManager(delegate: proxy, queue: configuration.centralManagerQueue, options: configuration.centralManagerOptions)
+        #endif
+        return central
+    }
+
+    private func attachSubscribers(with restorehandler: ((Restored) -> Void)?) {
         self.connectionEventSubscriber =
             connectionEventPublisher
+            .filter{ (event) -> Bool in
+                if event.peripheralIdentifier.id != self.peripheral!.id {
+                    return false
+                }
+                return true
+            } // SHOULD BE FLATMAPLATEST CHECK WITH UNIT TEST
             .flatMap { [unowned self] (event) -> AnyPublisher<ConnectionEvent, Never> in
                 print("Received event \(event)")
                 switch event {
@@ -608,9 +636,8 @@ public class LittleBlueTooth: Identifiable {
     /// - parameter options: Scanning options same as  CoreBluetooth  central manager option.
     /// - returns: A publisher with stream of disovered peripherals.
     public func startDiscovery(withServices services: [CBUUID]?, options: [String : Any]? = nil) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> {
-        if self.cbCentral.isScanning {
-            self.cbCentral.stopScan()
-//            return Result<PeripheralDiscovery, LittleBluetoothError>.Publisher(.failure(.alreadyScanning)).eraseToAnyPublisher()
+        if self.scanning != nil {
+            return Result<PeripheralDiscovery, LittleBluetoothError>.Publisher(.failure(.alreadyScanning)).eraseToAnyPublisher()
         }
         
         let scanSubject = PassthroughSubject<PeripheralDiscovery, LittleBluetoothError>()
@@ -710,7 +737,10 @@ public class LittleBlueTooth: Identifiable {
             self.centralProxy.connectionEventPublisher.setFailureType(to: LittleBluetoothError.self)
         }
         .filter{ (event) -> Bool in
-            print("Connct to event: \(event)")
+            print("Connect to event: \(event)")
+            if event.peripheralIdentifier.id != self.peripheral!.id {
+                return false
+            }
             switch event {
                 case .connected( _),
                      .autoConnected( _):
@@ -790,6 +820,9 @@ public class LittleBlueTooth: Identifiable {
         self.centralProxy.connectionEventPublisher
         .print("DisconnectPublisher")
         .filter{ (event) -> Bool in
+            if event.peripheralIdentifier.id != self.peripheral!.id {
+                return false
+            }
             if case ConnectionEvent.disconnected(_, error: _) = event {
                 return true
             }
@@ -818,6 +851,7 @@ public class LittleBlueTooth: Identifiable {
     /// During this operation everything is stopped, delegates are set to nil current operation cancelled
     /// - returns: A tuple with the central and the peripheral if connected
     public func extract() -> (central: CBCentralManager, peripheral: CBPeripheral?) {
+        // ATTENZIONE SE E' SHARED
         let cbCentral = self.cbCentral
         let cbPeripheral = self.peripheral?.cbPeripheral
         cbCentral.delegate = nil

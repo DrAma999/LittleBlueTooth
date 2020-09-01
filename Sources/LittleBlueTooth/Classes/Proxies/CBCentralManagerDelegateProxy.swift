@@ -22,6 +22,23 @@ public enum ConnectionEvent {
     case notReady(CBPeripheral, error: LittleBluetoothError?)
     case connectionFailed(CBPeripheral, error: LittleBluetoothError?)
     case disconnected(CBPeripheral, error: LittleBluetoothError?)
+    
+    var peripheralIdentifier: PeripheralIdentifier {
+        switch self {
+        case let .connected(periph):
+            return PeripheralIdentifier(peripheral: periph)
+        case let .autoConnected(periph):
+            return PeripheralIdentifier(peripheral: periph)
+        case let .ready(periph):
+            return PeripheralIdentifier(peripheral: periph)
+        case let .notReady(periph, _):
+            return PeripheralIdentifier(peripheral: periph)
+        case let .connectionFailed(periph, _):
+            return PeripheralIdentifier(peripheral: periph)
+        case let .disconnected(periph, _):
+            return PeripheralIdentifier(peripheral: periph)
+        }
+    }
 }
 
 public enum BluetoothState {

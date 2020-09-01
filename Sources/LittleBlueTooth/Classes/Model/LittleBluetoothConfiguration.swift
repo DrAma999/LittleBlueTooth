@@ -12,6 +12,15 @@ public typealias AutoconnectionHandler = (PeripheralIdentifier, LittleBluetoothE
 
 /// Configuration object that must be passed during the `LittleBlueTooth` initialization
 public struct LittleBluetoothConfiguration {
+    public enum CentralMode {
+        case shared
+        case single
+    }
+    
+    public static var `default`: LittleBluetoothConfiguration = {
+        return LittleBluetoothConfiguration()
+    }()
+    public var mode: CentralMode = .single
     /// `CBCentralManager` options dictionary for instance the restore identifier, thay are the same
     /// requested for `CBCentralManager`
     public var centralManagerOptions: [String : Any]?
@@ -34,3 +43,4 @@ public struct LittleBluetoothConfiguration {
     
     public init() {}
 }
+// TODO: Builder

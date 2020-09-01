@@ -14,6 +14,14 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
+class Weak<T: AnyObject> {
+  weak var value : T?
+  init (value: T) {
+    self.value = value
+  }
+}
+
+
 extension AnyCancellable {
   func store(in dictionary: inout [UUID : AnyCancellable],
              for key: UUID) {
