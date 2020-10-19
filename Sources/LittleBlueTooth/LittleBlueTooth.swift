@@ -191,7 +191,7 @@ public class LittleBlueTooth: Identifiable {
             print("If you want to use state preservation/restoration you should probablu want to implement the `restoreHandler`")
         }
         attachSubscribers(with: configuration.restoreHandler)
-        self._isLogEnabled = configuration.isLogEnabled
+        self.isLogEnabled = configuration.isLogEnabled
         log(
             "LBT init options %{public}@",
             log: OSLog.LittleBT_Log_General,
@@ -699,6 +699,7 @@ public class LittleBlueTooth: Identifiable {
                 throw LittleBluetoothError.peripheralNotFound
             }
             self.peripheral = Peripheral(filtered.first!)
+            self.peripheral!.isLogEnabled = self.isLogEnabled
             self.peripheralStatePublisherCancellable = self._peripheralStatePublisher.connect()
             self.peripheralChangesPublisherCancellable = self._peripheralChangesPublisher.connect()
             self.centralProxy.isAutoconnectionActive = autoreconnect
