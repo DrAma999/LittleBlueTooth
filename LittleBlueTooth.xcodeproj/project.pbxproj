@@ -62,6 +62,7 @@
 		65F63EE424F9216A000E3474 /* ReplaySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* ReplaySubject.swift */; };
 		65F63EE524F9216E000E3474 /* ReplaySubjectSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* ReplaySubjectSubscription.swift */; };
 		65F63EE624F9216E000E3474 /* ReplaySubjectSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* ReplaySubjectSubscription.swift */; };
+		65FE9E2A24FFBD2600BB779C /* SharedCentralTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FE9E2924FFBD2600BB779C /* SharedCentralTest.swift */; };
 		OBJ_52 /* LittleBlueToothError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* LittleBlueToothError.swift */; };
 		OBJ_53 /* AdvertisingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* AdvertisingData.swift */; };
 		OBJ_54 /* LittleBlueToothCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* LittleBlueToothCharacteristic.swift */; };
@@ -114,6 +115,7 @@
 		65AD4BEC24D437B700C0CBE6 /* LittleBlueTooth copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "LittleBlueTooth copy-Info.plist"; path = "/Users/Andrea/Documents/GitHub/LittleBlueTooth/LittleBlueTooth copy-Info.plist"; sourceTree = "<absolute>"; };
 		65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LittleBluetoothConfiguration.swift; sourceTree = "<group>"; };
 		65F63EDE24F8EA73000E3474 /* JustLittleBlueTooth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustLittleBlueTooth.swift; sourceTree = "<group>"; };
+		65FE9E2924FFBD2600BB779C /* SharedCentralTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCentralTest.swift; sourceTree = "<group>"; };
 		"LittleBlueTooth::LittleBlueTooth::Product" /* LittleBlueTooth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LittleBlueTooth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"LittleBlueTooth::LittleBlueToothTests::Product" /* LittleBlueToothTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = LittleBlueToothTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -284,6 +286,7 @@
 				6590D38124D0030000BEE864 /* WriteWithoutResponse.swift */,
 				654BCE8A24E03544002FC7A4 /* Extraction.swift */,
 				650F379024F7A82100C35395 /* CustomOperator.swift */,
+				65FE9E2924FFBD2600BB779C /* SharedCentralTest.swift */,
 			);
 			name = LittleBlueToothTests;
 			path = Tests/LittleBlueToothTests;
@@ -545,6 +548,7 @@
 			files = (
 				OBJ_82 /* ConnectionTest.swift in Sources */,
 				655F49E224CF3DA400C24461 /* StateRestoration.swift in Sources */,
+				65FE9E2A24FFBD2600BB779C /* SharedCentralTest.swift in Sources */,
 				650F379124F7A82100C35395 /* CustomOperator.swift in Sources */,
 				OBJ_83 /* ListenTest.swift in Sources */,
 				654BCE8B24E03544002FC7A4 /* Extraction.swift in Sources */,

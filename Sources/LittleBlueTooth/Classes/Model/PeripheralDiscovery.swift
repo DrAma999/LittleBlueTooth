@@ -67,10 +67,11 @@ public struct PeripheralDiscovery: PeripheralIdentifiable {
     
     init(_ peripheral: CBPeripheral, advertisement: [String : Any], rssi: NSNumber) {
         self.cbPeripheral = peripheral
-        self.name = peripheral.name
+        let advInfo = AdvertisingInfo(advertisementData: advertisement)
+        self.advertisement = advInfo
+        self.name = peripheral.name ?? advInfo.localName
         self.id = peripheral.identifier
         self.rssi = rssi.intValue
-        self.advertisement = AdvertisingInfo(advertisementData: advertisement)
     }
 }
 

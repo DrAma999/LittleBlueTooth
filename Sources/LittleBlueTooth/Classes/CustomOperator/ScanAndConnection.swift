@@ -37,6 +37,39 @@ extension Publisher where Self.Failure == LittleBluetoothError {
                               options: options)
     }
     
+    /// Starts scanning for `PeripheralDiscovery`
+    /// - parameter littleBluetooth: the `LittleBlueTooth` instance
+    /// - parameter services: Services for peripheral you are looking for
+    /// - parameter until: A closure that decide the condition for just one discovery to pass. If a discovery that matches the closure is found the central manager will stop scanning.
+    /// - returns: A publisher with stream of disovered peripherals.
+    public func startDiscovery(for littleBluetooth: LittleBlueTooth, withServices services: [CBUUID]?, until: @escaping (PeripheralDiscovery) -> Bool) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> {
+        func startDiscovery<Upstream: Publisher>(upstream: Upstream,
+                                                 for littleBluetooth: LittleBlueTooth,
+                                                 withServices services: [CBUUID]?,
+                                                 options: [String : Any]? = nil) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> where Upstream.Failure == LittleBluetoothError {
+            var discovery: PeripheralDiscovery?
+            return upstream
+            .flatMapLatest { _ in
+                    littleBluetooth.startDiscovery(withServices: services, options: options)
+            }.first(where: { (discovery) -> Bool in
+                until(discovery)
+            })
+            .map { disc -> Void in
+                discovery = disc
+                return ()
+            }
+            .stopDiscovery(for: littleBluetooth)
+            .map { _ in
+                return discovery!
+            }
+            .eraseToAnyPublisher()
+        }
+        return startDiscovery(upstream: self,
+                              for: littleBluetooth,
+                              withServices: services,
+                              options: [CBCentralManagerScanOptionAllowDuplicatesKey : true])
+    }
+    
     /// Stops peripheral discovery
     /// - parameter littleBluetooth: the `LittleBlueTooth` instance
     /// - returns: A publisher when discovery has been stopped
@@ -50,6 +83,23 @@ extension Publisher where Self.Failure == LittleBluetoothError {
         }
         return stopDiscovery(upstream: self,
                                  for: littleBluetooth)
+    }
+}
+
+extension Publisher where Self.Output == PeripheralDiscovery, Self.Failure == LittleBluetoothError {
+    
+    public func stopDiscovery(for littleBluetooth: LittleBlueTooth) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> {
+        func stopDiscovery<Upstream: Publisher>(upstream: Upstream,
+                                                for littleBluetooth: LittleBlueTooth) -> AnyPublisher<PeripheralDiscovery, LittleBluetoothError> where Upstream.Output == PeripheralDiscovery, Upstream.Failure == LittleBluetoothError {
+            return upstream
+                .flatMapLatest { discovery in
+                    littleBluetooth.stopDiscovery().map {
+                        discovery
+                    }
+            }
+        }
+        return stopDiscovery(upstream: self,
+                             for: littleBluetooth)
     }
 }
 

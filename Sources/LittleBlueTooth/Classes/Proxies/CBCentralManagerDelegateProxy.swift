@@ -115,6 +115,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
             type: .debug,
             arg: peripheral.description)
         let peripheraldiscovery = PeripheralDiscovery(peripheral, advertisement: advertisementData, rssi: RSSI)
+        print("Discovery from didDiscover \(peripheraldiscovery)")
         centralDiscoveriesPublisher.send(peripheraldiscovery)
     }
     
