@@ -193,7 +193,7 @@ public class LittleBlueTooth: Identifiable {
         attachSubscribers(with: configuration.restoreHandler)
         self.isLogEnabled = configuration.isLogEnabled
         log(
-            "LBT init options %{public}@",
+            "[LBT] init options %{public}@",
             log: OSLog.LittleBT_Log_General,
             type: .debug,
             arg: configuration.centralManagerOptions?.description ?? ""
@@ -204,7 +204,7 @@ public class LittleBlueTooth: Identifiable {
         self.connectionEventSubscriber =
             connectionEventPublisher
             .flatMap { [unowned self] (event) -> AnyPublisher<ConnectionEvent, Never> in
-                print("Received event \(event)")
+//                print("Received event \(event)")
                 switch event {
                 case .connected(let periph),
                      .autoConnected(let periph):
@@ -241,7 +241,7 @@ public class LittleBlueTooth: Identifiable {
                 // This delay to make able other subscribers to receive notification
             .delay(for: .milliseconds(50), scheduler: DispatchQueue.main)
             .sink { [unowned self] (event) in
-                print("Sinking event \(event)")
+//                print("Sinking event \(event)")
                 if case ConnectionEvent.disconnected( let peripheral, let error) = event {
                     self.cleanUpForDisconnection()
                     if let autoCon = self.autoconnectionHandler, let er = error {
@@ -284,7 +284,7 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         self.ensureBluetoothState()
-        .print("Read RSSI")
+        .customPrint("[LBT] Read RSSI", isEnabled: isLogEnabled)
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
         }
@@ -319,7 +319,7 @@ public class LittleBlueTooth: Identifiable {
     public func connectableListenPublisher<T: Readable>(for characteristic: LittleBlueToothCharacteristic, valueType: T.Type) -> Publishers.MakeConnectable<AnyPublisher<T, LittleBluetoothError>> {
         
            let listen = ensureBluetoothState()
-           .print("ConnectableListenPublisher")
+           .customPrint("[LBT] ConnectableListenPublisher", isEnabled: isLogEnabled)
            .flatMap { [unowned self] _ in
                self.ensurePeripheralReady()
            }
@@ -360,7 +360,7 @@ public class LittleBlueTooth: Identifiable {
     /// - important: The type of the value must be conform to `Readable`
     public func startListen<T: Readable>(from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
         let lis = ensureBluetoothState()
-        .print("StartListenPublisher")
+        .customPrint("[LBT] StartListenPublisher", isEnabled: isLogEnabled)
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
         }
@@ -405,7 +405,7 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         self.ensureBluetoothState()
-        .print("StartListenPublisher no Value")
+        .customPrint("[LBT] StartListenPublisher no Value", isEnabled: isLogEnabled)
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
         }
@@ -476,7 +476,7 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         ensureBluetoothState()
-        .print("ReadPublisher")
+        .customPrint("[LBT] ReadPublisher", isEnabled: isLogEnabled)
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
         }
@@ -528,7 +528,7 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
 
         ensureBluetoothState()
-        .print("WritePublisher")
+        .customPrint("[LBT] WritePublisher", isEnabled: isLogEnabled)
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
         }
@@ -565,7 +565,7 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
 
         ensureBluetoothState()
-        .print("WriteAndListePublisher")
+        .customPrint("[LBT] WriteAndListePublisher", isEnabled: isLogEnabled)
         .flatMap { [unowned self] _ in
             self.ensurePeripheralReady()
         }
@@ -617,7 +617,7 @@ public class LittleBlueTooth: Identifiable {
 
         scanning =
         ensureBluetoothState()
-        .print("DiscoverPublisher")
+        .customPrint("[LBT] DiscoverPublisher", isEnabled: isLogEnabled)
         .map { [unowned self] _  -> Void in
             if self.cbCentral.isScanning {
                 self.cbCentral.stopScan()
@@ -690,7 +690,7 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         ensureBluetoothState()
-        .print("ConnectPublisher")
+        .customPrint("[LBT] ConnectPublisher", isEnabled: isLogEnabled)
         .tryMap { [unowned self] _ -> Void in
             let filtered = self.cbCentral.retrievePeripherals(withIdentifiers: [peripheralIdentifier.id]).filter { (periph) -> Bool in
                 periph.identifier == peripheralIdentifier.id
@@ -711,7 +711,7 @@ public class LittleBlueTooth: Identifiable {
             self.centralProxy.connectionEventPublisher.setFailureType(to: LittleBluetoothError.self)
         }
         .filter{ (event) -> Bool in
-            print("Connct to event: \(event)")
+//            print("Connct to event: \(event)")
             switch event {
                 case .connected( _),
                      .autoConnected( _):
@@ -789,7 +789,7 @@ public class LittleBlueTooth: Identifiable {
         let key = UUID()
         
         self.centralProxy.connectionEventPublisher
-        .print("DisconnectPublisher")
+        .customPrint("[LBT] DisconnectPublisher", isEnabled: isLogEnabled)
         .filter{ (event) -> Bool in
             if case ConnectionEvent.disconnected(_, error: _) = event {
                 return true
@@ -848,7 +848,7 @@ public class LittleBlueTooth: Identifiable {
               let restoreDiscoverServices = restorer.services
               let restoreScanOptions = restorer.scanOptions
               let restoreDiscoveryPublisher = self.startDiscovery(withServices: restoreDiscoverServices, options: restoreScanOptions)
-              log("LBT Scan restore %{public}@",
+              log("[LBT] Scan restore %{public}@",
                   log: OSLog.LittleBT_Log_Restore,
                   type: .debug,
                   arg: restorer.centralManager.isScanning ? "true" : "false")
@@ -881,7 +881,7 @@ public class LittleBlueTooth: Identifiable {
               @unknown default:
                   fatalError("Connection event in default not handled")
               }
-              log("LBT Periph restore %{public}@, has delegate: %{public}@ state %{public}d",
+              log("[LBT] Periph restore %{public}@, has delegate: %{public}@ state %{public}d",
                   log: OSLog.LittleBT_Log_Restore,
                   type: .debug,
                   arg: cbPeripheral.description,
@@ -898,7 +898,7 @@ public class LittleBlueTooth: Identifiable {
         let future = Deferred {
             Future<BluetoothState, LittleBluetoothError> { [unowned self] prom in
                 self.centralProxy.centralStatePublisher
-                .print("CentralStatePublisher")
+                .customPrint("[LBT] CentralStatePublisher", isEnabled: isLogEnabled)
                 .tryFilter { [unowned self] (state) -> Bool in
                     switch state {
                     case .poweredOff:
@@ -921,7 +921,7 @@ public class LittleBlueTooth: Identifiable {
                     error as! LittleBluetoothError
                 }
                 .map { state -> BluetoothState in
-                    print("CBManager state: \(state)")
+//                    print("CBManager state: \(state)")
                     return state
                 }
                 .sink(receiveCompletion: { [unowned self, futKey] (completion) in
@@ -950,7 +950,7 @@ public class LittleBlueTooth: Identifiable {
         }
         
         return self.centralProxy.connectionEventPublisher
-        .print("EnsurePeripheralReadyPublisher")
+        .customPrint("[LBT] EnsurePeripheralReadyPublisher", isEnabled: isLogEnabled)
         .tryFilter { (event) -> Bool in
             switch event {
             case .disconnected(_, let error?):
