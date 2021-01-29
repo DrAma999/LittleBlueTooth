@@ -52,6 +52,8 @@
 		65AD4BE324D437B700C0CBE6 /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
 		65AD4BE424D437B700C0CBE6 /* LittleBlueTooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_29 /* LittleBlueTooth.swift */; };
 		65AD4BF024D438AD00C0CBE6 /* LittleBlueToothForTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */; };
+		65B7D53D25C3E01300556409 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B7D53C25C3E01300556409 /* Log.swift */; };
+		65B7D53E25C3E01300556409 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B7D53C25C3E01300556409 /* Log.swift */; };
 		65BA2D0F24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */; };
 		65ED540124D85EFC00558C2C /* CoreBluetoothMock in Frameworks */ = {isa = PBXBuildFile; productRef = 65ED540024D85EFC00558C2C /* CoreBluetoothMock */; };
 		65F63EDF24F8EA73000E3474 /* JustLittleBlueTooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F63EDE24F8EA73000E3474 /* JustLittleBlueTooth.swift */; };
@@ -112,6 +114,7 @@
 		65A6B34F24DD29000068FE1C /* Loggable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loggable.swift; sourceTree = "<group>"; };
 		65AD4BEB24D437B700C0CBE6 /* LittleBlueToothForTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LittleBlueToothForTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65AD4BEC24D437B700C0CBE6 /* LittleBlueTooth copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "LittleBlueTooth copy-Info.plist"; path = "/Users/Andrea/Documents/GitHub/LittleBlueTooth/LittleBlueTooth copy-Info.plist"; sourceTree = "<absolute>"; };
+		65B7D53C25C3E01300556409 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		65BA2D0E24CDDE99008B4BD7 /* LittleBluetoothConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LittleBluetoothConfiguration.swift; sourceTree = "<group>"; };
 		65F63EDE24F8EA73000E3474 /* JustLittleBlueTooth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustLittleBlueTooth.swift; sourceTree = "<group>"; };
 		"LittleBlueTooth::LittleBlueTooth::Product" /* LittleBlueTooth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LittleBlueTooth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -187,6 +190,7 @@
 				650F378824F6B9B600C35395 /* ReadAndWrite.swift */,
 				650F378D24F6C33200C35395 /* Listen.swift */,
 				65F63EDE24F8EA73000E3474 /* JustLittleBlueTooth.swift */,
+				65B7D53C25C3E01300556409 /* Log.swift */,
 			);
 			path = CustomOperator;
 			sourceTree = "<group>";
@@ -481,6 +485,7 @@
 			files = (
 				65AD4BD624D437B700C0CBE6 /* LittleBlueToothError.swift in Sources */,
 				65F63EE024F8ED8E000E3474 /* JustLittleBlueTooth.swift in Sources */,
+				65B7D53E25C3E01300556409 /* Log.swift in Sources */,
 				6574671724F684E600E08B47 /* ScanAndConnection.swift in Sources */,
 				65F63EE424F9216A000E3474 /* ReplaySubject.swift in Sources */,
 				65AD4BD724D437B700C0CBE6 /* AdvertisingData.swift in Sources */,
@@ -509,6 +514,7 @@
 			files = (
 				OBJ_52 /* LittleBlueToothError.swift in Sources */,
 				65F63EDF24F8EA73000E3474 /* JustLittleBlueTooth.swift in Sources */,
+				65B7D53D25C3E01300556409 /* Log.swift in Sources */,
 				6574671624F631F700E08B47 /* ScanAndConnection.swift in Sources */,
 				65F63EE324F92169000E3474 /* ReplaySubject.swift in Sources */,
 				OBJ_53 /* AdvertisingData.swift in Sources */,
@@ -645,7 +651,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.1;
+				MARKETING_VERSION = 0.6.2;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -DTEST";
@@ -736,7 +742,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.0;
+				MARKETING_VERSION = 0.6.2;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
@@ -770,7 +776,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.0;
+				MARKETING_VERSION = 0.6.2;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -DTEST";
@@ -804,7 +810,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.0;
+				MARKETING_VERSION = 0.6.2;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
@@ -945,7 +951,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.1;
+				MARKETING_VERSION = 0.6.2;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
@@ -979,7 +985,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/macosx",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.1;
+				MARKETING_VERSION = 0.6.2;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";

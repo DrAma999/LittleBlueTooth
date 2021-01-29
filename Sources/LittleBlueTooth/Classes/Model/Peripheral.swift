@@ -165,12 +165,12 @@ public class Peripheral: Identifiable {
     
     fileprivate func discoverCharacteristic(_ charateristicUUID: CBUUID, fromService serviceUUID: CBUUID) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> {
         let discovery = self.getService(serviceUUID: serviceUUID)
-        .print("Discover service")
+        .customPrint("[LBT] Discover service", isEnabled: isLogEnabled)
         .flatMap { services -> AnyPublisher<CBService, LittleBluetoothError> in
                 let service = services!.filter{ $0.uuid == serviceUUID}.first!
                 return self.getCharateristic(characteristicUUID: charateristicUUID, from: service)
         }
-        .print("Discover characteristic")
+        .customPrint("[LBT] Discover characteristic", isEnabled: isLogEnabled)
         .tryMap { (service) -> CBCharacteristic in
             guard let charact = service.characteristics?.filter({ $0.uuid == charateristicUUID}).first else {
                 throw LittleBluetoothError.characteristicNotFound(nil)
