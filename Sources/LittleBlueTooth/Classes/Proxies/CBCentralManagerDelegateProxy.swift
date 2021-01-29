@@ -84,7 +84,7 @@ class CBCentralManagerDelegateProxy: NSObject {
 
 extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        log("CBCMD DidUpdateState %{public}d",
+        log("[LBT: CBCMD] DidUpdateState %{public}d",
             log: OSLog.LittleBT_Log_CentralManager,
             type: .debug,
             arg: central.state.rawValue)
@@ -93,7 +93,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     
     /// Scan
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        log("CBCMD DidDiscover %{public}@",
+        log("[LBT: CBCMD] DidDiscover %{public}@",
             log: OSLog.LittleBT_Log_CentralManager,
             type: .debug,
             arg: peripheral.description)
@@ -103,7 +103,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     
     /// Monitoring connection
     func centralManager(_ central: CBCentralManager, didConnect: CBPeripheral) {
-        log("CBCMD DidConnect %{public}@",
+        log("[LBT: CBCMD] DidConnect %{public}@",
             log: OSLog.LittleBT_Log_CentralManager,
             type: .debug,
             arg: didConnect.description)
@@ -118,7 +118,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: Error?) {
-        log("CBCMD DidDisconnect %{public}@, Error %{public}@",
+        log("[LBT: CBCMD] DidDisconnect %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_CentralManager,
             type: .debug,
             arg: didDisconnectPeripheral.description,
@@ -143,7 +143,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
-        log("CBCMD WillRestoreState %{public}@",
+        log("[LBT: CBCMD] WillRestoreState %{public}@",
             log: OSLog.LittleBT_Log_Restore,
             type: .debug,
             arg: dict.description)
