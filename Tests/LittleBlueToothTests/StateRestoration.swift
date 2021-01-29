@@ -29,6 +29,7 @@ class StateRestoration: LittleBlueToothTests {
         blinky.simulateProximityChange(.immediate)
         
         var littleBTConf = LittleBluetoothConfiguration()
+        littleBTConf.isLogEnabled = true
         littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
         littleBT = LittleBlueTooth(with: littleBTConf)
         
@@ -65,6 +66,7 @@ class StateRestoration: LittleBlueToothTests {
         }
 
         littleBTConf = LittleBluetoothConfiguration()
+        littleBTConf.isLogEnabled = true
         littleBTConf.restoreHandler = { restore in
             print("Restorer \(restore)")
         }
