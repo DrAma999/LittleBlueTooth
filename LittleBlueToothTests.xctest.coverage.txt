@@ -1,0 +1,2500 @@
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/ConnectionTest.swift:
+    1|       |//
+    2|       |//  ConnectionTest.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 29/06/2020.
+    6|       |//  Copyright © 2020 Andrea Finollo. All rights reserved.
+    7|       |//
+    8|       |
+    9|       |import XCTest
+   10|       |import CoreBluetoothMock
+   11|       |import Combine
+   12|       |@testable import LittleBlueToothForTest
+   13|       |
+   14|       |class ConnectionTest: LittleBlueToothTests {
+   15|       |
+   16|      9|    override func setUpWithError() throws {
+   17|      9|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   18|      9|        try super.setUpWithError()
+   19|      9|        var configuration = LittleBluetoothConfiguration()
+   20|      9|        configuration.isLogEnabled = true
+   21|      9|        littleBT = LittleBlueTooth(with: configuration)
+   22|      9|    }
+   23|       |
+   24|      9|    override func tearDownWithError() throws {
+   25|      9|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   26|      9|    }
+   27|       |
+   28|      1|    func testPeripheralConnectionSuccess() {
+   29|      1|        disposeBag.removeAll()
+   30|      1|        
+   31|      1|        blinky.simulateProximityChange(.immediate)
+   32|      1|        let connectionExpectation = expectation(description: "Connection expectation")
+   33|      1|        
+   34|      1|        var connectedPeripheral: Peripheral?
+   35|      1|        
+   36|      1|        littleBT.startDiscovery(withServices: nil)
+   37|      1|        .flatMap { discovery in
+   38|      1|            self.littleBT.connect(to: discovery)
+   39|      1|        }
+   40|      1|        .sink(receiveCompletion: { completion in
+   41|      0|            print("Completion \(completion)")
+   42|      1|        }) { (connectedPeriph) in
+   43|      1|            print("Discovery \(connectedPeriph)")
+   44|      1|            connectedPeripheral = connectedPeriph
+   45|      1|            self.littleBT.disconnect().sink(receiveCompletion: { _ in
+   46|      1|            }) { _ in
+   47|      1|                connectionExpectation.fulfill()
+   48|      1|            }
+   49|      1|            .store(in: &self.disposeBag)
+   50|      1|        }
+   51|      1|        .store(in: &disposeBag)
+   52|      1|        
+   53|      1|        waitForExpectations(timeout: 15)
+   54|      1|        XCTAssertNotNil(connectedPeripheral)
+   55|      1|        XCTAssertEqual(connectedPeripheral!.cbPeripheral.identifier, blinky.identifier)
+   56|      1|
+   57|      1|    }
+   58|       |    
+   59|      1|    func testPeripheralConnectionReadRSSI() {
+   60|      1|         disposeBag.removeAll()
+   61|      1|         
+   62|      1|         blinky.simulateProximityChange(.near)
+   63|      1|         let readRSSIExpectation = expectation(description: "Read RSSI expectation")
+   64|      1|         
+   65|      1|         var rssiRead: Int?
+   66|      1|         
+   67|      1|         littleBT.startDiscovery(withServices: nil)
+   68|      1|         .flatMap { discovery in
+   69|      1|             self.littleBT.connect(to: discovery)
+   70|      1|         }
+   71|      1|         .flatMap{ _ in
+   72|      1|            self.littleBT.readRSSI()
+   73|      1|         }
+   74|      1|         .sink(receiveCompletion: { completion in
+   75|      0|             print("Completion \(completion)")
+   76|      1|         }) { (rssi) in
+   77|      1|             print("RSSI \(rssi)")
+   78|      1|             rssiRead = rssi
+   79|      1|             self.littleBT.disconnect().sink(receiveCompletion: { _ in
+   80|      1|             }) { _ in
+   81|      1|                 readRSSIExpectation.fulfill()
+   82|      1|             }
+   83|      1|             .store(in: &self.disposeBag)
+   84|      1|         }
+   85|      1|         .store(in: &disposeBag)
+   86|      1|         
+   87|      1|         waitForExpectations(timeout: 15)
+   88|      1|         XCTAssertNotNil(rssiRead)
+   89|      1|         XCTAssert(rssiRead! < 70)
+   90|      1|
+   91|      1|     }
+   92|       |    
+   93|       |
+   94|      1|    func testMultipleConnection() {
+   95|      1|        disposeBag.removeAll()
+   96|      1|        
+   97|      1|        blinky.simulateProximityChange(.immediate)
+   98|      1|        let connectionExpectation = expectation(description: "Multiple connection")
+   99|      1|        
+  100|      1|        var isAlreadyConnected = false
+  101|      1|        
+  102|      1|        littleBT.startDiscovery(withServices: nil)
+  103|      1|        .flatMap { discovery in
+  104|      1|            self.littleBT.connect(to: discovery).map {_ in discovery}
+  105|      1|        }
+  106|      1|        .flatMap { discovery in
+  107|      1|            self.littleBT.connect(to: discovery)
+  108|      1|        }
+  109|      1|        .sink(receiveCompletion: { completion in
+  110|      1|            print("Completion \(completion)")
+  111|      1|            switch completion {
+  112|      1|            case .finished:
+  113|      0|                break
+  114|      1|            case let .failure(error):
+  115|      1|                if case LittleBluetoothError.peripheralAlreadyConnectedOrConnecting(_) = error {
+  116|      1|                    isAlreadyConnected = true
+  117|      1|                    connectionExpectation.fulfill()
+  118|      1|                    self.littleBT.disconnect()
+  119|      1|                }
+  120|      1|            }
+  121|      1|        }) { (connectedPeriph) in
+  122|      0|            print("Discovery \(connectedPeriph)")
+  123|      0|        }
+  124|      1|        .store(in: &disposeBag)
+  125|      1|        waitForExpectations(timeout: 10)
+  126|      1|        XCTAssert(isAlreadyConnected)
+  127|      1|    }
+  128|       |    
+  129|      1|    func testConnectionDisconnectionObserving() {
+  130|      1|        disposeBag.removeAll()
+  131|      1|        
+  132|      1|        blinky.simulateProximityChange(.immediate)
+  133|      1|        var connectionEvent = [ConnectionEvent]()
+  134|      1|        var peripheralState = [PeripheralState]()
+  135|      1|        let connectionExpectation = expectation(description: "Connection test")
+  136|      1|        
+  137|      1|        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
+  138|      1|            blinky.simulateDisconnection()
+  139|      1|            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
+  140|      1|                connectionExpectation.fulfill()
+  141|      1|            }
+  142|      1|        }
+  143|      1|        
+  144|      1|        littleBT.startDiscovery(withServices: nil)
+  145|      1|        .flatMap { discovery in
+  146|      1|            self.littleBT.connect(to: discovery)
+  147|      1|        }
+  148|      1|        .sink(receiveCompletion: { completion in
+  149|      0|            print("Completion \(completion)")
+  150|      1|        }) { (connectedPeriph) in
+  151|      1|            print("Discovery \(connectedPeriph)")
+  152|      1|        }
+  153|      1|        .store(in: &disposeBag)
+  154|      1|        
+  155|      1|        littleBT.connectionEventPublisher
+  156|      3|        .sink { (event) in
+  157|      3|            print("ConnectionEvent \(event)")
+  158|      3|            connectionEvent.append(event)
+  159|      3|        }
+  160|      1|        .store(in: &disposeBag)
+  161|      1|        
+  162|      1|        littleBT.peripheralStatePublisher
+  163|    677|        .sink { (state) in
+  164|    677|            print("Peripheral state: \(state)")
+  165|    677|            peripheralState.append(state)
+  166|    677|        }
+  167|      1|        .store(in: &disposeBag)
+  168|      1|
+  169|      1|        waitForExpectations(timeout: 30)
+  170|      1|        print("Connection disconnection event \(connectionEvent.count)")
+  171|      1|        XCTAssert(connectionEvent.count == 3)
+  172|      1|
+  173|      1|    }
+  174|       |    
+  175|       |    
+  176|      1|    func testChangeDeviceName() {
+  177|      1|        disposeBag.removeAll()
+  178|      1|
+  179|      1|        blinky.simulateProximityChange(.immediate)
+  180|      1|
+  181|      1|        let changeNameAndServiceExpectation = expectation(description: "Change name test")
+  182|      1|
+  183|      1|        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
+  184|      1|            blinky.simulateServiceChange(newName: "pippo",
+  185|      1|                                         newServices: [.blinkyService])
+  186|      1|        }
+  187|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+  188|      1|
+  189|      1|
+  190|      1|        littleBT.startDiscovery(withServices: nil)
+  191|      1|        .flatMap { discovery in
+  192|      1|            self.littleBT.connect(to: discovery)
+  193|      1|        }
+  194|      1|        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+  195|      1|            self.littleBT.read(from: charateristic)
+  196|      1|        }
+  197|      1|        .sink(receiveCompletion: { completion in
+  198|      0|            print("Completion \(completion)")
+  199|      1|        }) { (connectedPeriph) in
+  200|      1|            print("Discovery \(connectedPeriph)")
+  201|      1|        }
+  202|      1|        .store(in: &disposeBag)
+  203|      1|
+  204|      1|        littleBT.changesStatePublisher
+  205|      2|            .sink { (state) in
+  206|      2|                print("Peripheral state: \(state)")
+  207|      2|                switch state {
+  208|      2|                case let .invalidatedServices(services):
+  209|      1|                    print("Invalidated services \(services)")
+  210|      2|                case let .name(newName):
+  211|      1|                    print("New Name: \(String(describing: newName))")
+  212|      1|                    self.littleBT.disconnect()
+  213|      1|                    changeNameAndServiceExpectation.fulfill()
+  214|      2|                }
+  215|      2|        }
+  216|      1|        .store(in: &disposeBag)
+  217|      1|
+  218|      1|        waitForExpectations(timeout: 30)
+  219|      1|    }
+  220|       |    
+  221|       |    
+  222|      1|    func testDisconnection() {
+  223|      1|        disposeBag.removeAll()
+  224|      1|        
+  225|      1|        blinky.simulateProximityChange(.immediate)
+  226|      1|        
+  227|      1|        let disconnectionExpectation = expectation(description: "Disconnection expectation")
+  228|      1|        
+  229|      1|        var isDisconnected = false
+  230|      1|        
+  231|      1|        
+  232|      1|        littleBT.startDiscovery(withServices: nil)
+  233|      1|        .flatMap { discovery in
+  234|      1|            self.littleBT.connect(to: discovery)
+  235|      1|        }
+  236|      1|        .flatMap { _ in
+  237|      1|            self.littleBT.disconnect()
+  238|      1|        }
+  239|      1|        .sink(receiveCompletion: { completion in
+  240|      0|            print("Completion \(completion)")
+  241|      1|        }) { (disconnectedPeriph) in
+  242|      1|            print("Disconnection \(disconnectedPeriph)")
+  243|      1|            isDisconnected = true
+  244|      1|            disconnectionExpectation.fulfill()
+  245|      1|        }
+  246|      1|        .store(in: &disposeBag)
+  247|      1|        
+  248|      1|        waitForExpectations(timeout: 10)
+  249|      1|        XCTAssert(isDisconnected)
+  250|      1|    }
+  251|       |    
+  252|       |    
+  253|      1|    func testAutoConnection() {
+  254|      1|        disposeBag.removeAll()
+  255|      1|        
+  256|      1|        blinky.simulateProximityChange(.immediate)
+  257|      1|        var connectionEvent = [ConnectionEvent]()
+  258|      1|        var peripheralState = [PeripheralState]()
+  259|      1|        let connectionExpectation = expectation(description: "Connection test")
+  260|      1|        littleBT.autoconnectionHandler = { (peripheral, error) -> Bool in
+  261|      1|            return true
+  262|      1|        }
+  263|      1|        
+  264|      1|        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+  265|      1|            blinky.simulateReset()
+  266|      1|            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
+  267|      1|                connectionExpectation.fulfill()
+  268|      1|            }
+  269|      1|        }
+  270|      1|        
+  271|      1|        littleBT.startDiscovery(withServices: nil)
+  272|      1|        .flatMap { discovery in
+  273|      1|                self.littleBT.connect(to: discovery)
+  274|      1|        }
+  275|      1|        .sink(receiveCompletion: { completion in
+  276|      0|            print("Completion \(completion)")
+  277|      1|        }) { (connectedPeriph) in
+  278|      1|            print("Discovery \(connectedPeriph)")
+  279|      1|        }
+  280|      1|        .store(in: &disposeBag)
+  281|      1|        
+  282|      1|        littleBT.connectionEventPublisher
+  283|      6|            .sink { (event) in
+  284|      6|                print("ConnectionEvent \(event)")
+  285|      6|                connectionEvent.append(event)
+  286|      6|        }
+  287|      1|        .store(in: &disposeBag)
+  288|      1|        
+  289|      1|        littleBT.peripheralStatePublisher
+  290|    758|            .sink { (state) in
+  291|    758|                print("Peripheral state: \(state)")
+  292|    758|                peripheralState.append(state)
+  293|    758|        }
+  294|      1|        .store(in: &disposeBag)
+  295|      1|        
+  296|      1|        waitForExpectations(timeout: 100)
+  297|      1|        self.littleBT.autoconnectionHandler = nil
+  298|      1|        self.littleBT.disconnect()
+  299|      1|        print("Autoconn event \(connectionEvent.count)")
+  300|      1|        XCTAssert(connectionEvent.count == 5)
+  301|      1|    }
+  302|       |    
+  303|      1|    func testPeripheralConnectionInitializationSuccess() {
+  304|      1|        disposeBag.removeAll()
+  305|      1|        
+  306|      1|        blinky.simulateProximityChange(.immediate)
+  307|      1|        let connectionExpectation = expectation(description: "Connection expectation")
+  308|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+  309|      1|
+  310|      1|        var ledState: LedState?
+  311|      1|
+  312|      1|        littleBT.connectionTasks = Just(()).setFailureType(to: LittleBluetoothError.self)
+  313|      1|        .flatMap{ _ -> AnyPublisher<LedState, LittleBluetoothError> in
+  314|      1|            self.littleBT.read(from: charateristic)
+  315|      1|        }.map { state in
+  316|      1|            ledState = state
+  317|      1|            return ()
+  318|      1|        }.eraseToAnyPublisher()
+  319|      1|        
+  320|      1|        
+  321|      1|        var connectedPeripheral: Peripheral?
+  322|      1|        
+  323|      1|        littleBT.startDiscovery(withServices: nil)
+  324|      1|        .flatMap { discovery in
+  325|      1|            self.littleBT.connect(to: discovery)
+  326|      1|        }
+  327|      1|        .sink(receiveCompletion: { completion in
+  328|      0|            print("Completion \(completion)")
+  329|      1|        }) { (connectedPeriph) in
+  330|      1|            print("Discovery \(connectedPeriph)")
+  331|      1|            connectedPeripheral = connectedPeriph
+  332|      1|            self.littleBT.disconnect().sink(receiveCompletion: { _ in
+  333|      1|            }) { _ in
+  334|      1|                connectionExpectation.fulfill()
+  335|      1|            }
+  336|      1|            .store(in: &self.disposeBag)
+  337|      1|        }
+  338|      1|        .store(in: &disposeBag)
+  339|      1|        
+  340|      1|        waitForExpectations(timeout: 15)
+  341|      1|        littleBT.connectionTasks = nil
+  342|      1|        XCTAssertNotNil(connectedPeripheral)
+  343|      1|        XCTAssertNotNil(ledState)
+  344|      1|        XCTAssert(!ledState!.isOn)
+  345|      1|        XCTAssertEqual(connectedPeripheral!.cbPeripheral.identifier, blinky.identifier)
+  346|      1|    }
+  347|       |    
+  348|      1|    func testConnectionFailed() {
+  349|      1|        disposeBag.removeAll()
+  350|      1|        
+  351|      1|        blinky.simulateProximityChange(.immediate)
+  352|      1|        blinky.simulateReset()
+  353|      1|
+  354|      1|        let foundExpectation = XCTestExpectation(description: "Device found expectation")
+  355|      1|        
+  356|      1|        var discovery: PeripheralDiscovery?
+  357|      1|        
+  358|      1|        littleBT.startDiscovery(withServices: nil)
+  359|      1|            .sink(receiveCompletion: { completion in
+  360|      0|                print("Completion \(completion)")
+  361|      1|            }) { (disc) in
+  362|      1|                print("Discovery \(disc)")
+  363|      1|                discovery = disc
+  364|      1|                foundExpectation.fulfill()
+  365|      1|        }
+  366|      1|        .store(in: &disposeBag)
+  367|      1|        wait(for: [foundExpectation], timeout: 3)
+  368|      1|        XCTAssertNotNil(discovery)
+  369|      1|        
+  370|      1|        blinky.simulateProximityChange(.outOfRange)
+  371|      1|        // Should never happen
+  372|      1|        let connected = XCTestExpectation(description: "Connected expectation")
+  373|      1|        connected.isInverted = true
+  374|      1|        
+  375|      1|        littleBT.connect(to: discovery!)
+  376|      1|        .sink(receiveCompletion: { (completion) in
+  377|      1|            print("Completion \(completion)")
+  378|      1|        }) { (periph) in
+  379|      0|            print("Peripheral \(periph)")
+  380|      0|            connected.fulfill()
+  381|      0|        }
+  382|      1|        .store(in: &disposeBag)
+  383|      1|        
+  384|      1|        wait(for: [connected], timeout: 3)
+  385|      1|        littleBT.disconnect()
+  386|      1|    }
+  387|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/CustomOperator.swift:
+    1|       |//
+    2|       |//  CustomOperator.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 27/08/2020.
+    6|       |//
+    7|       |
+    8|       |import XCTest
+    9|       |import CoreBluetoothMock
+   10|       |import Combine
+   11|       |@testable import LittleBlueToothForTest
+   12|       |
+   13|       |class CustomOperator: LittleBlueToothTests {
+   14|       |
+   15|     11|    override func setUpWithError() throws {
+   16|     11|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   17|     11|        try super.setUpWithError()
+   18|     11|        var configuration = LittleBluetoothConfiguration()
+   19|     11|        configuration.isLogEnabled = true
+   20|     11|        littleBT = LittleBlueTooth(with: configuration)
+   21|     11|    }
+   22|       |
+   23|     11|    override func tearDownWithError() throws {
+   24|     11|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   25|     11|    }
+   26|       |
+   27|       |    /// Connection custom operator test
+   28|      1|    func testConnectionOperatorFromScanDiscovery() {
+   29|      1|        disposeBag.removeAll()
+   30|      1|        
+   31|      1|        blinky.simulateProximityChange(.immediate)
+   32|      1|        let connectionExpectation = expectation(description: "Connection expectation")
+   33|      1|        
+   34|      1|        var connectedPeripheral: Peripheral?
+   35|      1|        
+   36|      1|        StartLittleBlueTooth
+   37|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+   38|      1|        .connect(for: self.littleBT)
+   39|      1|        .sink(receiveCompletion: { completion in
+   40|      0|            print("Completion \(completion)")
+   41|      1|        }) { (connectedPeriph) in
+   42|      1|            print("Discovery \(connectedPeriph)")
+   43|      1|            connectedPeripheral = connectedPeriph
+   44|      1|            self.littleBT.disconnect()
+   45|      1|            .delay(for: .seconds(5), scheduler: DispatchQueue.global())
+   46|      1|            .sink(receiveCompletion: { _ in
+   47|      1|            }) { _ in
+   48|      1|                connectionExpectation.fulfill()
+   49|      1|            }
+   50|      1|            .store(in: &self.disposeBag)
+   51|      1|        }
+   52|      1|        .store(in: &disposeBag)
+   53|      1|        
+   54|      1|        waitForExpectations(timeout: 15)
+   55|      1|        XCTAssertNotNil(connectedPeripheral)
+   56|      1|        XCTAssertEqual(connectedPeripheral!.cbPeripheral.identifier, blinky.identifier)
+   57|      1|    }
+   58|       |    
+   59|       |    /// Connection custom operator test
+   60|      1|    func testConnectionOperatorFromPeriphIdentifier() {
+   61|      1|        disposeBag.removeAll()
+   62|      1|        blinkyWOR.simulateProximityChange(.outOfRange)
+   63|      1|        blinky.simulateProximityChange(.immediate)
+   64|      1|        let connectionExpectation = expectation(description: "Connection identifier expectation")
+   65|      1|        
+   66|      1|        var connectedPeripheral: Peripheral?
+   67|      1|        
+   68|      1|        StartLittleBlueTooth
+   69|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+   70|      1|        .prefix(1)
+   71|      1|        .map{ PeripheralIdentifier(peripheral: $0.cbPeripheral)}
+   72|      1|        .connect(for: self.littleBT)
+   73|      1|        .sink(receiveCompletion: { completion in
+   74|      1|            print("Completion \(completion)")
+   75|      1|        }) { (connectedPeriph) in
+   76|      1|            print("Discovery \(connectedPeriph)")
+   77|      1|            connectedPeripheral = connectedPeriph
+   78|      1|            self.littleBT.disconnect()
+   79|      1|            .delay(for: .seconds(5), scheduler: DispatchQueue.global())
+   80|      1|            .sink(receiveCompletion: { _ in
+   81|      1|            }) { _ in
+   82|      1|                connectionExpectation.fulfill()
+   83|      1|            }
+   84|      1|            .store(in: &self.disposeBag)
+   85|      1|        }
+   86|      1|        .store(in: &disposeBag)
+   87|      1|        
+   88|      1|        waitForExpectations(timeout: 15)
+   89|      1|        XCTAssertNotNil(connectedPeripheral)
+   90|      1|        XCTAssertEqual(connectedPeripheral!.cbPeripheral.identifier, blinky.identifier)
+   91|      1|    }
+   92|       |    
+   93|       |    /// Scan e Stop custom operator test
+   94|      1|    func testScanStopOperatorFromScanDiscovery() {
+   95|      1|        disposeBag.removeAll()
+   96|      1|        blinkyWOR.simulateProximityChange(.immediate)
+   97|      1|        blinky.simulateProximityChange(.immediate)
+   98|      1|        let scanExpectation = expectation(description: "Scanning expectation")
+   99|      1|        scanExpectation.expectedFulfillmentCount = 2
+  100|      1|        var isStopped = false
+  101|      1|        var periphCounter = 0
+  102|      1|        
+  103|      1|        StartLittleBlueTooth
+  104|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+  105|      2|        .map { _ in
+  106|      2|           periphCounter += 1
+  107|      2|        }
+  108|      1|        .delay(for: .seconds(5), scheduler: DispatchQueue.global())
+  109|      1|        .stopDiscovery(for: self.littleBT)
+  110|      2|        .map {
+  111|      2|           isStopped = true
+  112|      2|        }
+  113|      1|        .sink(receiveCompletion: { completion in
+  114|      0|            print("Completion \(completion)")
+  115|      2|        }) { (_) in
+  116|      2|            print("Stopped")
+  117|      2|            blinkyWOR.simulateProximityChange(.outOfRange)
+  118|      2|            scanExpectation.fulfill()
+  119|      2|        }
+  120|      1|        .store(in: &disposeBag)
+  121|      1|        
+  122|      1|        waitForExpectations(timeout: 15)
+  123|      1|        XCTAssertTrue(isStopped)
+  124|      1|        XCTAssertTrue(periphCounter == 2)
+  125|      1|    }
+  126|       |    
+  127|       |    /// ReadRSSI custom operator test
+  128|      1|    func testPeripheralConnectionReadRSSIOperator() {
+  129|      1|        disposeBag.removeAll()
+  130|      1|        
+  131|      1|        blinky.simulateProximityChange(.near)
+  132|      1|        let readRSSIExpectation = expectation(description: "Read RSSI expectation")
+  133|      1|        
+  134|      1|        var rssiRead: Int?
+  135|      1|        
+  136|      1|        StartLittleBlueTooth
+  137|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+  138|      1|        .connect(for: self.littleBT)
+  139|      1|        .readRSSI(for: self.littleBT)
+  140|      1|        .sink(receiveCompletion: { completion in
+  141|      0|            print("Completion \(completion)")
+  142|      1|        }) { (rssi) in
+  143|      1|            print("RSSI \(rssi)")
+  144|      1|            rssiRead = rssi
+  145|      1|            self.littleBT.disconnect().sink(receiveCompletion: { _ in
+  146|      1|            }) { _ in
+  147|      1|                readRSSIExpectation.fulfill()
+  148|      1|            }
+  149|      1|            .store(in: &self.disposeBag)
+  150|      1|        }
+  151|      1|        .store(in: &disposeBag)
+  152|      1|        
+  153|      1|        waitForExpectations(timeout: 15)
+  154|      1|        XCTAssertNotNil(rssiRead)
+  155|      1|        XCTAssert(rssiRead! < 70)
+  156|      1|        
+  157|      1|    }
+  158|       |    
+  159|       |    /// Disconnection custom operator test
+  160|      1|    func testDisconnectionOperator() {
+  161|      1|        disposeBag.removeAll()
+  162|      1|        
+  163|      1|        blinky.simulateProximityChange(.immediate)
+  164|      1|        
+  165|      1|        let disconnectionExpectation = expectation(description: "Disconnection expectation")
+  166|      1|        var isDisconnected = false
+  167|      1|        
+  168|      1|        StartLittleBlueTooth
+  169|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+  170|      1|        .connect(for: littleBT)
+  171|      1|        .delay(for: .seconds(5), scheduler: DispatchQueue.global())
+  172|      1|        .disconnect(for: littleBT)
+  173|      1|        .sink(receiveCompletion: { completion in
+  174|      0|            print("Completion \(completion)")
+  175|      1|        }) { (disconnectedPeriph) in
+  176|      1|            print("Disconnection \(disconnectedPeriph)")
+  177|      1|            isDisconnected = true
+  178|      1|            disconnectionExpectation.fulfill()
+  179|      1|        }
+  180|      1|        .store(in: &disposeBag)
+  181|      1|        
+  182|      1|        waitForExpectations(timeout: 30)
+  183|      1|        XCTAssert(isDisconnected)
+  184|      1|    }
+  185|       |    
+  186|       |    
+  187|       |    /// Read custom operator test
+  188|      1|    func testReadLedOFFOperator() {
+  189|      1|        disposeBag.removeAll()
+  190|      1|        
+  191|      1|        blinky.simulateProximityChange(.immediate)
+  192|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
+  193|      1|        let readExpectation = expectation(description: "Read expectation")
+  194|      1|        
+  195|      1|        var ledState: LedState?
+  196|      1|        
+  197|      1|        StartLittleBlueTooth
+  198|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+  199|      1|        .connect(for: self.littleBT)
+  200|      1|        .read(for: self.littleBT, from: charateristic)
+  201|      1|        .sink(receiveCompletion: { completion in
+  202|      0|            print("Completion \(completion)")
+  203|      1|        }) { (answer: LedState) in
+  204|      1|            print("Answer \(answer)")
+  205|      1|            ledState = answer
+  206|      1|            self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  207|      1|            }) { (_) in
+  208|      1|                readExpectation.fulfill()
+  209|      1|            }
+  210|      1|            .store(in: &self.disposeBag)
+  211|      1|        }
+  212|      1|        .store(in: &disposeBag)
+  213|      1|        
+  214|      1|        waitForExpectations(timeout: 10)
+  215|      1|        XCTAssertNotNil(ledState)
+  216|      1|        XCTAssert(ledState!.isOn == false)
+  217|      1|    }
+  218|       |    
+  219|       |    /// Read custom operator test fail for wrong charcteriscti
+  220|      1|    func testWrongCharacteristicErrorOperator() {
+  221|      1|        disposeBag.removeAll()
+  222|      1|        
+  223|      1|        blinky.simulateProximityChange(.immediate)
+  224|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: "00001525-1212-EFDE-1523-785FEABCD133", for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
+  225|      1|        let wrongCharacteristicExpectation = expectation(description: "Wrong characteristic expectation")
+  226|      1|
+  227|      1|        var isWrong = false
+  228|      1|        
+  229|      1|        StartLittleBlueTooth
+  230|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+  231|      1|        .connect(for: self.littleBT)
+  232|      1|        .read(for: self.littleBT, from: charateristic)
+  233|      1|        .sink(receiveCompletion: { completion in
+  234|      1|            print("Completion \(completion)")
+  235|      1|            switch completion {
+  236|      1|            case .finished:
+  237|      0|                break
+  238|      1|            case let .failure(error):
+  239|      1|                if case LittleBluetoothError.characteristicNotFound(_) = error {
+  240|      1|                    isWrong = true
+  241|      1|                    self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  242|      1|                    }) { (_) in
+  243|      1|                        wrongCharacteristicExpectation.fulfill()
+  244|      1|                    }
+  245|      1|                    .store(in: &self.disposeBag)
+  246|      1|                }
+  247|      1|            }
+  248|      1|        }) { (answer: LedState) in
+  249|      0|            print("Answer \(answer)")
+  250|      0|        }
+  251|      1|        .store(in: &disposeBag)
+  252|      1|        
+  253|      1|        waitForExpectations(timeout: 10)
+  254|      1|        XCTAssert(isWrong)
+  255|      1|    }
+  256|       |    
+  257|       |    /// Write custom operator test
+  258|      1|    func testWriteLedOnReadLedONOperator() {
+  259|      1|        disposeBag.removeAll()
+  260|      1|        
+  261|      1|        blinky.simulateProximityChange(.immediate)
+  262|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
+  263|      1|        let readExpectation = expectation(description: "Read expectation")
+  264|      1|        
+  265|      1|        var ledState: LedState?
+  266|      1|        
+  267|      1|        StartLittleBlueTooth
+  268|      1|            .startDiscovery(for: self.littleBT, withServices: nil)
+  269|      1|            .connect(for: self.littleBT)
+  270|      1|            .write(for: self.littleBT, to: charateristic, value: Data([0x01]))
+  271|      1|            .read(for: self.littleBT, from: charateristic)
+  272|      1|            .sink(receiveCompletion: { completion in
+  273|      0|                print("Completion \(completion)")
+  274|      1|            }) { (answer: LedState) in
+  275|      1|                print("Answer \(answer)")
+  276|      1|                ledState = answer
+  277|      1|                self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  278|      1|                }) { (_) in
+  279|      1|                    readExpectation.fulfill()
+  280|      1|                }
+  281|      1|                .store(in: &self.disposeBag)
+  282|      1|                
+  283|      1|        }
+  284|      1|        .store(in: &disposeBag)
+  285|      1|        waitForExpectations(timeout: 10)
+  286|      1|        XCTAssertNotNil(ledState)
+  287|      1|        XCTAssert(ledState!.isOn == true)
+  288|      1|    }
+  289|       |    
+  290|       |    /// Write and listen custom operator test
+  291|      1|    func testWriteAndListenOperator() {
+  292|      1|        disposeBag.removeAll()
+  293|      1|        
+  294|      1|        blinky.simulateProximityChange(.immediate)
+  295|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
+  296|      1|        let writeAndListenExpectation = expectation(description: "Write and Listen")
+  297|      1|        
+  298|      1|        var ledState: LedState?
+  299|      1|        
+  300|      1|        Timer.publish(every: 0.5, on: .main, in: .common)
+  301|      1|            .autoconnect()
+  302|    130|            .map {_ in
+  303|    130|                blinky.simulateValueUpdate(Data([0x01]),
+  304|    130|                                           for: CBMCharacteristicMock.ledCharacteristic)
+  305|    130|        }.sink { value in
+  306|    130|            print("Led value:\(value)")
+  307|    130|        }
+  308|      1|        .store(in: &self.disposeBag)
+  309|      1|        
+  310|      1|        StartLittleBlueTooth
+  311|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+  312|      1|        .prefix(1)
+  313|      1|        .connect(for: self.littleBT)
+  314|      1|        .writeAndListen(for: self.littleBT, from: charateristic, value: Data([0x01]))
+  315|      1|        .sink(receiveCompletion: { completion in
+  316|      1|            print("Completion \(completion)")
+  317|      1|        }) { (answer: LedState) in
+  318|      1|            print("Answer \(answer)")
+  319|      1|            ledState = answer
+  320|      1|            self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  321|      1|            }) { (_) in
+  322|      1|                writeAndListenExpectation.fulfill()
+  323|      1|            }
+  324|      1|            .store(in: &self.disposeBag)
+  325|      1|            
+  326|      1|        }
+  327|      1|        .store(in: &disposeBag)
+  328|      1|        waitForExpectations(timeout: 10)
+  329|      1|        XCTAssertNotNil(ledState)
+  330|      1|        XCTAssert(ledState!.isOn == true)
+  331|      1|    }
+  332|       |    /// Listen custom operator test
+  333|      1|    func testListenOperator() {
+  334|      1|        disposeBag.removeAll()
+  335|      1|        
+  336|      1|        blinky.simulateProximityChange(.immediate)
+  337|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+  338|      1|        let listenExpectation = expectation(description: "Listen expectation")
+  339|      1|        
+  340|      1|        var listenCounter = 0
+  341|      1|        var timerCounter = 0
+  342|      1|        let timer = Timer.publish(every: 1, on: .main, in: .common)
+  343|      1|        let scheduler: AnyCancellable =
+  344|      1|        timer
+  345|     11|        .map {_ in
+  346|     11|            blinky.simulateValueUpdate(Data([0x01]), for: CBMCharacteristicMock.buttonCharacteristic)
+  347|     11|            timerCounter += 1
+  348|     11|        }.sink { value in
+  349|     11|            print("Led value:\(value)")
+  350|     11|        }
+  351|      1|        
+  352|      1|        StartLittleBlueTooth
+  353|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+  354|      1|        .connect(for: self.littleBT)
+  355|      1|        .startListen(for: self.littleBT, from: charateristic)
+  356|      1|        .sink(receiveCompletion: { completion in
+  357|      1|            print("Completion \(completion)")
+  358|     11|        }) { (answer: LedState) in
+  359|     11|            listenCounter += 1
+  360|     11|            print("Answer \(answer)")
+  361|     11|            if listenCounter > 10 {
+  362|      1|                scheduler.cancel()
+  363|      1|                self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  364|      1|                }) { (_) in
+  365|      1|                    listenExpectation.fulfill()
+  366|      1|                }
+  367|      1|                .store(in: &self.disposeBag)
+  368|     11|            }
+  369|     11|        }
+  370|      1|        .store(in: &disposeBag)
+  371|      1|        _ = timer.connect()
+  372|      1|        waitForExpectations(timeout: 20)
+  373|      1|        let contingencyRange = (timerCounter - 2)...timerCounter
+  374|      1|        print("Timer counter: \(timerCounter) Listen counter \(listenCounter) ")
+  375|      1|        XCTAssert(contingencyRange.contains(listenCounter))
+  376|      1|    }
+  377|       |    /// Enable Listen custom operator test
+  378|      1|    func testListenToMoreCharacteristicOperator() {
+  379|      1|        disposeBag.removeAll()
+  380|      1|        
+  381|      1|        blinky.simulateProximityChange(.immediate)
+  382|      1|        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+  383|      1|        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
+  384|      1|        // Expectation
+  385|      1|        let firstListenExpectation = XCTestExpectation(description: "First sub more expectation")
+  386|      1|        let secondListenExpectation = XCTestExpectation(description: "Second sub more expectation")
+  387|      1|        var sub1Event = [Bool]()
+  388|      1|        var sub2Event = [Bool]()
+  389|      1|        var firstCounter = 0
+  390|      1|        var secondCounter = 0
+  391|      1|        // Simulate notification
+  392|      1|        var timerCounter = 0
+  393|      1|        let timer = Timer.publish(every: 1, on: .main, in: .common)
+  394|      1|        let scheduler: AnyCancellable = timer
+  395|     11|            .map {_ -> UInt8 in
+  396|     11|                var data = UInt8.random(in: 0...1)
+  397|     11|                blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
+  398|     11|                data = UInt8.random(in: 0...1)
+  399|     11|                blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.ledCharacteristic)
+  400|     11|                timerCounter += 1
+  401|     11|                return data
+  402|     11|        }.sink { value in
+  403|     11|            print("Sink from timer value:\(value)")
+  404|     11|        }
+  405|      1|        
+  406|      1|        // First publisher
+  407|      1|        littleBT.listenPublisher
+  408|     21|        .filter { charact -> Bool in
+  409|     21|            charact.id == charateristicOne.id
+  410|     21|        }
+  411|     11|        .tryMap { (characteristic) -> ButtonState in
+  412|     11|            try characteristic.value()
+  413|     11|        }
+  414|      1|        .mapError { (error) -> LittleBluetoothError in
+  415|      1|            if let er = error as? LittleBluetoothError {
+  416|      1|                return er
+  417|      1|            }
+  418|      0|            return .emptyData
+  419|      1|        }
+  420|      1|        .sink(receiveCompletion: { completion in
+  421|      1|                print("Completion \(completion)")
+  422|     11|            }) { (answer) in
+  423|     11|                print("Sub1: \(answer)")
+  424|     11|                if firstCounter == 10 {
+  425|      1|                    scheduler.cancel()
+  426|      1|                    return
+  427|     10|                } else {
+  428|     10|                    sub1Event.append(answer.isOn)
+  429|     10|                    firstCounter += 1
+  430|     10|                }
+  431|     10|        }
+  432|      1|        .store(in: &self.disposeBag)
+  433|      1|        
+  434|      1|        // Second publisher
+  435|      1|        littleBT.listenPublisher
+  436|     21|        .filter { charact -> Bool in
+  437|     21|            charact.id == charateristicTwo.id
+  438|     21|        }
+  439|     10|        .tryMap { (characteristic) -> LedState in
+  440|     10|            try characteristic.value()
+  441|     10|        }.mapError { (error) -> LittleBluetoothError in
+  442|      1|            if let er = error as? LittleBluetoothError {
+  443|      1|                return er
+  444|      1|            }
+  445|      0|            return .emptyData
+  446|      1|        }
+  447|      1|        .sink(receiveCompletion: { completion in
+  448|      1|                print("Completion \(completion)")
+  449|     10|            }) { (answer) in
+  450|     10|                print("Sub2: \(answer)")
+  451|     10|                if secondCounter == 10 {
+  452|      0|                    return
+  453|     10|                } else {
+  454|     10|                    sub2Event.append(answer.isOn)
+  455|     10|                    secondCounter += 1
+  456|     10|                }
+  457|     10|        }
+  458|      1|        .store(in: &self.disposeBag)
+  459|      1|
+  460|      1|        StartLittleBlueTooth
+  461|      1|        .startDiscovery(for: self.littleBT, withServices: nil)
+  462|      1|        .connect(for: self.littleBT)
+  463|      1|        .enableListen(for: self.littleBT, from: charateristicOne)
+  464|      1|        .enableListen(for: self.littleBT, from: charateristicTwo)
+  465|      1|        .delay(for: .seconds(20), scheduler: DispatchQueue.global())
+  466|      1|        .disableListen(for: self.littleBT, from: charateristicOne)
+  467|      1|        .disableListen(for: self.littleBT, from: charateristicTwo)
+  468|      1|        .sink(receiveCompletion: { completion in
+  469|      0|            print("Completion \(completion)")
+  470|      1|        }) { (_) in
+  471|      1|            secondListenExpectation.fulfill()
+  472|      1|            firstListenExpectation.fulfill()
+  473|      1|        }
+  474|      1|        .store(in: &disposeBag)
+  475|      1|        _ = timer.connect()
+  476|      1|        
+  477|      1|        wait(for: [firstListenExpectation, secondListenExpectation], timeout: 30)
+  478|      1|        littleBT.disconnect()
+  479|      1|        XCTAssert(sub1Event.count == sub2Event.count)
+  480|      1|        let contingencyRange = (timerCounter - 2)...timerCounter
+  481|      1|        print("Timer counter: \(timerCounter) Event counter \(sub2Event.count) ")
+  482|      1|        XCTAssert(contingencyRange.contains(sub2Event.count))
+  483|      1|    }
+  484|       |
+  485|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/Extraction.swift:
+    1|       |//
+    2|       |//  Extraction.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 09/08/2020.
+    6|       |//
+    7|       |
+    8|       |import XCTest
+    9|       |import CoreBluetoothMock
+   10|       |import Combine
+   11|       |@testable import LittleBlueToothForTest
+   12|       |
+   13|       |class Extraction: LittleBlueToothTests {
+   14|       |
+   15|      3|    override func setUpWithError() throws {
+   16|      3|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   17|      3|        try super.setUpWithError()
+   18|      3|        var configuration = LittleBluetoothConfiguration()
+   19|      3|        configuration.isLogEnabled = true
+   20|      3|        littleBT = LittleBlueTooth(with: configuration)
+   21|      3|
+   22|      3|    }
+   23|       |
+   24|      3|    override func tearDownWithError() throws {
+   25|      3|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   26|      3|    }
+   27|       |
+   28|      1|    func testExtractionWithPeriph() {
+   29|      1|        disposeBag.removeAll()
+   30|      1|        var configuration = LittleBluetoothConfiguration()
+   31|      1|        configuration.isLogEnabled = true
+   32|      1|        littleBT = LittleBlueTooth(with: configuration)
+   33|      1|    
+   34|      1|        blinky.simulateProximityChange(.immediate)
+   35|      1|        let extractionExpectation = expectation(description: "Extraction expectation")
+   36|      1|        
+   37|      1|        var connectedPeripheral: Peripheral?
+   38|      1|        var extractedState: (central: CBCentralManager, peripheral: CBPeripheral?)?
+   39|      1|        
+   40|      1|        littleBT.startDiscovery(withServices: nil)
+   41|      1|        .flatMap { discovery in
+   42|      1|            self.littleBT.connect(to: discovery)
+   43|      1|        }
+   44|      1|        .sink(receiveCompletion: { completion in
+   45|      0|            print("Completion \(completion)")
+   46|      1|        }) { (connectedPeriph) in
+   47|      1|            print("Discovery \(connectedPeriph)")
+   48|      1|            connectedPeripheral = connectedPeriph
+   49|      1|            // Extract state
+   50|      1|            extractedState = self.littleBT.extract()
+   51|      1|            extractionExpectation.fulfill()
+   52|      1|        }
+   53|      1|        .store(in: &disposeBag)
+   54|      1|        
+   55|      1|        waitForExpectations(timeout: 15)
+   56|      1|        XCTAssertNotNil(connectedPeripheral)
+   57|      1|        XCTAssertEqual(connectedPeripheral!.cbPeripheral.identifier, blinky.identifier)
+   58|      1|        XCTAssertNotNil(extractedState)
+   59|      1|        XCTAssertEqual(extractedState!.peripheral!.identifier, blinky.identifier)
+   60|      1|        XCTAssertEqual(extractedState!.peripheral!.state, CBPeripheralState.connected)
+   61|      1|        self.littleBT.disconnect()
+   62|      1|
+   63|      1|    }
+   64|       |
+   65|      1|    func testExtractionWithoutPeriph() {
+   66|      1|        disposeBag.removeAll()
+   67|      1|        var configuration = LittleBluetoothConfiguration()
+   68|      1|        configuration.isLogEnabled = true
+   69|      1|        littleBT = LittleBlueTooth(with: configuration)
+   70|      1|        
+   71|      1|        let extractedState = self.littleBT.extract()
+   72|      1|        
+   73|      1|        XCTAssertNil(extractedState.peripheral)
+   74|      1|        XCTAssertNotNil(extractedState.central)
+   75|      1|    }
+   76|       |    
+   77|      1|    func testRestart() {
+   78|      1|        disposeBag.removeAll()
+   79|      1|        var configuration = LittleBluetoothConfiguration()
+   80|      1|        configuration.isLogEnabled = true
+   81|      1|        littleBT = LittleBlueTooth(with: configuration)
+   82|      1|        blinky.simulateDisconnection()
+   83|      1|        blinky.simulateProximityChange(.immediate)
+   84|      1|        let restartExpectation = expectation(description: "Restart expectation")
+   85|      1|        
+   86|      1|        var connectedPeripheral: Peripheral?
+   87|      1|        var extractedState: (central: CBCentralManager, peripheral: CBPeripheral?)?
+   88|      1|        
+   89|      1|        littleBT.startDiscovery(withServices: nil)
+   90|      1|        .flatMap { discovery in
+   91|      1|            self.littleBT.connect(to: discovery)
+   92|      1|        }
+   93|      1|        .sink(receiveCompletion: { completion in
+   94|      0|            print("Completion \(completion)")
+   95|      1|        }) { (connectedPeriph) in
+   96|      1|            print("Discovery \(connectedPeriph)")
+   97|      1|            connectedPeripheral = connectedPeriph
+   98|      1|            // Extract state
+   99|      1|            extractedState = self.littleBT.extract()
+  100|      1|            XCTAssertNotNil(connectedPeripheral)
+  101|      1|            XCTAssertEqual(connectedPeripheral!.cbPeripheral.identifier, blinky.identifier)
+  102|      1|            XCTAssertNotNil(extractedState)
+  103|      1|            XCTAssertEqual(extractedState!.peripheral!.identifier, blinky.identifier)
+  104|      1|            self.littleBT.restart(with: extractedState!.central, peripheral: extractedState!.peripheral!)
+  105|      1|            restartExpectation.fulfill()
+  106|      1|        }
+  107|      1|        .store(in: &disposeBag)
+  108|      1|        
+  109|      1|        waitForExpectations(timeout: 10)
+  110|      1|        XCTAssertNotNil(littleBT.peripheral)
+  111|      1|        self.littleBT.disconnect()
+  112|      1|        
+  113|      1|    }
+  114|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/ListenTest.swift:
+    1|       |//
+    2|       |//  ListenTest.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 04/07/2020.
+    6|       |//  Copyright © 2020 Andrea Finollo. All rights reserved.
+    7|       |//
+    8|       |
+    9|       |import XCTest
+   10|       |import Combine
+   11|       |import CoreBluetoothMock
+   12|       |@testable import LittleBlueToothForTest
+   13|       |
+   14|       |struct ButtonState: Readable {
+   15|       |    let isOn: Bool
+   16|       |
+   17|     52|    init(from data: Data) throws {
+   18|     52|        let answer: Bool = try data.extract(start: 0, length: 1)
+   19|     52|        self.isOn = answer
+   20|     52|    }
+   21|       |    
+   22|       |}
+   23|       |
+   24|       |
+   25|       |class ListenTest: LittleBlueToothTests {
+   26|       |    var cancellable: Cancellable?
+   27|       |
+   28|      4|    override func setUpWithError() throws {
+   29|      4|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   30|      4|        try super.setUpWithError()
+   31|      4|        var configuration = LittleBluetoothConfiguration()
+   32|      4|        configuration.isLogEnabled = true
+   33|      4|        littleBT = LittleBlueTooth(with: configuration)
+   34|      4|    }
+   35|       |
+   36|      4|    override func tearDownWithError() throws {
+   37|      4|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   38|      4|    }
+   39|       |    
+   40|      1|    func testListen() {
+   41|      1|        disposeBag.removeAll()
+   42|      1|        
+   43|      1|        blinky.simulateProximityChange(.immediate)
+   44|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read])
+   45|      1|        let listenExpectation = expectation(description: "Listen expectation")
+   46|      1|        
+   47|      1|        var listenCounter = 0
+   48|      1|        var timerCounter = 0
+   49|      1|        let timer = Timer.publish(every: 1, on: .main, in: .common)
+   50|      1|        let scheduler: AnyCancellable =
+   51|      1|        timer
+   52|     11|        .map {_ in
+   53|     11|            blinky.simulateValueUpdate(Data([0x01]), for: CBMCharacteristicMock.buttonCharacteristic)
+   54|     11|            timerCounter += 1
+   55|     11|        }.sink { value in
+   56|     11|            print("Led value:\(value)")
+   57|     11|        }
+   58|      1|        
+   59|      1|        littleBT.startDiscovery(withServices: nil)
+   60|      1|            .map { disc -> PeripheralDiscovery in
+   61|      1|                print("Discovery discovery \(disc)")
+   62|      1|                return disc
+   63|      1|        }
+   64|      1|        .flatMap { discovery in
+   65|      1|            self.littleBT.connect(to: discovery)
+   66|      1|        }
+   67|      1|        .flatMap { _ -> AnyPublisher<ButtonState, LittleBluetoothError> in
+   68|      1|            self.littleBT.startListen(from: charateristic)
+   69|      1|        }
+   70|      1|        .sink(receiveCompletion: { completion in
+   71|      1|            print("Completion \(completion)")
+   72|     11|        }) { (answer) in
+   73|     11|            listenCounter += 1
+   74|     11|            print("Answer \(answer)")
+   75|     11|            if listenCounter > 10 {
+   76|      1|                scheduler.cancel()
+   77|      1|                self.littleBT.disconnect().sink(receiveCompletion: {_ in
+   78|      1|                }) { (_) in
+   79|      1|                    listenExpectation.fulfill()
+   80|      1|                }
+   81|      1|                .store(in: &self.disposeBag)
+   82|     11|            }
+   83|     11|        }
+   84|      1|        .store(in: &disposeBag)
+   85|      1|        _ = timer.connect()
+   86|      1|
+   87|      1|        waitForExpectations(timeout: 20)
+   88|      1|        let contingencyRange = (timerCounter - 2)...timerCounter
+   89|      1|        print("Timer counter: \(timerCounter) Listen counter \(listenCounter) ")
+   90|      1|        XCTAssert(contingencyRange.contains(listenCounter))
+   91|      1|    }
+   92|       |    
+   93|       |    
+   94|      1|    func testConnectableListen() {
+   95|      1|        disposeBag.removeAll()
+   96|      1|
+   97|      1|        blinky.simulateProximityChange(.immediate)
+   98|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read])
+   99|      1|
+  100|      1|        // Expectation
+  101|      1|        let firstListenExpectation = expectation(description: "First sub expectation")
+  102|      1|        let secondListenExpectation = expectation(description: "Second sub expectation")
+  103|      1|        var sub1Event = [Bool]()
+  104|      1|        var sub2Event = [Bool]()
+  105|      1|        var firstCounter = 0
+  106|      1|        var secondCounter = 0
+  107|      1|        // Simulate notification
+  108|      1|        var timerCounter = 0
+  109|      1|        let timer = Timer.publish(every: 1, on: .main, in: .common)
+  110|      1|        let scheduler: AnyCancellable = timer
+  111|     10|            .map {_ -> UInt8 in
+  112|     10|                let data = UInt8.random(in: 0...1)
+  113|     10|                blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
+  114|     10|                timerCounter += 1
+  115|     10|                return data
+  116|     10|        }.sink { value in
+  117|     10|            print("Led value:\(value)")
+  118|     10|        }
+  119|      1|
+  120|      1|        let connectable = littleBT.connectableListenPublisher(for: charateristic, valueType: ButtonState.self)
+  121|      1|        
+  122|      1|        // First subscriber
+  123|      1|        connectable
+  124|      1|        .sink(receiveCompletion: { completion in
+  125|      1|            print("Completion \(completion)")
+  126|     10|        }) { (answer) in
+  127|     10|            firstCounter += 1
+  128|     10|            print("Sub1 \(answer)")
+  129|     10|            sub1Event.append(answer.isOn)
+  130|     10|            if firstCounter == 10 {
+  131|      1|                scheduler.cancel()
+  132|      1|                self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  133|      1|                }) { (_) in
+  134|      1|                    firstListenExpectation.fulfill()
+  135|      1|                }
+  136|      1|                .store(in: &self.disposeBag)
+  137|     10|            }
+  138|     10|        }
+  139|      1|        .store(in: &disposeBag)
+  140|      1|        
+  141|      1|        // Second subscriber
+  142|      1|        connectable
+  143|      1|        .sink(receiveCompletion: { completion in
+  144|      1|            print("Completion \(completion)")
+  145|     10|        }) { (answer) in
+  146|     10|          print("Sub2: \(answer)")
+  147|     10|            sub2Event.append(answer.isOn)
+  148|     10|          secondCounter += 1
+  149|     10|          if secondCounter == 10 {
+  150|      1|            secondListenExpectation.fulfill()
+  151|     10|          }
+  152|     10|        }
+  153|      1|        .store(in: &disposeBag)
+  154|      1|        
+  155|      1|
+  156|      1|        littleBT.startDiscovery(withServices: nil)
+  157|      1|        .map { disc -> PeripheralDiscovery in
+  158|      1|                print("Discovery discovery \(disc)")
+  159|      1|                return disc
+  160|      1|        }
+  161|      1|        .flatMap { discovery in
+  162|      1|            self.littleBT.connect(to: discovery)
+  163|      1|        }
+  164|      1|        .map { _ -> Void in
+  165|      1|            self.cancellable = connectable.connect()
+  166|      1|            return ()
+  167|      1|        }
+  168|      1|        .sink(receiveCompletion: { completion in
+  169|      0|            print("Completion \(completion)")
+  170|      1|        }) { (answer) in
+  171|      1|            print("Answer \(answer)")
+  172|      1|        }
+  173|      1|        .store(in: &disposeBag)
+  174|      1|        _ = timer.connect()
+  175|      1|        
+  176|      1|        waitForExpectations(timeout: 20)
+  177|      1|        XCTAssert(sub1Event.count == sub2Event.count)
+  178|      1|        XCTAssert(sub1Event == sub2Event)
+  179|      1|        let contingencyRange = (timerCounter - 2)...timerCounter
+  180|      1|        print("Timer counter: \(timerCounter) Event counter \(sub2Event.count) ")
+  181|      1|
+  182|      1|        XCTAssert(contingencyRange.contains(sub2Event.count))
+  183|      1|
+  184|      1|    }
+  185|       |    
+  186|       | 
+  187|       |
+  188|      1|    func testListenToMoreCharacteristic() {
+  189|      1|        disposeBag.removeAll()
+  190|      1|        
+  191|      1|        blinky.simulateProximityChange(.immediate)
+  192|      1|        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read])
+  193|      1|        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+  194|      1|        // Expectation
+  195|      1|        let firstListenExpectation = XCTestExpectation(description: "First sub more expectation")
+  196|      1|        let secondListenExpectation = XCTestExpectation(description: "Second sub more expectation")
+  197|      1|        var sub1Event = [Bool]()
+  198|      1|        var sub2Event = [Bool]()
+  199|      1|        var firstCounter = 0
+  200|      1|        var secondCounter = 0
+  201|      1|        // Simulate notification
+  202|      1|        var timerCounter = 0
+  203|      1|        let timer = Timer.publish(every: 1, on: .main, in: .common)
+  204|      1|        let scheduler: AnyCancellable = timer
+  205|     11|            .map {_ -> UInt8 in
+  206|     11|                var data = UInt8.random(in: 0...1)
+  207|     11|                blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
+  208|     11|                data = UInt8.random(in: 0...1)
+  209|     11|                blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.ledCharacteristic)
+  210|     11|                timerCounter += 1
+  211|     11|                return data
+  212|     11|        }.sink { value in
+  213|     11|            print("Sink from timer value:\(value)")
+  214|     11|        }
+  215|      1|        
+  216|      1|        // First publisher
+  217|      1|        littleBT.listenPublisher
+  218|     61|        .filter { charact -> Bool in
+  219|     61|            charact.id == charateristicOne.id
+  220|     61|        }
+  221|     11|        .tryMap { (characteristic) -> ButtonState in
+  222|     11|            try characteristic.value()
+  223|     11|        }
+  224|      1|        .mapError { (error) -> LittleBluetoothError in
+  225|      1|            if let er = error as? LittleBluetoothError {
+  226|      1|                return er
+  227|      1|            }
+  228|      0|            return .emptyData
+  229|      1|        }
+  230|      1|        .sink(receiveCompletion: { completion in
+  231|      1|                print("Completion \(completion)")
+  232|     11|            }) { (answer) in
+  233|     11|                print("Sub1: \(answer)")
+  234|     11|                if firstCounter == 10 {
+  235|      1|                    scheduler.cancel()
+  236|      1|                    return
+  237|     10|                } else {
+  238|     10|                    sub1Event.append(answer.isOn)
+  239|     10|                    firstCounter += 1
+  240|     10|                }
+  241|     10|        }
+  242|      1|        .store(in: &self.disposeBag)
+  243|      1|        
+  244|      1|        // Second publisher
+  245|      1|        littleBT.listenPublisher
+  246|     61|        .filter { charact -> Bool in
+  247|     61|            charact.id == charateristicTwo.id
+  248|     61|        }
+  249|     50|        .tryMap { (characteristic) -> LedState in
+  250|     50|            try characteristic.value()
+  251|     50|        }.mapError { (error) -> LittleBluetoothError in
+  252|      1|            if let er = error as? LittleBluetoothError {
+  253|      1|                return er
+  254|      1|            }
+  255|      0|            return .emptyData
+  256|      1|        }
+  257|      1|        .sink(receiveCompletion: { completion in
+  258|      1|                print("Completion \(completion)")
+  259|     50|            }) { (answer) in
+  260|     50|                print("Sub2: \(answer)")
+  261|     50|                if secondCounter == 10 {
+  262|     40|                    return
+  263|     40|                } else {
+  264|     10|                    sub2Event.append(answer.isOn)
+  265|     10|                    secondCounter += 1
+  266|     10|                }
+  267|     10|        }
+  268|      1|        .store(in: &self.disposeBag)
+  269|      1|
+  270|      1|        littleBT.startDiscovery(withServices: nil)
+  271|      1|            .map { disc -> PeripheralDiscovery in
+  272|      1|                print("Discovery discovery \(disc)")
+  273|      1|                return disc
+  274|      1|        }
+  275|      1|        .flatMap { discovery in
+  276|      1|            self.littleBT.connect(to: discovery)
+  277|      1|        }
+  278|      1|        .flatMap { _ in
+  279|      1|            self.littleBT.enableListen(from: charateristicOne)
+  280|      1|        }
+  281|      1|        .flatMap { _ in
+  282|      1|            self.littleBT.enableListen(from: charateristicTwo)
+  283|      1|        }
+  284|      1|        .delay(for: .seconds(20), scheduler: DispatchQueue.global())
+  285|      1|        .flatMap { _ in
+  286|      1|            self.littleBT.disableListen(from: charateristicOne)
+  287|      1|        }
+  288|      1|        .flatMap { _ in
+  289|      1|            self.littleBT.disableListen(from: charateristicTwo)
+  290|      1|        }
+  291|      1|        .sink(receiveCompletion: { completion in
+  292|      0|            print("Completion \(completion)")
+  293|      1|        }) { (_) in
+  294|      1|            secondListenExpectation.fulfill()
+  295|      1|            firstListenExpectation.fulfill()
+  296|      1|        }
+  297|      1|        .store(in: &disposeBag)
+  298|      1|        _ = timer.connect()
+  299|      1|        
+  300|      1|        wait(for: [firstListenExpectation, secondListenExpectation], timeout: 30)
+  301|      1|        littleBT.disconnect()
+  302|      1|        XCTAssert(sub1Event.count == sub2Event.count)
+  303|      1|        let contingencyRange = (timerCounter - 2)...timerCounter
+  304|      1|        print("Timer counter: \(timerCounter) Event counter \(sub2Event.count) ")
+  305|      1|        XCTAssert(contingencyRange.contains(sub2Event.count))
+  306|      1|        
+  307|      1|    }
+  308|       |    
+  309|      1|    func testPowerOffWhileListen() {
+  310|      1|        disposeBag.removeAll()
+  311|      1|        
+  312|      1|        blinky.simulateProximityChange(.immediate)
+  313|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+  314|      1|        let listenExpectation = expectation(description: "Listen while powering off expectation")
+  315|      1|        var isPowerOff = false
+  316|      1|        
+  317|      1|        let scheduler: AnyCancellable = Timer.publish(every: 0.5, on: .main, in: .common)
+  318|      1|        .autoconnect()
+  319|     10|        .map {_ in
+  320|     10|            let data = UInt8.random(in: 0...1)
+  321|     10|            blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
+  322|     10|        }.sink { value in
+  323|     10|            print("Led value:\(value)")
+  324|     10|        }
+  325|      1|        
+  326|      1|        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+  327|      1|            CBMCentralManagerMock.simulateInitialState(.poweredOff)
+  328|      1|        }
+  329|      1|        
+  330|      1|        littleBT.startDiscovery(withServices: nil)
+  331|      1|        .map { disc -> PeripheralDiscovery in
+  332|      1|                print("Discovery discovery \(disc)")
+  333|      1|                return disc
+  334|      1|        }
+  335|      1|        .flatMap { discovery in
+  336|      1|            self.littleBT.connect(to: discovery)
+  337|      1|        }
+  338|      1|        .flatMap { _ -> AnyPublisher<ButtonState, LittleBluetoothError> in
+  339|      1|            self.littleBT.startListen(from: charateristic)
+  340|      1|        }
+  341|      1|        .sink(receiveCompletion: { completion in
+  342|      1|            print("Completion \(completion)")
+  343|      1|            switch completion {
+  344|      1|            case let .failure(error):
+  345|      1|                if case LittleBluetoothError.bluetoothPoweredOff = error {
+  346|      1|                    isPowerOff = true
+  347|      1|                    listenExpectation.fulfill()
+  348|      1|                }
+  349|      1|            default:
+  350|      0|                break
+  351|      1|            }
+  352|      8|        }) { (answer) in
+  353|      8|            print("Answer \(answer)")
+  354|      8|        }
+  355|      1|        .store(in: &disposeBag)
+  356|      1|        
+  357|      1|        waitForExpectations(timeout: 10)
+  358|      1|        XCTAssert(isPowerOff)
+  359|      1|        scheduler.cancel()
+  360|      1|    }
+  361|       |    
+  362|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/LittleBlueToothTests.swift:
+    1|       |//
+    2|       |//  LittleBlueToothTests.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 10/06/2020.
+    6|       |//  Copyright © 2020 Andrea Finollo. All rights reserved.
+    7|       |//
+    8|       |
+    9|       |import XCTest
+   10|       |import CoreBluetoothMock
+   11|       |import Combine
+   12|       |@testable import LittleBlueToothForTest
+   13|       |
+   14|       |class LittleBlueToothTests: XCTestCase {
+   15|       |    var littleBT: LittleBlueTooth!
+   16|     49|    var disposeBag: Set<AnyCancellable> = []
+   17|       |    static var testInitialized: Bool = false
+   18|       |    
+   19|     41|    override func setUpWithError() throws {
+   20|     41|        try super.setUpWithError()
+   21|     41|        if !Self.testInitialized {
+   22|      1|            CBMCentralManagerMock.simulatePeripherals([blinky, blinkyWOR])
+   23|      1|            Self.testInitialized = true
+   24|     41|        }
+   25|     41|        CBMCentralManagerMock.simulateInitialState(.poweredOn)
+   26|     41|
+   27|     41|    }
+   28|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/Mocks/MockPeripherals.swift:
+    1|       |/*
+    2|       |* Copyright (c) 2020, Nordic Semiconductor
+    3|       |* All rights reserved.
+    4|       |*
+    5|       |* Redistribution and use in source and binary forms, with or without modification,
+    6|       |* are permitted provided that the following conditions are met:
+    7|       |*
+    8|       |* 1. Redistributions of source code must retain the above copyright notice, this
+    9|       |*    list of conditions and the following disclaimer.
+   10|       |*
+   11|       |* 2. Redistributions in binary form must reproduce the above copyright notice, this
+   12|       |*    list of conditions and the following disclaimer in the documentation and/or
+   13|       |*    other materials provided with the distribution.
+   14|       |*
+   15|       |* 3. Neither the name of the copyright holder nor the names of its contributors may
+   16|       |*    be used to endorse or promote products derived from this software without
+   17|       |*    specific prior written permission.
+   18|       |*
+   19|       |* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+   20|       |* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+   21|       |* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+   22|       |* IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+   23|       |* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+   24|       |* NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+   25|       |* PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+   26|       |* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+   27|       |* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   28|       |* POSSIBILITY OF SUCH DAMAGE.
+   29|       |*/
+   30|       |
+   31|       |import Foundation
+   32|       |import CoreBluetoothMock
+   33|       |
+   34|       |// MARK: - Mock nRF Blinky
+   35|       |
+   36|       |extension CBMUUID {
+   37|       |    static let nordicBlinkyService  = CBMUUID(string: "00001523-1212-EFDE-1523-785FEABCD123")
+   38|       |    static let buttonCharacteristic = CBMUUID(string: "00001524-1212-EFDE-1523-785FEABCD123")
+   39|       |    static let ledCharacteristic    = CBMUUID(string: "00001525-1212-EFDE-1523-785FEABCD123")
+   40|       |}
+   41|       |
+   42|       |extension CBMCharacteristicMock {
+   43|       |    
+   44|       |    static let buttonCharacteristic = CBMCharacteristicMock(
+   45|       |        type: .buttonCharacteristic,
+   46|       |        properties: [.notify, .read],
+   47|       |        descriptors: CBMClientCharacteristicConfigurationDescriptorMock()
+   48|       |    )
+   49|       |
+   50|       |    static let ledCharacteristic = CBMCharacteristicMock(
+   51|       |        type: .ledCharacteristic,
+   52|       |        properties: [.write, .read, .notify]
+   53|       |    )
+   54|       |    
+   55|       |}
+   56|       |
+   57|       |extension CBMServiceMock {
+   58|       |
+   59|       |    static let blinkyService = CBMServiceMock(
+   60|       |        type: .nordicBlinkyService, primary: true,
+   61|       |        characteristics:
+   62|       |            .buttonCharacteristic,
+   63|       |            .ledCharacteristic
+   64|       |    )
+   65|       |    
+   66|       |}
+   67|       |
+   68|       |private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
+   69|       |    private var ledEnabled: Bool = false
+   70|       |    private var buttonPressed: Bool = false
+   71|       |    
+   72|      7|    private var ledData: Data {
+   73|      7|        return ledEnabled ? Data([0x01]) : Data([0x00])
+   74|      7|    }
+   75|       |    
+   76|      1|    private var buttonData: Data {
+   77|      1|        return buttonPressed ? Data([0x01]) : Data([0x00])
+   78|      1|    }
+   79|       |
+   80|      4|    func reset() {
+   81|      4|        ledEnabled = false
+   82|      4|        buttonPressed = false
+   83|      4|    }
+   84|       |
+   85|       |    func peripheral(_ peripheral: CBMPeripheralSpec,
+   86|       |                    didReceiveReadRequestFor characteristic: CBMCharacteristic)
+   87|      8|            -> Result<Data, Error> {
+   88|      8|        if characteristic.uuid == .ledCharacteristic {
+   89|      7|            return .success(ledData)
+   90|      7|        } else {
+   91|      1|            return .success(buttonData)
+   92|      1|        }
+   93|      0|    }
+   94|       |    
+   95|       |    func peripheral(_ peripheral: CBMPeripheralSpec,
+   96|       |                    didReceiveWriteRequestFor characteristic: CBMCharacteristic,
+   97|      4|                    data: Data) -> Result<Void, Error> {
+   98|      4|        if !data.isEmpty {
+   99|      4|            ledEnabled = data[0] != 0x00
+  100|      4|        }
+  101|      4|        return .success(())
+  102|      4|    }
+  103|       |}
+  104|       |
+  105|       |
+  106|       |let blinky = CBMPeripheralSpec
+  107|       |    .simulatePeripheral(proximity: .outOfRange)
+  108|       |    .advertising(
+  109|       |        advertisementData: [
+  110|       |            CBMAdvertisementDataLocalNameKey    : "nRF Blinky",
+  111|       |            CBMAdvertisementDataServiceUUIDsKey : [CBMUUID.nordicBlinkyService],
+  112|       |            CBMAdvertisementDataIsConnectable   : true as NSNumber
+  113|       |        ],
+  114|       |        withInterval: 0.250,
+  115|       |        alsoWhenConnected: false)
+  116|       |    .connectable(
+  117|       |        name: "nRF Blinky",
+  118|       |        services: [.blinkyService],
+  119|       |        delegate: BlinkyCBMPeripheralSpecDelegate(),
+  120|       |        connectionInterval: 0.150,
+  121|       |        mtu: 23)
+  122|       |    .build()
+  123|       |
+  124|       |let blinkyWOR = CBMPeripheralSpec
+  125|       |    .simulatePeripheral(proximity: .outOfRange)
+  126|       |    .advertising(
+  127|       |        advertisementData: [
+  128|       |            CBMAdvertisementDataLocalNameKey    : "nRF Blinky WO",
+  129|       |            CBMAdvertisementDataServiceUUIDsKey : [CBMUUID.nordicBlinkyService],
+  130|       |            CBMAdvertisementDataIsConnectable   : true as NSNumber
+  131|       |        ],
+  132|       |        withInterval: 0.250,
+  133|       |        alsoWhenConnected: false)
+  134|       |    .connectable(
+  135|       |        name: "nRF Blinky",
+  136|       |        services: [.blinkyService],
+  137|       |        delegate: BlinkyCBMPeripheralSpecDelegate(),
+  138|       |        connectionInterval: 0.150,
+  139|       |        mtu: 3)
+  140|       |    .build()
+  141|       |
+  142|       |// MARK: - Mock Nordic HRM
+  143|       |
+  144|       |extension CBMServiceMock {
+  145|       |    
+  146|       |    static let hrmService = CBMServiceMock(
+  147|       |        type: CBMUUID(string: "180D"), primary: true,
+  148|       |        characteristics:
+  149|       |            CBMCharacteristicMock(
+  150|       |                type: CBMUUID(string: "2A37"), // Heart Rate Measurement
+  151|       |                properties: [.notify],
+  152|       |                descriptors: CBMClientCharacteristicConfigurationDescriptorMock()
+  153|       |            ),
+  154|       |            CBMCharacteristicMock(
+  155|       |                type: CBMUUID(string: "2A38"), // Body Sensor Location
+  156|       |                properties: [.read]
+  157|       |            )
+  158|       |    )
+  159|       |    
+  160|       |}
+  161|       |
+  162|       |private struct DummyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
+  163|       |    // Let's use default implementation.
+  164|       |    // The HRM will not show up in the scan result, as it
+  165|       |    // doesn't advertise with Nordic LED Button service.
+  166|       |    // If you uncomment the line below, and try to connect,
+  167|       |    // connection will fail on "Device not supported" error.
+  168|       |}
+  169|       |
+  170|       |let hrm = CBMPeripheralSpec
+  171|       |    .simulatePeripheral(proximity: .outOfRange)
+  172|       |    .advertising(
+  173|       |        advertisementData: [
+  174|       |            CBMAdvertisementDataLocalNameKey : "NordicHRM",
+  175|       |            CBMAdvertisementDataServiceUUIDsKey : [
+  176|       |                CBMUUID(string: "180D"), // Heart Rate
+  177|       |                CBMUUID(string: "180A"), // Device Information
+  178|       |                // BlinkyPeripheral.nordicBlinkyServiceUUID // <- this line
+  179|       |            ],
+  180|       |            CBMAdvertisementDataIsConnectable : true as NSNumber
+  181|       |        ],
+  182|       |        withInterval: 0.100)
+  183|       |    .connectable(
+  184|       |        name: "NordicHRM",
+  185|       |        services: [.hrmService],
+  186|       |        delegate: DummyCBMPeripheralSpecDelegate(),
+  187|       |        connectionInterval: 0.250,
+  188|       |        mtu: 251)
+  189|       |    .build()
+  190|       |
+  191|       |// MARK: - Physical Web Beacon
+  192|       |
+  193|       |let thingy = CBMPeripheralSpec
+  194|       |    .simulatePeripheral(proximity: .outOfRange)
+  195|       |    .advertising(
+  196|       |        advertisementData: [
+  197|       |            CBMAdvertisementDataServiceUUIDsKey : [
+  198|       |                CBMUUID(string: "FEAA")  // Eddystone
+  199|       |            ],
+  200|       |            CBMAdvertisementDataServiceDataKey : [
+  201|       |                // Physical Web beacon: 10ee03676f2e676c2f7049576466972
+  202|       |                // type: URL
+  203|       |                // TX Power: -18 dBm
+  204|       |                // URL: https://goo.gl/pIWdir -> Thingy:52
+  205|       |                CBMUUID(string: "FEAA") : Data(base64Encoded: "EO4DZ28uZ2wvcElXZGaXIA==")
+  206|       |            ]
+  207|       |        ],
+  208|       |        withInterval: 0.100)
+  209|       |    .build()
+  210|       |
+  211|       |class FakePeriph: CBMPeripheral {
+  212|      0|    var identifier: UUID = UUID()
+  213|       |    
+  214|       |    var delegate: CBMPeripheralDelegate?
+  215|       |    
+  216|      0|    var name: String? = "SoFake"
+  217|       |    
+  218|      0|    var state: CBMPeripheralState = .disconnected
+  219|       |    
+  220|       |    var services: [CBMService]?
+  221|       |    
+  222|       |    var canSendWriteWithoutResponse: Bool = false
+  223|       |    
+  224|       |    var ancsAuthorized: Bool = false
+  225|       |    
+  226|      0|    func readRSSI() {}
+  227|       |    
+  228|      0|    func discoverServices(_ serviceUUIDs: [CBMUUID]?) {}
+  229|       |    
+  230|      0|    func discoverIncludedServices(_ includedServiceUUIDs: [CBMUUID]?, for service: CBMService) {}
+  231|       |    
+  232|      0|    func discoverCharacteristics(_ characteristicUUIDs: [CBMUUID]?, for service: CBMService) {}
+  233|       |    
+  234|      0|    func discoverDescriptors(for characteristic: CBMCharacteristic) {}
+  235|       |    
+  236|      0|    func readValue(for characteristic: CBMCharacteristic) {}
+  237|       |    
+  238|      0|    func readValue(for descriptor: CBMDescriptor) {}
+  239|       |    
+  240|      0|    func maximumWriteValueLength(for type: CBMCharacteristicWriteType) -> Int {
+  241|      0|        return Int.max
+  242|      0|    }
+  243|       |    
+  244|      0|    func writeValue(_ data: Data, for characteristic: CBMCharacteristic, type: CBMCharacteristicWriteType) {}
+  245|       |    
+  246|      0|    func writeValue(_ data: Data, for descriptor: CBMDescriptor) {}
+  247|       |    
+  248|      0|    func setNotifyValue(_ enabled: Bool, for characteristic: CBMCharacteristic) {}
+  249|       |    
+  250|      0|    func openL2CAPChannel(_ PSM: CBML2CAPPSM) {}
+  251|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/ScanDiscoveryTest.swift:
+    1|       |//
+    2|       |//  ScanDiscoveryTest.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 26/06/2020.
+    6|       |//  Copyright © 2020 Andrea Finollo. All rights reserved.
+    7|       |//
+    8|       |
+    9|       |import XCTest
+   10|       |import Combine
+   11|       |import CoreBluetoothMock
+   12|       |@testable import LittleBlueToothForTest
+   13|       |
+   14|       |class ScanDiscoveryTest: LittleBlueToothTests {
+   15|       |    
+   16|       |
+   17|      4|    override func setUpWithError() throws {
+   18|      4|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   19|      4|        try super.setUpWithError()
+   20|      4|        var configuration = LittleBluetoothConfiguration()
+   21|      4|        configuration.isLogEnabled = true
+   22|      4|        littleBT = LittleBlueTooth(with: configuration)
+   23|      4|    }
+   24|       |
+   25|      4|    override func tearDownWithError() throws {
+   26|      4|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   27|      4|    }
+   28|       |
+   29|       |
+   30|      1|    func testPeripheralDiscoveryPowerOn() {
+   31|      1|        disposeBag.removeAll()
+   32|      1|
+   33|      1|        blinky.simulateProximityChange(.immediate)
+   34|      1|
+   35|      1|        let discoveryExpectation = expectation(description: "Discovery expectation")
+   36|      1|        var discovery: PeripheralDiscovery?
+   37|      1|        
+   38|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+   39|      1|        .sink(receiveCompletion: { completion in
+   40|      0|            print("Completion \(completion)")
+   41|      1|        }) { (discov) in
+   42|      1|            print("Discovery \(discov)")
+   43|      1|            discovery = discov
+   44|      1|            self.littleBT.stopDiscovery()
+   45|      1|            .sink(receiveCompletion: {_ in
+   46|      1|            }) { () in
+   47|      1|                discoveryExpectation.fulfill()
+   48|      1|            }
+   49|      1|            .store(in: &self.disposeBag)
+   50|      1|        }
+   51|      1|        .store(in: &disposeBag)
+   52|      1|        
+   53|      1|        waitForExpectations(timeout: 10)
+   54|      1|        XCTAssertNotNil(discovery)
+   55|      1|        _ = discovery!.name
+   56|      1|        let peripheral = discovery!.cbPeripheral
+   57|      1|        let advInfo = discovery!.advertisement
+   58|      1|        XCTAssertEqual(discovery!.cbPeripheral.identifier, blinky.identifier)
+   59|      1|        XCTAssertEqual(peripheral.identifier, blinky.identifier)
+   60|      1|        XCTAssertNotNil(advInfo)
+   61|      1|    }
+   62|       |    
+   63|       |    
+   64|      1|    func testPeripheralDiscoveryPowerOff() {
+   65|      1|        disposeBag.removeAll()
+   66|      1|        CBMCentralManagerMock.simulateInitialState(.poweredOff)
+   67|      1|        
+   68|      1|        blinky.simulateProximityChange(.immediate)
+   69|      1|        
+   70|      1|        let discoveryExpectation = expectation(description: "Discovery Expectation")
+   71|      1|        var isPowerOff = false
+   72|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+   73|      1|        .sink(receiveCompletion: { completion in
+   74|      1|                print("Completion \(completion)")
+   75|      1|                switch completion {
+   76|      1|                case .failure(let error):
+   77|      1|                    isPowerOff = false
+   78|      1|                    if case LittleBluetoothError.bluetoothPoweredOff = error {
+   79|      1|                        isPowerOff = true
+   80|      1|                    }
+   81|      1|                    self.littleBT.stopDiscovery()
+   82|      1|                    .sink(receiveCompletion: {_ in
+   83|      1|                    }) { () in
+   84|      1|                        discoveryExpectation.fulfill()
+   85|      1|                    }
+   86|      1|                    .store(in: &self.disposeBag)
+   87|      1|                case .finished:
+   88|      0|                    break
+   89|      1|                }
+   90|      1|            }) { (discovery) in
+   91|      0|                print("Discovery \(discovery)")
+   92|      0|        }
+   93|      1|        .store(in: &disposeBag)
+   94|      1|        
+   95|      1|        waitForExpectations(timeout: 10)
+   96|      1|        XCTAssertTrue(isPowerOff)
+   97|      1|    }
+   98|       |    
+   99|      1|    func testPeripheralDiscoveryStopScan() {
+  100|      1|        disposeBag.removeAll()
+  101|      1|
+  102|      1|        blinky.simulateProximityChange(.immediate)
+  103|      1|        let discoveryExpectation = expectation(description: "Discovery Expectation")
+  104|      1|        var isScanning = true
+  105|      1|
+  106|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+  107|      1|        .map { disc -> PeripheralDiscovery in
+  108|      1|            print("Discovery discovery \(disc)")
+  109|      1|            return disc
+  110|      1|        }
+  111|      1|        .flatMap {discovery in
+  112|      1|            self.littleBT.stopDiscovery().map {discovery}
+  113|      1|        }
+  114|      1|        .sink(receiveCompletion: { completion in
+  115|      0|            print("Completion \(completion)")
+  116|      1|        }) { (answer) in
+  117|      1|            print("Value \(answer)")
+  118|      1|            isScanning = self.littleBT.cbCentral.isScanning
+  119|      1|            discoveryExpectation.fulfill()
+  120|      1|        }
+  121|      1|        .store(in: &disposeBag)
+  122|      1|        waitForExpectations(timeout: 10)
+  123|      1|        XCTAssertFalse(isScanning)
+  124|      1|    }
+  125|       |    
+  126|      1|    func testPeripheralScanTimeout() {
+  127|      1|        disposeBag.removeAll()
+  128|      1|        
+  129|      1|        blinky.simulateProximityChange(.outOfRange)
+  130|      1|        let discoveryExpectation = expectation(description: "Discovery Expectation")
+  131|      1|
+  132|      1|        var isScanTimeout = false
+  133|      1|        let timeout = TimeInterval(3)
+  134|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+  135|      1|        .timeout(DispatchQueue.SchedulerTimeType.Stride(timeout.dispatchInterval), scheduler: DispatchQueue.main, options: nil, error: .scanTimeout)
+  136|      1|        .flatMap { discovery in
+  137|      0|            self.littleBT.connect(to: discovery)
+  138|      0|        }
+  139|      1|        .sink(receiveCompletion: { completion in
+  140|      1|            print("Completion \(completion)")
+  141|      1|            switch completion {
+  142|      1|            case .failure(let error):
+  143|      1|                isScanTimeout = false
+  144|      1|                if case LittleBluetoothError.scanTimeout = error {
+  145|      1|                    isScanTimeout = true
+  146|      1|                }
+  147|      1|                discoveryExpectation.fulfill()
+  148|      1|            case .finished:
+  149|      0|                break
+  150|      1|            }
+  151|      1|        }) { (connectedPeriph) in
+  152|      0|            print("Connected periph: \(connectedPeriph)")
+  153|      0|        }
+  154|      1|        .store(in: &disposeBag)
+  155|      1|        wait(for: [discoveryExpectation], timeout: 15)
+  156|      1|        
+  157|      1|        XCTAssert(isScanTimeout)
+  158|      1|
+  159|      1|    }
+  160|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/StateRestoration.swift:
+    1|       |//
+    2|       |//  StateRestoration.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 15/07/2020.
+    6|       |//
+    7|       |
+    8|       |import XCTest
+    9|       |import Combine
+   10|       |import CoreBluetoothMock
+   11|       |@testable import LittleBlueToothForTest
+   12|       |
+   13|       |
+   14|       |class StateRestoration: LittleBlueToothTests {
+   15|      1|    let fakeCBUUID = CBUUID(nsuuid: UUID())
+   16|       |
+   17|      1|    override func setUpWithError() throws {
+   18|      1|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   19|      1|        try super.setUpWithError()
+   20|      1|    }
+   21|       |
+   22|      1|    override func tearDownWithError() throws {
+   23|      1|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   24|      1|    }
+   25|       |    
+   26|      1|    func testStateRestore() {
+   27|      1|        let discoveryExpectation = expectation(description: "Discovery expectation")
+   28|      1|
+   29|      1|        blinky.simulateProximityChange(.immediate)
+   30|      1|        
+   31|      1|        var littleBTConf = LittleBluetoothConfiguration()
+   32|      1|        littleBTConf.isLogEnabled = true
+   33|      1|        littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
+   34|      1|        littleBT = LittleBlueTooth(with: littleBTConf)
+   35|      1|        
+   36|      1|        var periph: [PeripheralIdentifier]?
+   37|      1|        var scanOptions: [String : Any]?
+   38|      1|        var scanServices: [CBUUID]?
+   39|      1|        
+   40|      1|        var discoveredPeri: CBPeripheral?
+   41|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+   42|      1|            .sink(receiveCompletion: { completion in
+   43|      0|                print("Completion \(completion)")
+   44|      1|            }) { (discov) in
+   45|      1|                print("Discovery \(discov)")
+   46|      1|                discoveredPeri = discov.cbPeripheral
+   47|      1|                self.littleBT.stopDiscovery()
+   48|      1|                    .sink(receiveCompletion: {_ in
+   49|      1|                    }) { () in
+   50|      1|                        discoveryExpectation.fulfill()
+   51|      1|                }
+   52|      1|                .store(in: &self.disposeBag)
+   53|      1|        }
+   54|      1|        .store(in: &disposeBag)
+   55|      1|                
+   56|      1|        waitForExpectations(timeout: 10)
+   57|      1|        
+   58|      1|        let restoreExpectation = expectation(description: "State restoration")
+   59|      1|
+   60|      1|        CBMCentralManagerFactory.simulateStateRestoration = { (identifier) -> [String : Any]  in
+   61|      1|            return [
+   62|      1|                CBCentralManagerRestoredStatePeripheralsKey : [discoveredPeri],
+   63|      1|                CBCentralManagerRestoredStateScanOptionsKey : [CBCentralManagerScanOptionAllowDuplicatesKey : false],
+   64|      1|                CBCentralManagerRestoredStateScanServicesKey : [self.fakeCBUUID]
+   65|      1|            ]
+   66|      1|        }
+   67|      1|
+   68|      1|        littleBTConf = LittleBluetoothConfiguration()
+   69|      1|        littleBTConf.isLogEnabled = true
+   70|      1|        littleBTConf.restoreHandler = { restore in
+   71|      1|            print("Restorer \(restore)")
+   72|      1|        }
+   73|      1|        littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
+   74|      1|        littleBT = LittleBlueTooth(with: littleBTConf)
+   75|      1|        
+   76|      1|        littleBT.restoreStatePublisher
+   77|      1|            .sink { (restorer) in
+   78|      1|                print(restorer)
+   79|      1|                periph = restorer.peripherals
+   80|      1|                scanOptions = restorer.scanOptions
+   81|      1|                scanServices = restorer.services
+   82|      1|                restoreExpectation.fulfill()
+   83|      1|        }
+   84|      1|        .store(in: &disposeBag)
+   85|      1|        
+   86|      1|        waitForExpectations(timeout: 10)
+   87|      1|
+   88|      1|        XCTAssertNotNil(periph)
+   89|      1|        XCTAssertNotNil(scanOptions)
+   90|      1|        XCTAssertNotNil(scanServices)
+   91|      1|        XCTAssert(scanServices!.count == 1)
+   92|      1|        XCTAssert(scanServices!.first! == fakeCBUUID)
+   93|      1|        XCTAssert((scanOptions![CBCentralManagerScanOptionAllowDuplicatesKey] as! Bool) == false)
+   94|      1|
+   95|      1|    }
+   96|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/UtilityTest.swift:
+    1|       |//
+    2|       |//  UtilityTest.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 05/07/2020.
+    6|       |//  Copyright © 2020 Andrea Finollo. All rights reserved.
+    7|       |//
+    8|       |
+    9|       |import XCTest
+   10|       |import CoreBluetoothMock
+   11|       |import Combine
+   12|       |@testable import LittleBlueToothForTest
+   13|       |
+   14|       |class UtilityTest: LittleBlueToothTests {
+   15|       |
+   16|      8|    override func setUpWithError() throws {
+   17|      8|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   18|      8|    }
+   19|       |
+   20|      8|    override func tearDownWithError() throws {
+   21|      8|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   22|      8|    }
+   23|       |
+   24|       |    struct LedStateWrong: Readable {
+   25|       |        let isOn: Bool
+   26|       |        
+   27|      1|        init(from data: Data) throws {
+   28|      1|            let answer: Bool = try data.extract(start: 0, length: 4)
+   29|      1|            self.isOn = answer
+   30|      1|        }
+   31|       |        
+   32|       |    }
+   33|       |    
+   34|      1|    func testReadable() {
+   35|      1|        let ledState = try? LedState(from: Data([0x01]))
+   36|      1|        XCTAssertNotNil(ledState)
+   37|      1|        
+   38|      1|        do {
+   39|      1|            let _ = try LedStateWrong(from: Data([0x01]))
+   40|      1|        } catch let error {
+   41|      1|            if case LittleBluetoothError.deserializationFailedDataOfBounds(_,_,_) = error {
+   42|      1|                XCTAssert(true)
+   43|      1|            } else {
+   44|      0|                XCTAssert(false)
+   45|      1|            }
+   46|      1|        }
+   47|      1|    }
+   48|       |    
+   49|       |    struct WritableMock: Writable {
+   50|      1|        var data: Data {
+   51|      1|            return LittleBlueTooth.assemble([UInt8(0x01), UInt8(0x02)])
+   52|      1|        }
+   53|       |        
+   54|       |    }
+   55|       |    
+   56|      1|    func testCharacteristicEquality() {
+   57|      1|        let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+   58|      1|        let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD123", properties: [.read, .notify])
+   59|      1|        XCTAssert(characteristicOne == characteristicTwo)
+   60|      1|    }
+   61|       |    
+   62|      1|    func testCharacteristicEqualityFail() {
+   63|      1|          let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+   64|      1|          let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD127", properties: [.read, .notify])
+   65|      1|          XCTAssertFalse(characteristicOne == characteristicTwo)
+   66|      1|      }
+   67|       |    
+   68|      1|    func testCharacteristicHash() {
+   69|      1|        let characteristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+   70|      1|        let characteristicTwo = LittleBlueToothCharacteristic(characteristic: "00001524-1212-EFDE-1523-785FEABCD123", for: "00001523-1212-EFDE-1523-785FEABCD123", properties: [.read, .notify])
+   71|      1|        XCTAssert(characteristicOne.hashValue == characteristicTwo.hashValue)
+   72|      1|     }
+   73|       |    
+   74|      1|    func testWritable() {
+   75|      1|        let writable = WritableMock()
+   76|      1|        XCTAssert(writable.data == Data([0x01, 0x02]))
+   77|      1|    }
+   78|       |    
+   79|      1|    func testExtension() {
+   80|      1|        let uintdt = UInt8(0x01).data
+   81|      1|        XCTAssert(uintdt == Data([0x01]))
+   82|      1|        
+   83|      1|        let dtuint = UInt8(from: Data([0x01]))
+   84|      1|        XCTAssert(dtuint == 0x01)
+   85|      1|
+   86|      1|        let data = Data(from: Data([0x01]))
+   87|      1|        XCTAssert(data == Data([0x01]))
+   88|      1|
+   89|      1|        let dataData = data.data
+   90|      1|        XCTAssert(dataData == Data([0x01]))
+   91|      1|
+   92|      1|    }
+   93|       |    
+   94|      1|    func testPeripheralIdentifier() {
+   95|      1|        let uuid = UUID()
+   96|      1|        var periphId: PeripheralIdentifier? = PeripheralIdentifier(uuid: uuid, name: "foo")
+   97|      1|        XCTAssertTrue(periphId!.name! == "foo")
+   98|      1|        XCTAssertTrue(periphId!.id == uuid)
+   99|      1|        
+  100|      1|        periphId = PeripheralIdentifier(uuid: uuid)
+  101|      1|        XCTAssertTrue(periphId!.id == uuid)
+  102|      1|
+  103|      1|        periphId = try? PeripheralIdentifier(string: uuid.uuidString, name: "foo")
+  104|      1|        XCTAssertNotNil(periphId)
+  105|      1|        XCTAssertTrue(periphId!.name! == "foo")
+  106|      1|        XCTAssertTrue(periphId!.id == uuid)
+  107|      1|        
+  108|      1|        periphId = try? PeripheralIdentifier(string: uuid.uuidString)
+  109|      1|        XCTAssertNotNil(periphId)
+  110|      1|        XCTAssertTrue(periphId!.id == uuid)
+  111|      1|        
+  112|      1|       
+  113|      1|        
+  114|      1|        var periphIdTwo = PeripheralIdentifier(uuid: periphId!.id)
+  115|      1|        XCTAssertTrue(periphId == periphIdTwo)
+  116|      1|
+  117|      1|        periphIdTwo = PeripheralIdentifier(uuid: UUID())
+  118|      1|        XCTAssertFalse(periphId == periphIdTwo)
+  119|      1|        
+  120|      1|        periphId = try? PeripheralIdentifier(string: "")
+  121|      1|        XCTAssertNil(periphId)
+  122|      1|    }
+  123|       |    
+  124|      1|    func testShareReplay() {
+  125|      1|        var event1: Set<String> = []
+  126|      1|        var event2: Set<String> = []
+  127|      1|
+  128|      1|        let cvs = CurrentValueSubject<String, Never>("Hello")
+  129|      1|        
+  130|      1|        let shareTest =
+  131|      1|            cvs
+  132|      1|                .shareReplay(1)
+  133|      1|                .eraseToAnyPublisher()
+  134|      1|        
+  135|      2|        let sub1 = shareTest.sink(receiveValue: { value in
+  136|      2|            event1.insert(value)
+  137|      2|            print("subscriber1: \(value)\n")
+  138|      2|        })
+  139|      1|        print("Sub1: \(sub1)")
+  140|      1|
+  141|      2|        let sub2 = shareTest.sink(receiveValue: { value in
+  142|      2|            event2.insert(value)
+  143|      2|            print("subscriber2: \(value)\n")
+  144|      2|        })
+  145|      1|        print("Sub2: \(sub2)")
+  146|      1|
+  147|      1|        cvs.send("World")
+  148|      1|        cvs.send(completion: .finished)
+  149|      1|        cvs.send("Huge")
+  150|      1|        
+  151|      1|        XCTAssert(event1.count == 2)
+  152|      1|        XCTAssert(event1 == event2)
+  153|      1|    }
+  154|       |
+  155|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/WriteReadTest.swift:
+    1|       |//
+    2|       |//  ReadTest.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 29/06/2020.
+    6|       |//  Copyright © 2020 Andrea Finollo. All rights reserved.
+    7|       |//
+    8|       |
+    9|       |import XCTest
+   10|       |import Combine
+   11|       |import CoreBluetoothMock
+   12|       |@testable import LittleBlueToothForTest
+   13|       |
+   14|       |struct LedState: Readable {
+   15|       |    let isOn: Bool
+   16|       |
+   17|     81|    init(from data: Data) throws {
+   18|     81|        let answer: Bool = try data.extract(start: 0, length: 1)
+   19|     81|        self.isOn = answer
+   20|     81|    }
+   21|       |    
+   22|       |}
+   23|       |
+   24|       |class ReadWriteTest: LittleBlueToothTests {
+   25|       |    
+   26|      7|    override func setUpWithError() throws {
+   27|      7|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   28|      7|        try super.setUpWithError()
+   29|      7|        var configuration = LittleBluetoothConfiguration()
+   30|      7|        configuration.isLogEnabled = true
+   31|      7|        littleBT = LittleBlueTooth(with: configuration)
+   32|      7|    }
+   33|       |
+   34|      7|    override func tearDownWithError() throws {
+   35|      7|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   36|      7|    }
+   37|       |    
+   38|      1|    func testWrongServiceError() {
+   39|      1|        disposeBag.removeAll()
+   40|      1|        
+   41|      1|        blinky.simulateProximityChange(.immediate)
+   42|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: "10001523-1212-EFDE-1523-785FEABCD123", properties: [.notify, .read, .write])
+   43|      1|
+   44|      1|        let wrongServiceExpectation = expectation(description: "Wrong service expectation")
+   45|      1|        
+   46|      1|        var isWrong = false
+   47|      1|        
+   48|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+   49|      1|            .map { disc -> PeripheralDiscovery in
+   50|      1|                print("Discovery discovery \(disc)")
+   51|      1|                return disc
+   52|      1|        }
+   53|      1|        .flatMap { discovery in
+   54|      1|            self.littleBT.connect(to: discovery)
+   55|      1|        }
+   56|      1|        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+   57|      1|            self.littleBT.read(from: charateristic)
+   58|      1|        }
+   59|      1|        .sink(receiveCompletion: { (completion) in
+   60|      1|            print("Completion \(completion)")
+   61|      1|            switch completion {
+   62|      1|            case .finished:
+   63|      0|                break
+   64|      1|            case let .failure(error):
+   65|      1|                if case LittleBluetoothError.serviceNotFound(_) = error {
+   66|      1|                    isWrong = true
+   67|      1|                    self.littleBT.disconnect().sink(receiveCompletion: {_ in
+   68|      1|                    }) { (_) in
+   69|      1|                        wrongServiceExpectation.fulfill()
+   70|      1|                    }
+   71|      1|                    .store(in: &self.disposeBag)
+   72|      1|                } else {
+   73|      0|                    isWrong = false
+   74|      1|                }
+   75|      1|            }
+   76|      1|        }) { (answer) in
+   77|      0|            print("Answer \(answer)")
+   78|      0|        }
+   79|      1|        .store(in: &disposeBag)
+   80|      1|        
+   81|      1|        waitForExpectations(timeout: 30)
+   82|      1|        XCTAssert(isWrong)
+   83|      1|    }
+   84|       |    
+   85|       |    
+   86|      1|    func testWrongCharacteristicError() {
+   87|      1|        disposeBag.removeAll()
+   88|      1|        
+   89|      1|        blinky.simulateProximityChange(.immediate)
+   90|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: "00001525-1212-EFDE-1523-785FEABCD133", for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
+   91|      1|        let wrongCharacteristicExpectation = expectation(description: "Wrong characteristic expectation")
+   92|      1|
+   93|      1|        var isWrong = false
+   94|      1|        
+   95|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+   96|      1|            .map { disc -> PeripheralDiscovery in
+   97|      1|                print("Discovery discovery \(disc)")
+   98|      1|                return disc
+   99|      1|        }
+  100|      1|        .flatMap { discovery in
+  101|      1|            self.littleBT.connect(to: discovery)
+  102|      1|        }
+  103|      1|        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+  104|      1|            self.littleBT.read(from: charateristic)
+  105|      1|        }
+  106|      1|        .sink(receiveCompletion: { completion in
+  107|      1|            print("Completion \(completion)")
+  108|      1|            switch completion {
+  109|      1|            case .finished:
+  110|      0|                break
+  111|      1|            case let .failure(error):
+  112|      1|                if case LittleBluetoothError.characteristicNotFound(_) = error {
+  113|      1|                    isWrong = true
+  114|      1|                    self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  115|      1|                    }) { (_) in
+  116|      1|                        wrongCharacteristicExpectation.fulfill()
+  117|      1|                    }
+  118|      1|                    .store(in: &self.disposeBag)
+  119|      1|                }
+  120|      1|            }
+  121|      1|        }) { (answer) in
+  122|      0|            print("Answer \(answer)")
+  123|      0|        }
+  124|      1|        .store(in: &disposeBag)
+  125|      1|        
+  126|      1|        waitForExpectations(timeout: 10)
+  127|      1|        XCTAssert(isWrong)
+  128|      1|    }
+  129|       |    
+  130|      1|    func testReadLedOFF() {
+  131|      1|        blinky.simulateReset()
+  132|      1|        disposeBag.removeAll()
+  133|      1|        
+  134|      1|        blinky.simulateProximityChange(.immediate)
+  135|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+  136|      1|        let readExpectation = expectation(description: "Read expectation")
+  137|      1|        
+  138|      1|        var ledState: LedState?
+  139|      1|        
+  140|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+  141|      1|        .map { disc -> PeripheralDiscovery in
+  142|      1|                   print("Discovery discovery \(disc)")
+  143|      1|                   return disc
+  144|      1|        }
+  145|      1|        .flatMap { discovery in
+  146|      1|            self.littleBT.connect(to: discovery)
+  147|      1|        }
+  148|      1|        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+  149|      1|            self.littleBT.read(from: charateristic)
+  150|      1|        }
+  151|      1|        .sink(receiveCompletion: { completion in
+  152|      0|            print("Completion \(completion)")
+  153|      1|        }) { (answer) in
+  154|      1|            print("Answer \(answer)")
+  155|      1|            ledState = answer
+  156|      1|            self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  157|      1|            }) { (_) in
+  158|      1|                readExpectation.fulfill()
+  159|      1|            }
+  160|      1|            .store(in: &self.disposeBag)
+  161|      1|        }
+  162|      1|        .store(in: &disposeBag)
+  163|      1|        
+  164|      1|        waitForExpectations(timeout: 10)
+  165|      1|        XCTAssertNotNil(ledState)
+  166|      1|        XCTAssert(ledState!.isOn == false)
+  167|      1|    }
+  168|       |    
+  169|      1|    func testWriteLedOnReadLedON() {
+  170|      1|        disposeBag.removeAll()
+  171|      1|        
+  172|      1|        blinky.simulateProximityChange(.immediate)
+  173|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+  174|      1|        let readExpectation = expectation(description: "Read expectation")
+  175|      1|
+  176|      1|        var ledState: LedState?
+  177|      1|        
+  178|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+  179|      1|        .map { disc -> PeripheralDiscovery in
+  180|      1|                   print("Discovery discovery \(disc)")
+  181|      1|                   return disc
+  182|      1|           }
+  183|      1|        .flatMap { discovery in
+  184|      1|            self.littleBT.connect(to: discovery)
+  185|      1|        }
+  186|      1|        .flatMap { _ in
+  187|      1|            self.littleBT.write(to: charateristic, value: Data([0x01]))
+  188|      1|        }
+  189|      1|        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+  190|      1|            self.littleBT.read(from: charateristic)
+  191|      1|        }
+  192|      1|        .sink(receiveCompletion: { completion in
+  193|      0|            print("Completion \(completion)")
+  194|      1|        }) { (answer) in
+  195|      1|            print("Answer \(answer)")
+  196|      1|            ledState = answer
+  197|      1|            self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  198|      1|            }) { (_) in
+  199|      1|                readExpectation.fulfill()
+  200|      1|            }
+  201|      1|            .store(in: &self.disposeBag)
+  202|      1|
+  203|      1|        }
+  204|      1|        .store(in: &disposeBag)
+  205|      1|         waitForExpectations(timeout: 10)
+  206|      1|        XCTAssertNotNil(ledState)
+  207|      1|        XCTAssert(ledState!.isOn == true)
+  208|      1|    }
+  209|       |
+  210|       |    
+  211|      1|    func testWriteAndListen() {
+  212|      1|        disposeBag.removeAll()
+  213|      1|               
+  214|      1|        blinky.simulateProximityChange(.immediate)
+  215|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+  216|      1|        let writeAndListenExpectation = expectation(description: "Write and Listen")
+  217|      1|        
+  218|      1|        var ledState: LedState?
+  219|      1|        
+  220|      1|        Timer.publish(every: 0.5, on: .main, in: .common)
+  221|      1|        .autoconnect()
+  222|     19|        .map {_ in
+  223|     19|            blinky.simulateValueUpdate(Data([0x01]),
+  224|     19|                                           for: CBMCharacteristicMock.ledCharacteristic)
+  225|     19|        }.sink { value in
+  226|     19|            print("Led value:\(value)")
+  227|     19|        }
+  228|      1|        .store(in: &self.disposeBag)
+  229|      1|
+  230|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+  231|      1|            .map { disc -> PeripheralDiscovery in
+  232|      1|                print("Discovery discovery \(disc)")
+  233|      1|                return disc
+  234|      1|        }
+  235|      1|        .flatMap { discovery in
+  236|      1|            self.littleBT.connect(to: discovery)
+  237|      1|        }
+  238|      1|        .flatMap { _ in
+  239|      1|            self.littleBT.writeAndListen(from: charateristic, value: Data([0x01]))
+  240|      1|        }
+  241|      1|        .sink(receiveCompletion: { completion in
+  242|      0|            print("Completion \(completion)")
+  243|      1|        }) { (answer: LedState) in
+  244|      1|            print("Answer \(answer)")
+  245|      1|            ledState = answer
+  246|      1|            self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  247|      1|            }) { (_) in
+  248|      1|                writeAndListenExpectation.fulfill()
+  249|      1|            }
+  250|      1|            .store(in: &self.disposeBag)
+  251|      1|            
+  252|      1|        }
+  253|      1|        .store(in: &disposeBag)
+  254|      1|         waitForExpectations(timeout: 10)
+  255|      1|        XCTAssertNotNil(ledState)
+  256|      1|        XCTAssert(ledState!.isOn == true)
+  257|      1|    }
+  258|       |    
+  259|      1|    func testMultipleRead() {
+  260|      1|        blinky.simulateReset()
+  261|      1|        disposeBag.removeAll()
+  262|      1|        
+  263|      1|        blinky.simulateProximityChange(.immediate)
+  264|      1|        let ledCharateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
+  265|      1|        let buttonCharateristic = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+  266|      1|        let multipleReadExpectation = expectation(description: "Multiple read")
+  267|      1|        
+  268|      1|        var ledIsOff = false
+  269|      1|        var buttonIsOff = false
+  270|      1|
+  271|      1|        
+  272|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+  273|      1|        .map { disc -> PeripheralDiscovery in
+  274|      1|            print("Discovery discovery \(disc)")
+  275|      1|            return disc
+  276|      1|        }
+  277|      1|        .flatMap { discovery in
+  278|      1|            self.littleBT.connect(to: discovery)
+  279|      1|        }
+  280|      1|        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+  281|      1|            self.littleBT.read(from: ledCharateristic)
+  282|      1|        }
+  283|      1|        .flatMap { led -> AnyPublisher<ButtonState, LittleBluetoothError> in
+  284|      1|            ledIsOff = !led.isOn
+  285|      1|            return self.littleBT.read(from: buttonCharateristic)
+  286|      1|        }
+  287|      1|        .sink(receiveCompletion: { completion in
+  288|      0|            print("Completion \(completion)")
+  289|      1|        }) { (button) in
+  290|      1|            print("Answer \(button)")
+  291|      1|            buttonIsOff = !button.isOn
+  292|      1|            self.littleBT.disconnect().sink(receiveCompletion: {_ in
+  293|      1|            }) { (_) in
+  294|      1|                multipleReadExpectation.fulfill()
+  295|      1|            }
+  296|      1|            .store(in: &self.disposeBag)
+  297|      1|        }
+  298|      1|        .store(in: &disposeBag)
+  299|      1|        
+  300|      1|        waitForExpectations(timeout: 10)
+  301|      1|        XCTAssert(buttonIsOff)
+  302|      1|        XCTAssert(ledIsOff)
+  303|      1|    }
+  304|       |    
+  305|      1|    func testDisconnectionBeforeRead() {
+  306|      1|        disposeBag.removeAll()
+  307|      1|
+  308|      1|        blinky.simulateProximityChange(.immediate)
+  309|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+  310|      1|        let disconnectionExpectation = expectation(description: "Disconnection before read")
+  311|      1|        
+  312|      1|        var isDisconnected = false
+  313|      1|
+  314|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+  315|      1|            .map { disc -> PeripheralDiscovery in
+  316|      1|                print("Discovery discovery \(disc)")
+  317|      1|                return disc
+  318|      1|        }
+  319|      1|        .flatMap { discovery in
+  320|      1|            self.littleBT.connect(to: discovery)
+  321|      1|        }
+  322|      1|        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
+  323|      1|            blinky.simulateDisconnection()
+  324|      1|            return self.littleBT.read(from: charateristic)
+  325|      1|        }
+  326|      1|        .sink(receiveCompletion: { completion in
+  327|      1|            print("Completion \(completion)")
+  328|      1|            switch completion {
+  329|      1|            case .finished:
+  330|      0|                break
+  331|      1|            case let .failure(error):
+  332|      1|                if case LittleBluetoothError.peripheralDisconnected(_, _) = error {
+  333|      1|                    isDisconnected = true
+  334|      1|                    disconnectionExpectation.fulfill()
+  335|      1|                }
+  336|      1|            }
+  337|      1|        }) { (answer) in
+  338|      0|            print("Answer \(answer)")
+  339|      0|        }
+  340|      1|        .store(in: &disposeBag)
+  341|      1|
+  342|      1|        waitForExpectations(timeout: 10)
+  343|      1|        XCTAssert(isDisconnected)
+  344|      1|    }
+  345|       |
+  346|       |}
+
+/Users/Andrea/Documents/GitHub/LittleBlueTooth/Tests/LittleBlueToothTests/WriteWithoutResponse.swift:
+    1|       |//
+    2|       |//  WriteWithoutResponse.swift
+    3|       |//  LittleBlueToothTests
+    4|       |//
+    5|       |//  Created by Andrea Finollo on 28/07/2020.
+    6|       |//
+    7|       |
+    8|       |import XCTest
+    9|       |import CoreBluetoothMock
+   10|       |import Combine
+   11|       |@testable import LittleBlueToothForTest
+   12|       |
+   13|       |class WriteWithoutResponse: LittleBlueToothTests {
+   14|       |
+   15|      2|    override func setUpWithError() throws {
+   16|      2|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   17|      2|        try super.setUpWithError()
+   18|      2|        var lttlCon = LittleBluetoothConfiguration()
+   19|      2|        lttlCon.isLogEnabled = true
+   20|      2|        littleBT = LittleBlueTooth(with: lttlCon)
+   21|      2|    }
+   22|       |
+   23|      2|    override func tearDownWithError() throws {
+   24|      2|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   25|      2|    }
+   26|       |
+   27|      1|   func testWriteWOResponse() {
+   28|      1|       disposeBag.removeAll()
+   29|      1|       blinky.simulateProximityChange(.outOfRange)
+   30|      1|       blinkyWOR.simulateProximityChange(.immediate)
+   31|      1|       let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+   32|      1|       let writeWOResp = expectation(description: "Write without response expectation")
+   33|      1|
+   34|      1|       var data = Data()
+   35|     23|       (0..<23).forEach { (val) in
+   36|     23|           data.append(val)
+   37|     23|       }
+   38|      1|       littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+   39|      1|       .flatMap { discovery in
+   40|      1|           self.littleBT.connect(to: discovery)
+   41|      1|       }
+   42|      1|       .flatMap { _ in
+   43|      1|           self.littleBT.write(to: charateristic, value: data, response: false)
+   44|      1|       }
+   45|      1|       .sink(receiveCompletion: { completion in
+   46|      0|           print("Completion \(completion)")
+   47|      1|       }) { (answer) in
+   48|      1|           print("Answer \(answer)")
+   49|      1|           self.littleBT.disconnect().sink(receiveCompletion: {_ in
+   50|      1|           }) { (_) in
+   51|      1|               writeWOResp.fulfill()
+   52|      1|           }
+   53|      1|           .store(in: &self.disposeBag)
+   54|      1|
+   55|      1|       }
+   56|      1|       .store(in: &disposeBag)
+   57|      1|        waitForExpectations(timeout: 10)
+   58|      1|   }
+   59|       |    
+   60|      1|    func testWriteWOResponseMoreBuffer() {
+   61|      1|        disposeBag.removeAll()
+   62|      1|        blinky.simulateProximityChange(.outOfRange)
+   63|      1|        blinkyWOR.simulateProximityChange(.immediate)
+   64|      1|        let charateristic = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+   65|      1|        let writeWOResp = expectation(description: "Write without response expectation")
+   66|      1|
+   67|      1|        var data = Data()
+   68|     30|        (0..<30).forEach { (val) in
+   69|     30|            data.append(val)
+   70|     30|        }
+   71|      1|        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
+   72|      1|        .flatMap { discovery in
+   73|      1|            self.littleBT.connect(to: discovery)
+   74|      1|        }
+   75|      1|        .flatMap { _ in
+   76|      1|            self.littleBT.write(to: charateristic, value: data, response: false)
+   77|      1|        }
+   78|      1|        .sink(receiveCompletion: { completion in
+   79|      0|            print("Completion \(completion)")
+   80|      1|        }) { (answer) in
+   81|      1|            print("Answer \(answer)")
+   82|      1|            self.littleBT.disconnect().sink(receiveCompletion: {_ in
+   83|      1|            }) { (_) in
+   84|      1|                writeWOResp.fulfill()
+   85|      1|            }
+   86|      1|            .store(in: &self.disposeBag)
+   87|      1|
+   88|      1|        }
+   89|      1|        .store(in: &disposeBag)
+   90|      1|         waitForExpectations(timeout: 10)
+   91|      1|    }
+   92|       |
+   93|       |
+   94|       |}
+
