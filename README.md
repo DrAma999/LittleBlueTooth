@@ -76,7 +76,7 @@ The library is still on development so use at own you risk.
 * Initialization operations: sometimes you want to perform some bluetooth commands right after a connection, for instance an authentication, and you want to perform that before another operation have access to the peripheral.
 * Readable and Writable characteristics: basically those two protocols will deal in reading a `Data` object to the concrete type you want or writing your concrete type into a `Data` object.
 * Simplified `Error` normalization and if you want more you can always access the inner `CBError`
-* Code coverage > 90%
+* Code coverage > 90% (it shows 50% but something has been broken in the script that generate the report, if you click on the badge you'll see the coverage, files in test are just alias but it seems that is taking them as different)
 
 ## INSTALLATION
 ### Carthage
