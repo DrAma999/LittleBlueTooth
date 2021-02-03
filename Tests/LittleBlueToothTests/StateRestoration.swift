@@ -57,7 +57,7 @@ class StateRestoration: LittleBlueToothTests {
         
         let restoreExpectation = expectation(description: "State restoration")
 
-        CBMCentralManagerFactory.simulateStateRestoration = { (identifier) -> [String : Any]  in
+        CBMCentralManagerFactory.simulateStateRestoration = { (_) -> [String : Any]  in
             return [
                 CBCentralManagerRestoredStatePeripheralsKey : [discoveredPeri],
                 CBCentralManagerRestoredStateScanOptionsKey : [CBCentralManagerScanOptionAllowDuplicatesKey : false],
