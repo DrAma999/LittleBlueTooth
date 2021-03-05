@@ -1,9 +1,11 @@
-name: Create Release
+name: Test and Create Release
 
 # Create XCFramework when a version is tagged
 on:
   push:
-    tags: [master]
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 env:
   XCODE_VER: 12.4
@@ -35,14 +37,14 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: macos-latest
     steps:
-      - name: Check out LittleBluetooth
+      - name: Check out LittleBlueTooth
         uses: actions/checkout@v2
       - name: Build XCFrameworks
         run: |
           set -euo pipefail
           sudo xcode-select -s /Applications/Xcode_${XCODE_VER}.app
-          cd .github/workflows
-          ./build_xcframework.sh
+          carthage build --no-skip-current --use-xcframeworks
+          cd Carthage/Build
           cp ../../LICENSE .
           zip -9r LittleBlueTooth.xcframeworks.zip *.xcframework LICENSE
       - name: Upload files to release draft
@@ -51,4 +53,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
           draft: true
-          files: Frameworks/LittleBlueTooth.xcframeworks.zip
+          files: Carthage/Build/LittleBlueTooth.xcframeworks.zip
