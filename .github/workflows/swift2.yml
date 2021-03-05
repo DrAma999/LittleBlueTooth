@@ -42,6 +42,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo xcode-select -s /Applications/Xcode_${XCODE_VER}.app
+          swift build --sanitize="address"
           carthage build --no-skip-current --use-xcframeworks --verbose
           cd Carthage/Build
           cp ../../LICENSE .
