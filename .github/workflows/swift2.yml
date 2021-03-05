@@ -42,7 +42,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo xcode-select -s /Applications/Xcode_${XCODE_VER}.app
-          carthage build --no-skip-current --use-xcframeworks
+          carthage build --no-skip-current --use-xcframeworks --verbose
           cd Carthage/Build
           cp ../../LICENSE .
           zip -9r LittleBlueTooth.xcframeworks.zip *.xcframework LICENSE
