@@ -3,9 +3,8 @@ name: Test and Create Release
 # Create XCFramework when a version is tagged
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags:
+       - '*'
 
 env:
   XCODE_VER: 12.4
