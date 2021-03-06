@@ -43,9 +43,9 @@ jobs:
           set -euo pipefail
           sudo xcode-select -s /Applications/Xcode_${XCODE_VER}.app
           swift build --sanitize="address"
-          carthage build --no-skip-current --use-xcframeworks --verbose
-          cd Carthage/Build
-          cp ../../LICENSE .
+          ./buildXCFramework.sh
+          cd xcframeworks
+          cp ../LICENSE .
           zip -9r LittleBlueTooth.xcframeworks.zip *.xcframework LICENSE
       - name: Upload files to release draft
         uses: marvinpinto/action-automatic-releases@latest
