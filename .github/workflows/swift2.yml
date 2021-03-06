@@ -53,4 +53,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
           draft: true
-          files: Carthage/Build/LittleBlueTooth.xcframeworks.zip
+          files: xcframeworks/LittleBlueTooth.xcframeworks.zip
