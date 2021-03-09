@@ -12,7 +12,7 @@ import CoreBluetoothMock
 #else
 import CoreBluetooth
 #endif
-
+/// Collection of errors that can be returned by LittleBlueTooth
 public enum LittleBluetoothError: Error {
     case bluetoothPoweredOff
     case bluetoothUnauthorized
