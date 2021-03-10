@@ -14,25 +14,38 @@ import CoreBluetoothMock
 #else
 import CoreBluetooth
 #endif
-
+/// An enum representing the connection event that has occurred
 public enum ConnectionEvent {
+    /// Peripheral is connected but not ready to receive command
     case connected(CBPeripheral)
+    /// Peripheral is connected after a disconnection automatically but not ready to receive command
     case autoConnected(CBPeripheral)
+    /// Peripheral is ready to receive command
     case ready(CBPeripheral)
+    /// Peripheral is not ready probaly due to some unexpected disconnection
     case notReady(CBPeripheral, error: LittleBluetoothError?)
+    /// Process of connection has failed
     case connectionFailed(CBPeripheral, error: LittleBluetoothError?)
+    /// Peripheral has been disconnected, if it was unexpected a `LittleBluetoothError` is returned
     case disconnected(CBPeripheral, error: LittleBluetoothError?)
 }
 
+/// An enumeration representing the state of the bluetooth stack of the device
 public enum BluetoothState {
-
+    /// Unknown, probably transient
     case unknown
+    /// Bluetooth is resetting
     case resetting
+    /// Bluetooth is not supported for this device
     case unsupported
+    /// The application is not authorized to use bluetooth
     case unauthorized
+    /// The bluetooth is off
     case poweredOff
+    /// The bluetooth is on and ready
     case poweredOn
     
+    /// Inizialize using a `CBManagerState`
     init(_ state: CBManagerState) {
         switch state {
         case .unknown:

@@ -18,7 +18,7 @@ extension Publisher where Self.Failure == LittleBluetoothError {
     // MARK: - RSSI
     /// Returns a  publisher with the `Int`value of the RSSI.
     /// - parameter littleBluetooth: the `LittleBlueTooth` instance
-    /// - returns: A  publisher with the `Int` value of the RSSI..
+    /// - returns: A  publisher with the `Int` value of the RSSI.
     public func readRSSI(for littleBluetooth: LittleBlueTooth) -> AnyPublisher<Int, LittleBluetoothError> {
         
         func readRSSI<Upstream: Publisher>(upstream: Upstream,
