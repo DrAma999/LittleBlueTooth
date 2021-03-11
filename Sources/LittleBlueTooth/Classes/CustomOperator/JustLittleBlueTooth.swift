@@ -7,5 +7,7 @@
 
 import Foundation
 import Combine
-
-public let StartLittleBlueTooth = Just(()).setFailureType(to: LittleBluetoothError.self)
+/// Syntactic sugar to start a `LittleBlueTooth` pipeline
+public var StartLittleBlueTooth: Result<(), LittleBluetoothError>.Publisher {
+    Just(()).setFailureType(to: LittleBluetoothError.self)
+}

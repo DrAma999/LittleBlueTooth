@@ -20,21 +20,32 @@ public protocol PeripheralIdentifiable: Identifiable {
 }
 /// An object that contains the unique identifier of the `CBPeripheral` and the name of it (if present)
 public struct PeripheralIdentifier: PeripheralIdentifiable {
+    /// The `UUID`of the peripheral
     public var id: UUID
+    /// The name of the peripheral
     public var name: String?
+    /// The wrapped `CBPeripheral`
     public var cbPeripheral: CBPeripheral?
     
+    /// Initialize a `PeripheralIdentifier` using a `CBPeripheral`
     public init(peripheral: CBPeripheral) {
         self.id = peripheral.identifier
         self.name = peripheral.name
         self.cbPeripheral = peripheral
     }
-    
+    /// Initialize a  `PeripheralIdentifier`.
+    /// - parameter uuid: the `UUID` of a peripheral.
+    /// - parameter name: the name of a peripheral
+    /// - returns: An instance of `PeripheralIdentifier`.
     public init(uuid: UUID, name: String? = nil) {
         self.id = uuid
         self.name = name
     }
-    
+    /// Initialize a  `PeripheralIdentifier`.
+    /// - parameter string: the uuid in string of a peripheral.
+    /// - parameter name: the name of a peripheral
+    /// - throws: and error is thrown if the converstion string->UUID fails
+    /// - returns: An instance of `PeripheralIdentifier`.
     public init(string: String, name: String? = nil) throws {
         if let id = UUID(uuidString: string) {
             self.init(uuid: id, name: name)
@@ -45,6 +56,7 @@ public struct PeripheralIdentifier: PeripheralIdentifiable {
 }
 
 extension PeripheralIdentifier: CustomStringConvertible {
+    /// Extended description
     public var description: String {
         return """
         UUID: \(id)
@@ -57,14 +69,21 @@ extension PeripheralIdentifier: CustomStringConvertible {
 An object that contains the unique identifier of the `CBPeripheral`, the name of it (if present) and the advertising info.
 */
 public struct PeripheralDiscovery: PeripheralIdentifiable {
-        
+    /// The `UUID` of the discovery
     public var id: UUID
+    /// The name of the discovery
     public var name: String?
-    
+    /// The wrapped `CBPeripheral` of the discovery
     public let cbPeripheral: CBPeripheral
+    /// The wrapped `AdvertisingInfo` of the discovery
     public let advertisement: AdvertisingInfo
+    /// The wrapped rssi of the discovery
     public let rssi: Int
-    
+    /// Initialize a  `PeripheralDiscovery`.
+    /// - parameter peripheral: the `CBPeripheral` that you want to wrap
+    /// - parameter advertisement: the advertising info as they are returned from `CBManager`
+    /// - parameter rssi: the rssi iof the `CBPeripheral`
+    /// - returns: An instance of `PeripheralDiscovery`.
     init(_ peripheral: CBPeripheral, advertisement: [String : Any], rssi: NSNumber) {
         self.cbPeripheral = peripheral
         self.name = peripheral.name
@@ -75,6 +94,7 @@ public struct PeripheralDiscovery: PeripheralIdentifiable {
 }
 
 extension PeripheralDiscovery: CustomDebugStringConvertible {
+    /// Extended description of the discovery
     public var debugDescription: String {
         return """
         Name: \(name ?? "not available")

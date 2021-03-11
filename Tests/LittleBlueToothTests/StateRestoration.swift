@@ -29,6 +29,7 @@ class StateRestoration: LittleBlueToothTests {
         blinky.simulateProximityChange(.immediate)
         
         var littleBTConf = LittleBluetoothConfiguration()
+        littleBTConf.isLogEnabled = true
         littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
         littleBT = LittleBlueTooth(with: littleBTConf)
         
@@ -56,7 +57,7 @@ class StateRestoration: LittleBlueToothTests {
         
         let restoreExpectation = expectation(description: "State restoration")
 
-        CBMCentralManagerFactory.simulateStateRestoration = { (identifier) -> [String : Any]  in
+        CBMCentralManagerFactory.simulateStateRestoration = { (_) -> [String : Any]  in
             return [
                 CBCentralManagerRestoredStatePeripheralsKey : [discoveredPeri],
                 CBCentralManagerRestoredStateScanOptionsKey : [CBCentralManagerScanOptionAllowDuplicatesKey : false],
@@ -65,6 +66,7 @@ class StateRestoration: LittleBlueToothTests {
         }
 
         littleBTConf = LittleBluetoothConfiguration()
+        littleBTConf.isLogEnabled = true
         littleBTConf.restoreHandler = { restore in
             print("Restorer \(restore)")
         }

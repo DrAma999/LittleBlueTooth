@@ -257,7 +257,7 @@ class ConnectionTest: LittleBlueToothTests {
         var connectionEvent = [ConnectionEvent]()
         var peripheralState = [PeripheralState]()
         let connectionExpectation = expectation(description: "Connection test")
-        littleBT.autoconnectionHandler = { (peripheral, error) -> Bool in
+        littleBT.autoconnectionHandler = { (_, _) -> Bool in
             return true
         }
         

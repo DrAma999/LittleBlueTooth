@@ -13,28 +13,40 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
+/// Type alias for a CBUUID string used to identify services
 public typealias LittleBlueToothServiceIndentifier = String
+/// Type alias for a CBUUID string used to identify characteristic
 public typealias LittleBlueToothCharacteristicIndentifier = String
 
 
 /// A representation of a bluetooth characteristic
 public struct LittleBlueToothCharacteristic: Identifiable {
+    /// The `CBUUID` of the characteristic
     public let id: CBUUID
+    /// The `CBUUID` of the service
     public let service: CBUUID
+    /// Properties of the characteristic. They are mapped from `CBCharacteristicProperties`
     public let properties: Properties
-    
+    /// Inner value of the `CBCaharacteristic`
     public var rawValue: Data? {
         cbCharacteristic?.value
     }
     
     private var cbCharacteristic: CBCharacteristic?
     
+    /// Initialize a  `LittleBlueToothCharacteristic`.
+    /// - parameter characteristic: the `LittleBlueToothCharacteristicIndentifier` instance, basically a string
+    /// - parameter service: the `LittleBlueToothServiceIndentifier` instance, basically a string
+    /// - parameter properties: an option set of properties
+    /// - returns: An instance of `LittleBlueToothCharacteristic`.
     public init(characteristic: LittleBlueToothCharacteristicIndentifier, for service: LittleBlueToothServiceIndentifier, properties: LittleBlueToothCharacteristic.Properties) {
         self.id = CBUUID(string: characteristic)
         self.service = CBUUID(string: service)
         self.properties = properties
     }
-    
+    /// Initialize a  `LittleBlueToothCharacteristic` from a `CBCharacteristic`
+    /// - parameter characteristic: the `CBCharacteristic` instance that you want to use
+    /// - returns: An instance of `LittleBlueToothCharacteristic`.
     public init(with characteristic: CBCharacteristic) {
         self.id = characteristic.uuid
         self.service = characteristic.service.uuid
@@ -42,6 +54,11 @@ public struct LittleBlueToothCharacteristic: Identifiable {
         self.properties = Properties(properties: characteristic.properties)
     }
     
+    /// A helper method to get a concrete value from the value contained in the characteristic.
+    /// The type must conform to the `Readable` protocol
+    /// - parameter characteristic: the `CBCharacteristic` instance that you want to use
+    /// - returns: An instance of  of the requested type.
+    /// - throws: If the transformation from the `Data` to the `T` type cannot be made an error is thrown
     public func value<T: Readable>() throws -> T {
         guard let data = rawValue else {
             throw LittleBluetoothError.emptyData
@@ -51,6 +68,7 @@ public struct LittleBlueToothCharacteristic: Identifiable {
 }
 
 extension LittleBlueToothCharacteristic: Equatable, Hashable {
+    /// If two `LittleBlueToothCharacteristic` are compared and they have the same characteristic and service identifier they are equal
     public static func == (lhs: Self, rhs: Self) -> Bool {
         if lhs.id == rhs.id &&
             lhs.service == rhs.service {
@@ -59,6 +77,7 @@ extension LittleBlueToothCharacteristic: Equatable, Hashable {
         return false
     }
     
+    /// Combute the hash of a `LittleBlueToothCharacteristic`
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(service)

@@ -51,6 +51,7 @@ public struct CentralRestorer {
 }
 
 extension CentralRestorer: CustomDebugStringConvertible {
+    /// Extended description of the `CentralRestorer`
     public var debugDescription: String {
         return """
         Peripherals: \(peripherals)
@@ -70,7 +71,7 @@ public enum Restored: CustomDebugStringConvertible {
     case peripheral(Peripheral)
     /// Nothing has been restored
     case nothing
-    
+    /// Extended description of the `Restored` object
     public var debugDescription: String {
         switch self {
         case .scan(_):

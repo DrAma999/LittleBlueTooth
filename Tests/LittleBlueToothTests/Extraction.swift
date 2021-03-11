@@ -15,6 +15,9 @@ class Extraction: LittleBlueToothTests {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         try super.setUpWithError()
+        var configuration = LittleBluetoothConfiguration()
+        configuration.isLogEnabled = true
+        littleBT = LittleBlueTooth(with: configuration)
 
     }
 
@@ -24,7 +27,9 @@ class Extraction: LittleBlueToothTests {
 
     func testExtractionWithPeriph() {
         disposeBag.removeAll()
-        littleBT = LittleBlueTooth(with: LittleBluetoothConfiguration())
+        var configuration = LittleBluetoothConfiguration()
+        configuration.isLogEnabled = true
+        littleBT = LittleBlueTooth(with: configuration)
     
         blinky.simulateProximityChange(.immediate)
         let extractionExpectation = expectation(description: "Extraction expectation")
@@ -59,7 +64,9 @@ class Extraction: LittleBlueToothTests {
 
     func testExtractionWithoutPeriph() {
         disposeBag.removeAll()
-        littleBT = LittleBlueTooth(with: LittleBluetoothConfiguration())
+        var configuration = LittleBluetoothConfiguration()
+        configuration.isLogEnabled = true
+        littleBT = LittleBlueTooth(with: configuration)
         
         let extractedState = self.littleBT.extract()
         
@@ -69,7 +76,9 @@ class Extraction: LittleBlueToothTests {
     
     func testRestart() {
         disposeBag.removeAll()
-        littleBT = LittleBlueTooth(with: LittleBluetoothConfiguration())
+        var configuration = LittleBluetoothConfiguration()
+        configuration.isLogEnabled = true
+        littleBT = LittleBlueTooth(with: configuration)
         blinky.simulateDisconnection()
         blinky.simulateProximityChange(.immediate)
         let restartExpectation = expectation(description: "Restart expectation")
