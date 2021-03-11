@@ -1,6 +1,6 @@
 import Foundation
 import Combine
-
+///The ShareReplay is used to share a single subscription to the upstream publisher and replay items emitted by that one.
 public final class ReplaySubject<Output, Failure: Error>: Subject {
     private var buffer = [Output]()
     private let bufferSize: Int
@@ -8,6 +8,7 @@ public final class ReplaySubject<Output, Failure: Error>: Subject {
     private var completion: Subscribers.Completion<Failure>?
     private let lock = NSRecursiveLock()
 
+    /// Initialize a `ReplaySubject` subject with a buffer size
     public init(_ bufferSize: Int = 0) {
         self.bufferSize = bufferSize
     }

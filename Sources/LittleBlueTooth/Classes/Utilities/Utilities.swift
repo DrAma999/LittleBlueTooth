@@ -20,6 +20,7 @@ public extension Data {
     }
 }
 
+/// Confomancy for `Data` object to `Writable` and `Readable` protocol
 extension Data: Writable, Readable {
     public var data: Data {
         self
@@ -39,6 +40,7 @@ extension UInt8: Writable, Readable {
 }
 
 public extension LittleBlueTooth {
+    /// Function to create a `Data` object from an array of `Writable` objects
     static func assemble(_ writables: [Writable]) -> Data {
         var data = Data()
         

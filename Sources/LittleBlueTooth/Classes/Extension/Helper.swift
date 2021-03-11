@@ -21,13 +21,14 @@ extension AnyCancellable {
   }
 }
 extension Publisher {
-
+    /// Republishes elements sent by the most recently received publisher.
    func flatMapLatest<T: Publisher>(_ transform: @escaping (Self.Output) -> T) -> AnyPublisher<T.Output, T.Failure> where T.Failure == Self.Failure {
        return map(transform).switchToLatest().eraseToAnyPublisher()
    }
 }
 
 extension TimeInterval {
+    /// Get a `DispatchTimeInterval` from a TimeInterval.
     public var dispatchInterval: DispatchTimeInterval {
         let microseconds = Int64(self * TimeInterval(USEC_PER_SEC)) // perhaps use nanoseconds, though would more often be > Int.max
         return microseconds < Int.max ? DispatchTimeInterval.microseconds(Int(microseconds)) : DispatchTimeInterval.seconds(Int(self))

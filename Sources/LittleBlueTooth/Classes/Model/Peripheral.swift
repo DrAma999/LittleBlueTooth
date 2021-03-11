@@ -15,18 +15,28 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
+/// An enumeration that represent the changes in peripheral services or name
 public enum PeripheralChanges {
+    /// The name has been changed
     case name(String?)
+    /// Some services have been invalidated
     case invalidatedServices([CBService])
 }
 
+/// The state of the peripheral
 public enum PeripheralState {
+    /// Peripheral is disconnected
     case disconnected
+    /// Peripheral is connecting
     case connecting
+    /// Peripheral is connected
     case connected
+    /// Peripheral is disconnecting
     case disconnecting
+    /// The peripheral state is not know, could be transitory
     case unknown
     
+    /// Initilize a Peripheral state using a `CBPeripheralState`
     init(state: CBPeripheralState) {
         switch state {
         case .disconnected:
@@ -43,23 +53,27 @@ public enum PeripheralState {
     }
 }
 
+/// It represents a peripheral along with its properties
 public class Peripheral: Identifiable {
+    /// An identifier for the peripheral it is the same as the wrapped `CBPeripheral`
     public var id: UUID {
         cbPeripheral.identifier
     }
-    
+    /// The name of the peripheral it is the same as the wrapped `CBPeripheral`
     public var name: String? {
         cbPeripheral.name
     }
-    
+    /// The state of the peripheral it is the same as the wrapped `CBPeripheral`
     public var state: PeripheralState {
         PeripheralState(state: cbPeripheral.state)
     }
     
+    /// The wrapped `CBPeripheral`
     public let cbPeripheral: CBPeripheral
+    /// The rssi value of the peripheral
     public var rssi: Int?
     
-
+    /// Logging on the peripheral can be disable or enabled acting of that property
     var isLogEnabled: Bool {
         get {
             return _isLogEnabled
@@ -70,11 +84,12 @@ public class Peripheral: Identifiable {
         }
     }
     
+    /// The publisher that listen to changes in peripheral name or services
     lazy var changesPublisher: AnyPublisher<PeripheralChanges, Never> =
                peripheralProxy.peripheralChangesPublisher
                .share()
                .eraseToAnyPublisher()
-    
+    /// The publisher that listen to characteristic notifications
     lazy var listenPublisher: AnyPublisher<CBCharacteristic, LittleBluetoothError> =
             peripheralProxy.peripheralUpdatedValueForNotifyCharacteristicPublisher
             .tryMap { (value) -> CBCharacteristic in
@@ -94,6 +109,8 @@ public class Peripheral: Identifiable {
     private let peripheralProxy = CBPeripheralDelegateProxy()
     private var _isLogEnabled: Bool = false
 
+    /// Initialize a `Peripheral` using a `CBperipheral`
+    /// It also attach the publisher to monitor the state of the peripheral
     init(_ peripheral: CBPeripheral) {
         self.cbPeripheral = peripheral
         self.cbPeripheral.delegate = self.peripheralProxy
@@ -200,7 +217,7 @@ public class Peripheral: Identifiable {
         }
         return readRSSI
     }
-    
+   
     func read(from charateristicUUID: CBUUID, of serviceUUID: CBUUID) -> AnyPublisher<Data?, LittleBluetoothError> {
         let read = discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
         .flatMap { characteristic -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
@@ -353,6 +370,7 @@ public class Peripheral: Identifiable {
 }
 
 extension Peripheral: CustomDebugStringConvertible {
+    /// Extended description of the peripheral
     public var debugDescription: String {
         return """
         Id: \(id)

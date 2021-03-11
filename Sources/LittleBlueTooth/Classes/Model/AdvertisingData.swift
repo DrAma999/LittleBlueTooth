@@ -13,6 +13,7 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
+/// A wrapper around the advertisement data returned from a BLE device.
 public struct AdvertisingInfo {
      public let advertisementData: [String: Any]
 
