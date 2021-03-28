@@ -100,7 +100,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         log("[LBT: CBCMD] DidUpdateState %{public}d",
             log: OSLog.LittleBT_Log_CentralManager,
             type: .debug,
-            arg: central.state.rawValue)
+            arg: [central.state.rawValue])
        _centralStatePublisher.send(BluetoothState(central.state))
     }
     
@@ -109,7 +109,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         log("[LBT: CBCMD] DidDiscover %{public}@",
             log: OSLog.LittleBT_Log_CentralManager,
             type: .debug,
-            arg: peripheral.description)
+            arg: [peripheral.description])
         let peripheraldiscovery = PeripheralDiscovery(peripheral, advertisement: advertisementData, rssi: RSSI)
         centralDiscoveriesPublisher.send(peripheraldiscovery)
     }
@@ -119,7 +119,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         log("[LBT: CBCMD] DidConnect %{public}@",
             log: OSLog.LittleBT_Log_CentralManager,
             type: .debug,
-            arg: didConnect.description)
+            arg: [didConnect.description])
         if isAutoconnectionActive {
             isAutoconnectionActive = false
             let event = ConnectionEvent.autoConnected(didConnect)
@@ -134,8 +134,8 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         log("[LBT: CBCMD] DidDisconnect %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_CentralManager,
             type: .debug,
-            arg: didDisconnectPeripheral.description,
-            error?.localizedDescription ?? "")
+            arg: [didDisconnectPeripheral.description,
+            error?.localizedDescription ?? ""])
         isAutoconnectionActive = false
         var lttlError: LittleBluetoothError?
         if let error = error {
@@ -159,7 +159,7 @@ extension CBCentralManagerDelegateProxy: CBCentralManagerDelegate {
         log("[LBT: CBCMD] WillRestoreState %{public}@",
             log: OSLog.LittleBT_Log_Restore,
             type: .debug,
-            arg: dict.description)
+            arg: [dict.description])
         _willRestoreStatePublisher.send(CentralRestorer(centralManager: central, restoredInfo: dict))
     }
     

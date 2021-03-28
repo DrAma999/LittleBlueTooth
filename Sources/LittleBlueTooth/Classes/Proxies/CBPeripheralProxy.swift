@@ -44,7 +44,7 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
     func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral){
         log("[LBT: CBPD] ReadyToSendWRiteWOResp",
             log: OSLog.LittleBT_Log_Peripheral,
-            type: .debug)
+            type: .debug, arg: [])
         peripheralIsReadyToSendWriteWithoutResponse.send()
     }
 
@@ -52,7 +52,7 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidUpdateName %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: peripheral.name ?? "na")
+            arg: [peripheral.name ?? "na"])
         peripheralChangesPublisher.send(.name(peripheral.name))
     }
 
@@ -60,7 +60,7 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidModifyServices %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: invalidatedServices.description)
+            arg: [invalidatedServices.description])
         peripheralChangesPublisher.send(.invalidatedServices(invalidatedServices))
     }
 
@@ -76,7 +76,7 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidDiscoverServices, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: error?.localizedDescription ?? "")
+            arg: [error?.localizedDescription ?? "None"])
         if let error = error {
             peripheralDiscoveredServicesPublisher.send((nil,.serviceNotFound(error)))
         } else {
@@ -88,8 +88,8 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidDiscoverIncludedServices %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: service.description,
-            error?.localizedDescription ?? "")
+            arg: [service.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
             peripheralDiscoveredIncludedServicesPublisher.send((service, error))
         } else {
@@ -98,11 +98,11 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?){
-        log("[LBT: CBPD] DidDiscoverCharacteristic %{public}@, Error %{public}@",
+        log("[LBT: CBPD] DidDiscoverCharacteristic %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: service.description,
-            error?.localizedDescription ?? "")
+            arg: [service.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
             peripheralDiscoveredCharacteristicsForServicePublisher.send((service,  .characteristicNotFound(error)))
         } else {
@@ -114,8 +114,8 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidUpdateValue %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: characteristic.description,
-            error?.localizedDescription ?? "")
+            arg: [characteristic.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
             peripheralUpdatedValueForCharacteristicPublisher.send((characteristic, .couldNotReadFromCharacteristic(characteristic: characteristic.uuid, error: error)))
         } else {
@@ -131,8 +131,8 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidWriteValue %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: characteristic.description,
-            error?.localizedDescription ?? "")
+            arg: [characteristic.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
             peripheralWrittenValueForCharacteristicPublisher.send((characteristic, .couldNotWriteFromCharacteristic(characteristic: characteristic.uuid, error: error)))
         } else {
@@ -144,8 +144,8 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidUpdateNotifState %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: characteristic.description,
-            error?.localizedDescription ?? "")
+            arg: [characteristic.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
             peripheralUpdatedNotificationStateForCharacteristicPublisher.send((characteristic, .couldNotUpdateListenState(characteristic: characteristic.uuid, error: error)))
         } else {

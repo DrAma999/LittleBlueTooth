@@ -196,7 +196,7 @@ public class LittleBlueTooth: Identifiable {
             "[LBT] init options %{public}@",
             log: OSLog.LittleBT_Log_General,
             type: .debug,
-            arg: configuration.centralManagerOptions?.description ?? ""
+            arg: [configuration.centralManagerOptions?.description ?? ""]
         )
     }
     
@@ -851,7 +851,7 @@ public class LittleBlueTooth: Identifiable {
               log("[LBT] Scan restore %{public}@",
                   log: OSLog.LittleBT_Log_Restore,
                   type: .debug,
-                  arg: restorer.centralManager.isScanning ? "true" : "false")
+                  arg: [restorer.centralManager.isScanning ? "true" : "false"])
               return .scan(discoveryPublisher: restoreDiscoveryPublisher)
           }
           if let periph = restorer.peripherals.first, let cbPeripheral = periph.cbPeripheral {
@@ -884,9 +884,9 @@ public class LittleBlueTooth: Identifiable {
               log("[LBT] Periph restore %{public}@, has delegate: %{public}@ state %{public}d",
                   log: OSLog.LittleBT_Log_Restore,
                   type: .debug,
-                  arg: cbPeripheral.description,
+                  arg: [cbPeripheral.description,
                   cbPeripheral.delegate != nil ? "true" : "false",
-                  cbPeripheral.state.rawValue)
+                  cbPeripheral.state.rawValue])
               return Restored.peripheral(self.peripheral!)
           }
           return Restored.nothing
