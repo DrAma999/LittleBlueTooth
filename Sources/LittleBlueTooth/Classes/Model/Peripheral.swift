@@ -108,6 +108,7 @@ public class Peripheral: Identifiable {
     
     private let peripheralProxy = CBPeripheralDelegateProxy()
     private var _isLogEnabled: Bool = false
+    private var disposeBag = [UUID : AnyCancellable]()
 
     /// Initialize a `Peripheral` using a `CBperipheral`
     /// It also attach the publisher to monitor the state of the peripheral
@@ -132,24 +133,49 @@ public class Peripheral: Identifiable {
         #endif
     }
     
+    private func removeAndCancelSubscriber(for key: UUID) {
+        let sub = disposeBag[key]
+        sub?.cancel()
+        disposeBag.removeValue(forKey: key)
+    }
+    
     fileprivate func getService(serviceUUID: CBUUID) -> AnyPublisher<[CBService]?, LittleBluetoothError> {
         if let services = self.cbPeripheral.services, services.contains(where: { (service) -> Bool in
             return service.uuid == serviceUUID
         }) {
             return Result<[CBService]?, LittleBluetoothError>.Publisher(.success(services)).eraseToAnyPublisher()
         } else {
-            let services = self.peripheralProxy.peripheralDiscoveredServicesPublisher
-            .tryMap { (value) -> [CBService]? in
-                switch value {
-                case let (_, error?):
-                    throw error
-                case let (services?, _) where services.map{$0.uuid}.contains(serviceUUID):
-                    return services
-                case (_, .none):
-                    throw LittleBluetoothError.serviceNotFound(nil)
+            let futKey = UUID()
+            let services = Deferred {
+                Future<[CBService]?, LittleBluetoothError> { [unowned self, futKey] promise in
+                    self.peripheralProxy.peripheralDiscoveredServicesPublisher
+                        .tryMap { (value) -> [CBService]? in
+                            switch value {
+                            case let (_, error?):
+                                throw error
+                            case let (services?, _) where services.map{$0.uuid}.contains(serviceUUID):
+                                return services
+                            case (_, .none):
+                                throw LittleBluetoothError.serviceNotFound(nil)
+                            }
+                        }
+                        .mapError {$0 as! LittleBluetoothError}
+                        .sink { (completion) in
+                            switch completion {
+                            case .finished:
+                                break
+                            case .failure(let error):
+                                promise(.failure(error))
+                                self.removeAndCancelSubscriber(for: futKey)
+                            }
+                        } receiveValue: { (charact) in
+                            promise(.success(charact))
+                            self.removeAndCancelSubscriber(for: futKey)
+                        }
+                        .store(in: &self.disposeBag, for: futKey)
                 }
             }
-            .mapError {$0 as! LittleBluetoothError}
+            .eraseToAnyPublisher()
             defer {
                 self.cbPeripheral.discoverServices([serviceUUID])
             }
@@ -158,21 +184,23 @@ public class Peripheral: Identifiable {
     }
     
     fileprivate func getCharateristic(characteristicUUID: CBUUID, from service: CBService) -> AnyPublisher<CBService, LittleBluetoothError> {
+        // Check if has beed already discovered
         if let characteristics = service.characteristics, characteristics.contains(where: { (charact) -> Bool in
             return charact.uuid == characteristicUUID
         }) {
             return Result<CBService, LittleBluetoothError>.Publisher(.success(service)).eraseToAnyPublisher()
         } else {
-            let charact = self.peripheralProxy.peripheralDiscoveredCharacteristicsForServicePublisher
-            .tryMap { (value) -> CBService in
-                switch value {
-                case let (_, error?):
-                    throw error
-                case let (service, _):
-                    return service
+            let charact =
+                self.peripheralProxy.peripheralDiscoveredCharacteristicsForServicePublisher
+                .tryMap { (value) -> CBService in
+                    switch value {
+                    case let (_, error?):
+                        throw error
+                    case let (service, _):
+                        return service
+                    }
                 }
-            }
-            .mapError {$0 as! LittleBluetoothError}
+                .mapError {$0 as! LittleBluetoothError}
             defer {
                 self.cbPeripheral.discoverCharacteristics([characteristicUUID], for: service)
             }
@@ -181,37 +209,85 @@ public class Peripheral: Identifiable {
     }
     
     fileprivate func discoverCharacteristic(_ charateristicUUID: CBUUID, fromService serviceUUID: CBUUID) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> {
-        let discovery = self.getService(serviceUUID: serviceUUID)
-        .customPrint("[LBT] Discover service", isEnabled: isLogEnabled)
-        .flatMap { services -> AnyPublisher<CBService, LittleBluetoothError> in
-                let service = services!.filter{ $0.uuid == serviceUUID}.first!
-                return self.getCharateristic(characteristicUUID: charateristicUUID, from: service)
+        // Check if it has already been discovered
+        if let service = cbPeripheral.services?.first(where: { service in
+            service.uuid == serviceUUID
+        }), let charact = service.characteristics?.first(where: { characteristic in
+            characteristic.uuid == charateristicUUID
+        }) {
+            return Result<CBCharacteristic, LittleBluetoothError>.Publisher(.success(charact)).eraseToAnyPublisher()
         }
-        .customPrint("[LBT] Discover characteristic", isEnabled: isLogEnabled)
-        .tryMap { (service) -> CBCharacteristic in
-            guard let charact = service.characteristics?.filter({ $0.uuid == charateristicUUID}).first else {
-                throw LittleBluetoothError.characteristicNotFound(nil)
+        
+        let futKey = UUID()
+        let discovery = Deferred {
+            Future<CBCharacteristic, LittleBluetoothError> { [unowned self, futKey] promise in
+                self.getService(serviceUUID: serviceUUID)
+                    .customPrint("[LBT] Discover service", isEnabled: isLogEnabled)
+                    .flatMap { services -> AnyPublisher<CBService, LittleBluetoothError> in
+                        let service = services!.filter{ $0.uuid == serviceUUID}.first!
+                        return self.getCharateristic(characteristicUUID: charateristicUUID, from: service)
+                    }
+                    .customPrint("[LBT] Discover characteristic", isEnabled: isLogEnabled)
+                    .filter { (service) -> Bool in
+                        if let characteristics = service.characteristics?.map({$0.uuid}), characteristics.contains(charateristicUUID) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                    .map { service -> CBCharacteristic in
+                        return service.characteristics!.filter({ $0.uuid == charateristicUUID}).first!
+                    }
+                    .sink { (completion) in
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            promise(.failure(error))
+                            self.removeAndCancelSubscriber(for: futKey)
+                        }
+                    } receiveValue: { (charact) in
+                        promise(.success(charact))
+                        self.removeAndCancelSubscriber(for: futKey)
+                    }
+                    .store(in: &self.disposeBag, for: futKey)
             }
-            return charact
-        }
-        .mapError{$0 as! LittleBluetoothError}
-        .eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
+        
         return discovery
     }
     
     func readRSSI() -> AnyPublisher<Int, LittleBluetoothError> {
-        let readRSSI =
-            peripheralProxy.peripheralRSSIPublisher
-            .tryMap { (value) -> Int in
-                switch value {
-                case let (_, error?):
-                    throw error
-                case let (rssi, _):
-                    return rssi
-                }
+        let futKey = UUID()
+        let readRSSI = Deferred {
+            Future<Int, LittleBluetoothError> { [unowned self, futKey] promise in
+                peripheralProxy.peripheralRSSIPublisher
+                    .tryMap { (value) -> Int in
+                        switch value {
+                        case let (_, error?):
+                            throw error
+                        case let (rssi, _):
+                            return rssi
+                        }
+                    }
+                    .mapError {$0 as! LittleBluetoothError}
+                    .sink(receiveCompletion: { [unowned self, futKey] (completion) in
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            promise(.failure(error))
+                            self.removeAndCancelSubscriber(for: futKey)
+                        }
+                    }) { [unowned self, futKey] (readvalue) in
+                        promise(.success(readvalue))
+                        self.removeAndCancelSubscriber(for: futKey)
+                    }
+                    .store(in: &disposeBag, for: futKey)
             }
-            .mapError {$0 as! LittleBluetoothError}
-            .eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
+        
         defer {
             cbPeripheral.readRSSI()
         }
@@ -219,23 +295,44 @@ public class Peripheral: Identifiable {
     }
    
     func read(from charateristicUUID: CBUUID, of serviceUUID: CBUUID) -> AnyPublisher<Data?, LittleBluetoothError> {
-        let read = discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
-        .flatMap { characteristic -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
-            self.cbPeripheral.readValue(for: characteristic)
-            return self.peripheralProxy.peripheralUpdatedValueForCharacteristicPublisher
-            .tryMap { (value) -> CBCharacteristic in
-                switch value {
-                case let (_, error?):
-                    throw error
-                case let (charact, _):
-                    return charact
-                }
+        let futKey = UUID()
+        let read = Deferred {
+            Future<Data?, LittleBluetoothError> { [unowned self, futKey] promise in
+                discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
+                    .flatMap { characteristic -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+                        self.cbPeripheral.readValue(for: characteristic)
+                        return self.peripheralProxy.peripheralUpdatedValueForCharacteristicPublisher
+                            .filter { [charUUID = charateristicUUID] (value) in
+                                value.0.uuid == charUUID
+                            }
+                            .tryMap { (value) -> CBCharacteristic in
+                                switch value {
+                                case let (_, error?):
+                                    throw error
+                                case let (charact, _):
+                                    return charact
+                                }
+                            }
+                            .mapError {$0 as! LittleBluetoothError}
+                            .eraseToAnyPublisher()
+                    }
+                    .map { (characteristic) -> Data? in
+                        characteristic.value
+                    }
+                    .sink(receiveCompletion: { [unowned self, futKey] (completion) in
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            promise(.failure(error))
+                            self.removeAndCancelSubscriber(for: futKey)
+                        }
+                    }) { [unowned self, futKey] (readvalue) in
+                        promise(.success(readvalue))
+                        self.removeAndCancelSubscriber(for: futKey)
+                    }
+                    .store(in: &disposeBag, for: futKey)
             }
-            .mapError {$0 as! LittleBluetoothError}
-            .eraseToAnyPublisher()
-        }
-        .map { (characteristic) -> Data? in
-            characteristic.value
         }
         .eraseToAnyPublisher()
         return read
@@ -243,37 +340,55 @@ public class Peripheral: Identifiable {
     
     
     func write(to charateristicUUID: CBUUID, of serviceUUID: CBUUID, data: Data, response: Bool = true) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> {
-        let write = discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
-        .flatMap { characteristic -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
-            if response {
-                self.cbPeripheral.writeValue(data, for: characteristic, type: .withResponse)
-                return self.peripheralProxy.peripheralWrittenValueForCharacteristicPublisher.tryMap { (value) -> CBCharacteristic in
-                    switch value {
-                    case let (_, error?):
-                        throw error
-                    case let (charact, _):
-                        return charact
+        
+        let futKey = UUID()
+        let write = Deferred {
+            Future<CBCharacteristic, LittleBluetoothError> { [unowned self, futKey] promise in
+                discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
+                    .flatMap { characteristic -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+                        if response {
+                            self.cbPeripheral.writeValue(data, for: characteristic, type: .withResponse)
+                            return self.peripheralProxy.peripheralWrittenValueForCharacteristicPublisher.tryMap { (value) -> CBCharacteristic in
+                                switch value {
+                                case let (_, error?):
+                                    throw error
+                                case let (charact, _):
+                                    return charact
+                                }
+                            }
+                            .mapError {$0 as! LittleBluetoothError}
+                            .eraseToAnyPublisher()
+                        } else {
+                            let writeWOResp = self.peripheralProxy.peripheralIsReadyToSendWriteWithoutResponse
+                                .map { _ -> Bool in
+                                    return true
+                                }
+                                .prepend([self.cbPeripheral.canSendWriteWithoutResponse])
+                                .filter{ $0 }
+                                .prefix(1)
+                                .map {_ in
+                                    self.cbPeripheral.writeValue(data, for: characteristic, type: .withoutResponse)
+                                }
+                                .setFailureType(to: LittleBluetoothError.self)
+                                .map { characteristic }
+                                .eraseToAnyPublisher()
+                            
+                            return writeWOResp
+                        }
                     }
-                }
-                .mapError {$0 as! LittleBluetoothError}
-                .eraseToAnyPublisher()
-            } else {
-                
-                let writeWOResp = self.peripheralProxy.peripheralIsReadyToSendWriteWithoutResponse
-                .map { _ -> Bool in
-                    return true
-                }
-                .prepend([self.cbPeripheral.canSendWriteWithoutResponse])
-                .filter{ $0 }
-                .prefix(1)
-                .map {_ in
-                    self.cbPeripheral.writeValue(data, for: characteristic, type: .withoutResponse)
-                }
-                .setFailureType(to: LittleBluetoothError.self)
-                .map { characteristic }
-                .eraseToAnyPublisher()
-                
-                return writeWOResp
+                    .sink(receiveCompletion: { [unowned self, futKey] (completion) in
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            promise(.failure(error))
+                            self.removeAndCancelSubscriber(for: futKey)
+                        }
+                    }) { [unowned self, futKey] (readvalue) in
+                        promise(.success(readvalue))
+                        self.removeAndCancelSubscriber(for: futKey)
+                    }
+                    .store(in: &disposeBag, for: futKey)
             }
         }
         .eraseToAnyPublisher()
@@ -282,50 +397,88 @@ public class Peripheral: Identifiable {
 
     
     func startListen(from charateristicUUID: CBUUID, of serviceUUID: CBUUID) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> {
-        let notifyStart = discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
-        .flatMap { (characteristic) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
-            if characteristic.isNotifying {
-               return Result<CBCharacteristic, LittleBluetoothError>.Publisher(.success(characteristic)).eraseToAnyPublisher()
+        
+        let futKey = UUID()
+        let notifyStart = Deferred {
+            Future<CBCharacteristic, LittleBluetoothError> { [unowned self, futKey] promise in
+                discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
+                    .flatMap { (characteristic) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+                        if characteristic.isNotifying {
+                            return Result<CBCharacteristic, LittleBluetoothError>.Publisher(.success(characteristic)).eraseToAnyPublisher()
+                        }
+                        defer {
+                            self.cbPeripheral.setNotifyValue(true, for: characteristic)
+                        }
+                        return self.peripheralProxy.peripheralUpdatedNotificationStateForCharacteristicPublisher
+                            .tryMap { (value) -> CBCharacteristic in
+                                switch value {
+                                case let (_, error?):
+                                    throw error
+                                case let (charact, _):
+                                    return charact
+                                }
+                            }
+                            .mapError {$0 as! LittleBluetoothError}
+                            .eraseToAnyPublisher()
+                    }
+                    .sink { (completion) in
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            promise(.failure(error))
+                            self.removeAndCancelSubscriber(for: futKey)
+                        }
+                    } receiveValue: { (charact) in
+                        promise(.success(charact))
+                        self.removeAndCancelSubscriber(for: futKey)
+                    }
+                    .store(in: &self.disposeBag, for: futKey)
             }
-            defer {
-                self.cbPeripheral.setNotifyValue(true, for: characteristic)
-            }
-            return self.peripheralProxy.peripheralUpdatedNotificationStateForCharacteristicPublisher
-            .tryMap { (value) -> CBCharacteristic in
-                switch value {
-                case let (_, error?):
-                    throw error
-                case let (charact, _):
-                    return charact
-                }
-            }
-            .mapError {$0 as! LittleBluetoothError}
-            .eraseToAnyPublisher()
+            
         }
         .eraseToAnyPublisher()
         return notifyStart
     }
     
     func stopListen(from charateristicUUID: CBUUID, of serviceUUID: CBUUID) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> {
-        let notifyStop = discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
-        .flatMap { (characteristic) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
-            if !characteristic.isNotifying {
-               return Result<CBCharacteristic, LittleBluetoothError>.Publisher(.success(characteristic)).eraseToAnyPublisher()
+        let futKey = UUID()
+        let notifyStop = Deferred {
+            Future<CBCharacteristic, LittleBluetoothError> { [unowned self, futKey] promise in
+                discoverCharacteristic(charateristicUUID, fromService: serviceUUID)
+                    .flatMap { (characteristic) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+                        if !characteristic.isNotifying {
+                            return Result<CBCharacteristic, LittleBluetoothError>.Publisher(.success(characteristic)).eraseToAnyPublisher()
+                        }
+                        defer {
+                            self.cbPeripheral.setNotifyValue(false, for: characteristic)
+                        }
+                        return self.peripheralProxy.peripheralUpdatedNotificationStateForCharacteristicPublisher
+                            .tryMap { (value) -> CBCharacteristic in
+                                switch value {
+                                case let (_, error?):
+                                    throw error
+                                case let (charact, _):
+                                    return charact
+                                }
+                            }
+                            .mapError {$0 as! LittleBluetoothError}
+                            .eraseToAnyPublisher()
+                    }
+                    .sink { (completion) in
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            promise(.failure(error))
+                            self.removeAndCancelSubscriber(for: futKey)
+                        }
+                    } receiveValue: { (charact) in
+                        promise(.success(charact))
+                        self.removeAndCancelSubscriber(for: futKey)
+                    }
+                    .store(in: &self.disposeBag, for: futKey)
             }
-            defer {
-                self.cbPeripheral.setNotifyValue(false, for: characteristic)
-            }
-            return self.peripheralProxy.peripheralUpdatedNotificationStateForCharacteristicPublisher
-            .tryMap { (value) -> CBCharacteristic in
-                switch value {
-                case let (_, error?):
-                    throw error
-                case let (charact, _):
-                    return charact
-                }
-            }
-            .mapError {$0 as! LittleBluetoothError}
-            .eraseToAnyPublisher()
         }
         .eraseToAnyPublisher()
         return notifyStop
@@ -333,37 +486,56 @@ public class Peripheral: Identifiable {
     
     func writeAndListen(from charateristicUUID: CBUUID, of serviceUUID: CBUUID, data: Data) -> AnyPublisher<Data?, LittleBluetoothError> {
         
-        let writeListen = startListen(from: charateristicUUID, of: serviceUUID)
-            .flatMap { (_) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
-                self.write(to: charateristicUUID, of: serviceUUID, data: data)
-            }
-            .flatMap { (_) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
-                self.peripheralProxy.peripheralUpdatedValueForNotifyCharacteristicPublisher
-                .tryMap { (value) -> CBCharacteristic in
-                    switch value {
-                    case let (_, error?):
-                        throw error
-                    case let (charact, _):
-                        return charact
+        let futKey = UUID()
+        let writeListen = Deferred {
+            Future<Data?, LittleBluetoothError> { [unowned self, futKey] promise in
+                startListen(from: charateristicUUID, of: serviceUUID)
+                    .flatMap { (_) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+                        self.write(to: charateristicUUID, of: serviceUUID, data: data)
                     }
-                }
-                .mapError {$0 as! LittleBluetoothError}
-                .eraseToAnyPublisher()
+                    .flatMap { (_) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+                        self.peripheralProxy.peripheralUpdatedValueForNotifyCharacteristicPublisher
+                            .tryMap { (value) -> CBCharacteristic in
+                                switch value {
+                                case let (_, error?):
+                                    throw error
+                                case let (charact, _):
+                                    return charact
+                                }
+                            }
+                            .mapError {$0 as! LittleBluetoothError}
+                            .eraseToAnyPublisher()
+                    }
+                    .prefix(1)
+                    .filter { (charachteristic) -> Bool in
+                        if charachteristic.uuid == charateristicUUID {
+                            return true
+                        }
+                        return false
+                    }
+                    .flatMap{ (_) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
+                        self.stopListen(from: charateristicUUID, of: serviceUUID)
+                    }
+                    .map { charact -> Data? in
+                        charact.value
+                    }
+                    .sink { (completion) in
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            promise(.failure(error))
+                            self.removeAndCancelSubscriber(for: futKey)
+                        }
+                    } receiveValue: { (charact) in
+                        promise(.success(charact))
+                        self.removeAndCancelSubscriber(for: futKey)
+                    }
+                    .store(in: &self.disposeBag, for: futKey)
             }
-            .prefix(1)
-            .filter { (charachteristic) -> Bool in
-                if charachteristic.uuid == charateristicUUID {
-                    return true
-                }
-                return false
-            }
-            .flatMap{ (_) -> AnyPublisher<CBCharacteristic, LittleBluetoothError> in
-                self.stopListen(from: charateristicUUID, of: serviceUUID)
-            }
-            .map { charact -> Data? in
-                charact.value
-            }
-            .eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
+        
         return writeListen
     }
     

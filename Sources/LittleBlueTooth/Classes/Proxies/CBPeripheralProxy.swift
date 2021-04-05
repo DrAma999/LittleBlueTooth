@@ -19,16 +19,28 @@ class CBPeripheralDelegateProxy: NSObject {
     
     let peripheralChangesPublisher = PassthroughSubject<PeripheralChanges, Never>()
     let peripheralRSSIPublisher = PassthroughSubject<(Int, LittleBluetoothError?), Never>()
-    let peripheralDiscoveredServicesPublisher = PassthroughSubject<([CBService]?, LittleBluetoothError?), Never>()
-    let peripheralDiscoveredIncludedServicesPublisher = PassthroughSubject<(CBService, Error?), Never>()
-    let peripheralDiscoveredCharacteristicsForServicePublisher = PassthroughSubject<(CBService, LittleBluetoothError?), Never>()
+    
+    lazy var  peripheralDiscoveredServicesPublisher = { _peripheralDiscoveredServicesPublisher.share().eraseToAnyPublisher()
+    }()
+    let _peripheralDiscoveredServicesPublisher = PassthroughSubject<([CBService]?, LittleBluetoothError?), Never>()
+    
+    lazy var  peripheralDiscoveredIncludedServicesPublisher = { _peripheralDiscoveredIncludedServicesPublisher.share().eraseToAnyPublisher()
+    }()
+    let _peripheralDiscoveredIncludedServicesPublisher = PassthroughSubject<(CBService, Error?), Never>()
+    
+    lazy var peripheralDiscoveredCharacteristicsForServicePublisher = { _peripheralDiscoveredCharacteristicsForServicePublisher.share().eraseToAnyPublisher()
+    }()
+    let _peripheralDiscoveredCharacteristicsForServicePublisher = PassthroughSubject<(CBService, LittleBluetoothError?), Never>()
+    
+    lazy var peripheralUpdatedNotificationStateForCharacteristicPublisher = { _peripheralUpdatedNotificationStateForCharacteristicPublisher.share().eraseToAnyPublisher()
+    }()
+    let _peripheralUpdatedNotificationStateForCharacteristicPublisher =
+        PassthroughSubject<(CBCharacteristic, LittleBluetoothError?), Never>()
+    
     let peripheralUpdatedValueForCharacteristicPublisher = PassthroughSubject<(CBCharacteristic, LittleBluetoothError?), Never>()
     let peripheralUpdatedValueForNotifyCharacteristicPublisher = PassthroughSubject<(CBCharacteristic, LittleBluetoothError?), Never>()
     let peripheralWrittenValueForCharacteristicPublisher = PassthroughSubject<(CBCharacteristic, LittleBluetoothError?), Never>()
     let peripheralIsReadyToSendWriteWithoutResponse = PassthroughSubject<Void, Never>()
-
-    let peripheralUpdatedNotificationStateForCharacteristicPublisher =
-        PassthroughSubject<(CBCharacteristic, LittleBluetoothError?), Never>()
     
     let peripheralDiscoveredDescriptorsForCharacteristicPublisher =
         PassthroughSubject<(CBCharacteristic, LittleBluetoothError?), Never>()
@@ -44,7 +56,7 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
     func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral){
         log("[LBT: CBPD] ReadyToSendWRiteWOResp",
             log: OSLog.LittleBT_Log_Peripheral,
-            type: .debug)
+            type: .debug, arg: [])
         peripheralIsReadyToSendWriteWithoutResponse.send()
     }
 
@@ -52,7 +64,7 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidUpdateName %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: peripheral.name ?? "na")
+            arg: [peripheral.name ?? "na"])
         peripheralChangesPublisher.send(.name(peripheral.name))
     }
 
@@ -60,7 +72,7 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidModifyServices %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: invalidatedServices.description)
+            arg: [invalidatedServices.description])
         peripheralChangesPublisher.send(.invalidatedServices(invalidatedServices))
     }
 
@@ -76,11 +88,11 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidDiscoverServices, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: error?.localizedDescription ?? "")
+            arg: [error?.localizedDescription ?? "None"])
         if let error = error {
-            peripheralDiscoveredServicesPublisher.send((nil,.serviceNotFound(error)))
+            _peripheralDiscoveredServicesPublisher.send((nil,.serviceNotFound(error)))
         } else {
-            peripheralDiscoveredServicesPublisher.send((peripheral.services, nil))
+            _peripheralDiscoveredServicesPublisher.send((peripheral.services, nil))
         }
     }
 
@@ -88,12 +100,12 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidDiscoverIncludedServices %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: service.description,
-            error?.localizedDescription ?? "")
+            arg: [service.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
-            peripheralDiscoveredIncludedServicesPublisher.send((service, error))
+            _peripheralDiscoveredIncludedServicesPublisher.send((service, error))
         } else {
-            peripheralDiscoveredIncludedServicesPublisher.send((service, nil))
+            _peripheralDiscoveredIncludedServicesPublisher.send((service, nil))
         }
     }
     
@@ -101,12 +113,12 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidDiscoverCharacteristic %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: service.description,
-            error?.localizedDescription ?? "")
+            arg: [service.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
-            peripheralDiscoveredCharacteristicsForServicePublisher.send((service,  .characteristicNotFound(error)))
+            _peripheralDiscoveredCharacteristicsForServicePublisher.send((service,  .characteristicNotFound(error)))
         } else {
-            peripheralDiscoveredCharacteristicsForServicePublisher.send((service, nil))
+            _peripheralDiscoveredCharacteristicsForServicePublisher.send((service, nil))
         }
     }
 
@@ -114,8 +126,8 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidUpdateValue %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: characteristic.description,
-            error?.localizedDescription ?? "")
+            arg: [characteristic.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
             peripheralUpdatedValueForCharacteristicPublisher.send((characteristic, .couldNotReadFromCharacteristic(characteristic: characteristic.uuid, error: error)))
         } else {
@@ -131,8 +143,8 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidWriteValue %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: characteristic.description,
-            error?.localizedDescription ?? "")
+            arg: [characteristic.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
             peripheralWrittenValueForCharacteristicPublisher.send((characteristic, .couldNotWriteFromCharacteristic(characteristic: characteristic.uuid, error: error)))
         } else {
@@ -144,12 +156,12 @@ extension CBPeripheralDelegateProxy: CBPeripheralDelegate {
         log("[LBT: CBPD] DidUpdateNotifState %{public}@, Error %{public}@",
             log: OSLog.LittleBT_Log_Peripheral,
             type: .debug,
-            arg: characteristic.description,
-            error?.localizedDescription ?? "")
+            arg: [characteristic.description,
+            (error?.localizedDescription ?? "None")])
         if let error = error {
-            peripheralUpdatedNotificationStateForCharacteristicPublisher.send((characteristic, .couldNotUpdateListenState(characteristic: characteristic.uuid, error: error)))
+            _peripheralUpdatedNotificationStateForCharacteristicPublisher.send((characteristic, .couldNotUpdateListenState(characteristic: characteristic.uuid, error: error)))
         } else {
-            peripheralUpdatedNotificationStateForCharacteristicPublisher.send((characteristic, nil))
+            _peripheralUpdatedNotificationStateForCharacteristicPublisher.send((characteristic, nil))
         }
     }
 
