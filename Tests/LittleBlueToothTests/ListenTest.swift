@@ -183,6 +183,82 @@ class ListenTest: LittleBlueToothTests {
 
     }
     
+    func testCombineLatest() {
+        disposeBag.removeAll()
+        blinky.simulateProximityChange(.immediate)
+        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBMUUID.buttonCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read])
+        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBMUUID.ledCharacteristic.uuidString, for: CBMUUID.nordicBlinkyService.uuidString, properties: [.notify, .read, .write])
+        
+        func getOne() -> AnyPublisher<ButtonState, LittleBluetoothError> {
+            littleBT.startListen(from: charateristicOne)
+                .prepend(littleBT.read(from: charateristicOne))
+                .eraseToAnyPublisher()
+        }
+        
+        func getTwo() -> AnyPublisher<LedState, LittleBluetoothError> {
+            littleBT.startListen(from: charateristicTwo)
+                .prepend(littleBT.read(from: charateristicTwo))
+                .eraseToAnyPublisher()
+        }
+        let combineLatestListenExpectation = XCTestExpectation(description: "Combine latest expect")
+        var counter = 0
+        let first = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+        let firstScheduler = first
+            .map {_ -> UInt8 in
+                let data = UInt8.random(in: 0...1)
+                blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.buttonCharacteristic)
+                return data
+            }
+            .sink { value in
+                print("Button value:\(value)")
+            }
+        
+        let second = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+        
+        let secondScheduler = second
+            .map {_ -> UInt8 in
+                let data = UInt8.random(in: 0...1)
+                blinky.simulateValueUpdate(Data([data]), for: CBMCharacteristicMock.ledCharacteristic)
+                return data
+            }.sink { value in
+                print("Led value:\(value)")
+            }
+
+        
+        StartLittleBlueTooth
+        .startDiscovery(for: self.littleBT, withServices: nil)
+        .connect(for: self.littleBT)
+        .sink(receiveCompletion: { completion in
+            print("Completion \(completion)")
+        }) { (answer: Peripheral) in
+            print("Answer \(answer)")
+            Publishers.CombineLatest(
+                      getOne(),
+                      getTwo()
+            )
+            .sink(receiveCompletion: { completion in
+                print("Completion \(completion)")
+            }) { (answer) in
+                print("Answer \(answer)")
+                counter += 1
+                if counter >= 10 {
+                    self.littleBT.disconnect().sink(receiveCompletion: {_ in
+                    }) { (_) in
+                        combineLatestListenExpectation.fulfill()
+                        secondScheduler.cancel()
+                        firstScheduler.cancel()
+                    }
+                    .store(in: &self.disposeBag)
+                }
+            }
+            .store(in: &self.disposeBag)
+        }
+        .store(in: &disposeBag)
+        
+        wait(for: [combineLatestListenExpectation], timeout: 30)
+
+    }
  
 
     func testListenToMoreCharacteristic() {
