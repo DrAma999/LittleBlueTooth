@@ -473,42 +473,41 @@ public class LittleBlueTooth: Identifiable {
     public func read<T: Readable>(from characteristic: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
         
         let readSubject = PassthroughSubject<T, LittleBluetoothError>()
-        let key = UUID()
-        
+        let futKey = UUID()
         ensureBluetoothState()
-        .customPrint("[LBT] ReadPublisher", isEnabled: isLogEnabled)
-        .flatMap { [unowned self] _ in
-            self.ensurePeripheralReady()
-        }
-        .flatMap { periph in
-            periph.read(from: characteristic.id, of: characteristic.service)
-        }
-        .tryMap { (data) -> T in
-            guard let data = data else {
-                throw LittleBluetoothError.emptyData
+            .customPrint("[LBT] ReadPublisher", isEnabled: isLogEnabled)
+            .flatMap { [unowned self] _ in
+                self.ensurePeripheralReady()
             }
-            return try T.init(from: data)
-        }
-        .mapError { (error) -> LittleBluetoothError in
-            if let er = error as? LittleBluetoothError {
-                return er
+            .flatMap { [characteristic] periph in
+                periph.read(from: characteristic.id, of: characteristic.service)
             }
-            return .couldNotReadFromCharacteristic(characteristic: characteristic.id, error: error)
-        }
-        .sink(receiveCompletion: { [unowned self, key] (completion) in
-            switch completion {
-            case .finished:
-                break
-            case .failure(let error):
-                readSubject.send(completion: .failure(error))
-                self.removeAndCancelSubscriber(for: key)
+            .tryMap { (data) -> T in
+                guard let data = data else {
+                    throw LittleBluetoothError.emptyData
+                }
+                return try T.init(from: data)
             }
-        }) { [unowned self, key] (readvalue) in
-            readSubject.send(readvalue)
-            readSubject.send(completion: .finished)
-            self.removeAndCancelSubscriber(for: key)
-        }
-        .store(in: &disposeBag, for: key)
+            .mapError { (error) -> LittleBluetoothError in
+                if let er = error as? LittleBluetoothError {
+                    return er
+                }
+                return .couldNotReadFromCharacteristic(characteristic: characteristic.id, error: error)
+            }
+            .sink(receiveCompletion: { [unowned self, futKey] (completion) in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    readSubject.send(completion: .failure(error))
+                    self.removeAndCancelSubscriber(for: futKey)
+                }
+            }) { [unowned self, futKey] (readvalue) in
+                readSubject.send(readvalue)
+                readSubject.send(completion: .finished)
+                self.removeAndCancelSubscriber(for: futKey)
+            }
+            .store(in: &disposeBag, for: futKey)
         
         return readSubject.eraseToAnyPublisher()
     }
@@ -932,7 +931,7 @@ public class LittleBlueTooth: Identifiable {
                         prom(.failure(error))
                         self.removeAndCancelSubscriber(for: futKey)
                     }
-                }) { [unowned self] (state) in
+                }) { [unowned self, futKey] (state) in
                     prom(.success(state))
                     self.removeAndCancelSubscriber(for: futKey)
                 }

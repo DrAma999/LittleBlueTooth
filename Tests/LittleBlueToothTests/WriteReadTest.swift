@@ -82,51 +82,6 @@ class ReadWriteTest: LittleBlueToothTests {
         XCTAssert(isWrong)
     }
     
-    
-    func testWrongCharacteristicError() {
-        disposeBag.removeAll()
-        
-        blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: "00001525-1212-EFDE-1523-785FEABCD133", for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
-        let wrongCharacteristicExpectation = expectation(description: "Wrong characteristic expectation")
-
-        var isWrong = false
-        
-        littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
-            .map { disc -> PeripheralDiscovery in
-                print("Discovery discovery \(disc)")
-                return disc
-        }
-        .flatMap { discovery in
-            self.littleBT.connect(to: discovery)
-        }
-        .flatMap { _ -> AnyPublisher<LedState, LittleBluetoothError> in
-            self.littleBT.read(from: charateristic)
-        }
-        .sink(receiveCompletion: { completion in
-            print("Completion \(completion)")
-            switch completion {
-            case .finished:
-                break
-            case let .failure(error):
-                if case LittleBluetoothError.characteristicNotFound(_) = error {
-                    isWrong = true
-                    self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                    }) { (_) in
-                        wrongCharacteristicExpectation.fulfill()
-                    }
-                    .store(in: &self.disposeBag)
-                }
-            }
-        }) { (answer) in
-            print("Answer \(answer)")
-        }
-        .store(in: &disposeBag)
-        
-        waitForExpectations(timeout: 10)
-        XCTAssert(isWrong)
-    }
-    
     func testReadLedOFF() {
         blinky.simulateReset()
         disposeBag.removeAll()

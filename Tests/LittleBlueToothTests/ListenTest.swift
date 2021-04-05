@@ -191,7 +191,7 @@ class ListenTest: LittleBlueToothTests {
         
         func getOne() -> AnyPublisher<ButtonState, LittleBluetoothError> {
             littleBT.startListen(from: charateristicOne)
-                .prepend(littleBT.read(from: charateristicTwo))
+                .prepend(littleBT.read(from: charateristicOne))
               .handleEvents(receiveCompletion: { completion in
                 switch completion {
                   case .finished:

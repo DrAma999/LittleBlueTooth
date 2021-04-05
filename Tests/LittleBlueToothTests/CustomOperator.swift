@@ -216,44 +216,6 @@ class CustomOperator: LittleBlueToothTests {
         XCTAssert(ledState!.isOn == false)
     }
     
-    /// Read custom operator test fail for wrong charcteriscti
-    func testWrongCharacteristicErrorOperator() {
-        disposeBag.removeAll()
-        
-        blinky.simulateProximityChange(.immediate)
-        let charateristic = LittleBlueToothCharacteristic(characteristic: "00001525-1212-EFDE-1523-785FEABCD133", for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
-        let wrongCharacteristicExpectation = expectation(description: "Wrong characteristic expectation")
-
-        var isWrong = false
-        
-        StartLittleBlueTooth
-        .startDiscovery(for: self.littleBT, withServices: nil)
-        .connect(for: self.littleBT)
-        .read(for: self.littleBT, from: charateristic)
-        .sink(receiveCompletion: { completion in
-            print("Completion \(completion)")
-            switch completion {
-            case .finished:
-                break
-            case let .failure(error):
-                if case LittleBluetoothError.characteristicNotFound(_) = error {
-                    isWrong = true
-                    self.littleBT.disconnect().sink(receiveCompletion: {_ in
-                    }) { (_) in
-                        wrongCharacteristicExpectation.fulfill()
-                    }
-                    .store(in: &self.disposeBag)
-                }
-            }
-        }) { (answer: LedState) in
-            print("Answer \(answer)")
-        }
-        .store(in: &disposeBag)
-        
-        waitForExpectations(timeout: 10)
-        XCTAssert(isWrong)
-    }
-    
     /// Write custom operator test
     func testWriteLedOnReadLedONOperator() {
         disposeBag.removeAll()
