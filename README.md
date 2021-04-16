@@ -14,7 +14,7 @@
 ## INTRODUCTION
 LittleBluetooth is a library that helps you developing applications that need to work with a bluetooth low energy device.
 It is written using `Swift` and the `Combine` framework thus is only compatible from iOS 13, macOS 10.15, watchOS 6.0 to upper version.
-It will make pretty easy to work with CoreBlueTooth connecting to a peripherala and reading a characteristic can be mabe with just these lines of code:
+It will make pretty easy to work with CoreBlueTooth: connecting to a peripheral and reading a characteristic can be mabe with just these lines of code:
 ```
 StartLittleBlueTooth
 .startDiscovery(for: self.littleBT, withServices: [CBUUID(string: HRMCostants.HRMService)])
@@ -62,6 +62,8 @@ The library is still on development so use at own you risk.
 
 [Custom operators](#custom-combine-operator)
 
+[Documentation](#documentation)
+
 [Sample application](#sample-application)
 
 [License](#license)
@@ -75,8 +77,8 @@ The library is still on development so use at own you risk.
 * Write and listen (or better listen and write): sometimes you need to write a command and get a “response” right away
 * Initialization operations: sometimes you want to perform some bluetooth commands right after a connection, for instance an authentication, and you want to perform that before another operation have access to the peripheral.
 * Readable and Writable characteristics: basically those two protocols will deal in reading a `Data` object to the concrete type you want or writing your concrete type into a `Data` object.
-* Simplified `Error` normalization and if you want more you can always access the inner `CBError`
-* Code coverage > 90% (it shows 50% but something has been broken in the script that generate the report, if you click on the badge you'll see the coverage, files in test are just alias but it seems that is taking them as different)
+* Simplified `Error` normalization and if you need more information you can always access the inner `CBError`
+* Code coverage > 90% 
 
 ## INSTALLATION
 ### Carthage
@@ -99,11 +101,12 @@ Add the following dependency to your Package.swift file:
 .package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.6.0")
 ```
 Or simply add the URL from XCode menu Swift packages.
-
+### XCFramework
+Already compiled XCFramework are avaible to be download in the release section of github.
 
 ## HOW TO USE IT
 ### Instantiate
-Create a `LittleBluetoothConfiguration` object and pass to the init method of `LittleBlueTooth`.
+Create a `LittleBluetoothConfiguration` object and pass it to the init method of `LittleBlueTooth`.
 All `LittleBluetoothConfiguration` properties are optional.
 ```
     var littleBTConf = LittleBluetoothConfiguration()
@@ -250,7 +253,7 @@ let littleChar = LittleBlueToothCharacteristic(characteristic: "19B10011-E8F2-53
 The class or struct that you want to read must conform to the `Readable`
 protocol, basically it means that it can be instantiated from a `Data` object.
 
-For example here I’m declaring and Acceleration struct that contains acceleration data from a sensor.
+For example here I’m declaring and `Acceleration` struct that contains acceleration data from a sensor.
 
 ```
 struct Acceleration: Readable {
@@ -449,7 +452,7 @@ _Multiple listen_:
 If you need to receive more notifications on just one subscriber this publisher is made for you.
 Just activate one or more notification and subscribe to the `listenPublisher` publisher.
 It starts to stream all notifications once a peripheral is connected automatically.
-Now, it's your responsability to filter and converting `Data` object from `CBCharacteristic` to you type.
+Now, it's your responsability to filter and converting `Data` object from `CBCharacteristic` to your type.
 ```
 // First publisher
 littleBT.listenPublisher
@@ -685,6 +688,9 @@ To disconnect from a device simply call:
 ### Note
 To start operations using a publisher or a custom operator you **must attach a subscriber**.
 And the result `AnyCancellable` must be store in a property or in a disposebag, you must guarantee the existance of the pipeline untill the end.
+
+## DOCUMENTATION
+Jazzy doc is available [here](https://drama999.github.io/LittleBlueTooth/index.html)
 
 ## SAMPLE APPLICATION
 A sample application can be download [here](https://github.com/DrAma999/LittleBlueToothTestApp). It requires also to adownload an application for macOS or iOS to simulate a heart rate monitor.
