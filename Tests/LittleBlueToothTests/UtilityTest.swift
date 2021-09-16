@@ -162,7 +162,6 @@ class UtilityTest: LittleBlueToothTests {
         
         class MockLogger: Loggable {
             var isLogEnabled = true
-            static var wasCalled = false
         }
         
         XCTAssertNoThrow(
