@@ -16,12 +16,12 @@ protocol Loggable {
 
 extension Loggable  {
     func log(_ message: StaticString, log: OSLog, type: OSLogType, arg: [CVarArg]) {
+        assert(arg.count <= 3)
         #if !TEST
         // https://stackoverflow.com/questions/50937765/why-does-wrapping-os-log-cause-doubles-to-not-be-logged-correctly/50942917#50942917
         guard isLogEnabled else {
             return
         }
-        assert(arg.count <= 2)
         switch arg.count {
         case 1:
             os_log(type, log: log, message, arg[0])

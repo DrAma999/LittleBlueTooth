@@ -9,6 +9,7 @@
 import XCTest
 import CoreBluetoothMock
 import Combine
+import os.log
 @testable import LittleBlueToothForTest
 
 class UtilityTest: LittleBlueToothTests {
@@ -150,6 +151,24 @@ class UtilityTest: LittleBlueToothTests {
         
         XCTAssert(event1.count == 2)
         XCTAssert(event1 == event2)
+    }
+    
+    // MARK: - Loggable
+
+    /// Note that the current implementation does not actually `throw` but rather uses `assert`.  Nevertheless
+    /// wrapping with `XCTAssertNoThrow` accomplishes the goal of verifying the function behaviour while adding
+    /// a tiny future proof should assert be replaced by a thrown Error.
+    func testLoggableShouldAccept3Args() {
+        
+        class MockLogger: Loggable {
+            var isLogEnabled = true
+            static var wasCalled = false
+        }
+        
+        XCTAssertNoThrow(
+            MockLogger().log("3 may pass", log: OSLog.LittleBT_Log_General, type: .info,
+                             arg: ["arg1", "arg2", "arg3"])
+        )
     }
 
 }
