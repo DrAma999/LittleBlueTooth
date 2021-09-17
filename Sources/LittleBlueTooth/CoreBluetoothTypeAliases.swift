@@ -36,9 +36,7 @@ import Foundation
 // the imports to CoreBluetooth to fix conflicts and initiate the manager
 // using CBCentralManagerFactory, instad of just creating a CBCentralManager.
 
-
 public typealias CBCentralManagerFactory         = CBMCentralManagerFactory
-public typealias CBPeer                          = CBMPeer
 public typealias CBUUID                          = CBMUUID
 public typealias CBError                         = CBMError
 public typealias CBATTError                      = CBMATTError
@@ -48,7 +46,6 @@ public typealias CBCentralManager                = CBMCentralManager
 public typealias CBCentralManagerDelegate        = CBMCentralManagerDelegate
 public typealias CBPeripheral                    = CBMPeripheral
 public typealias CBPeripheralDelegate            = CBMPeripheralDelegate
-public typealias CBAttribute                     = CBMAttribute
 public typealias CBService                       = CBMService
 public typealias CBCharacteristic                = CBMCharacteristic
 public typealias CBCharacteristicWriteType       = CBMCharacteristicWriteType
@@ -56,9 +53,9 @@ public typealias CBCharacteristicProperties      = CBMCharacteristicProperties
 public typealias CBDescriptor                    = CBMDescriptor
 public typealias CBConnectionEvent               = CBMConnectionEvent
 public typealias CBConnectionEventMatchingOption = CBMConnectionEventMatchingOption
-@available(iOS 11.0, *)
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
 public typealias CBL2CAPPSM                      = CBML2CAPPSM
-@available(iOS 11.0, *)
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
 public typealias CBL2CAPChannel                  = CBML2CAPChannel
 
 public let CBCentralManagerScanOptionAllowDuplicatesKey       = CBMCentralManagerScanOptionAllowDuplicatesKey
@@ -86,5 +83,4 @@ public let CBAdvertisementDataSolicitedServiceUUIDsKey        = CBMAdvertisement
 public let CBConnectPeripheralOptionNotifyOnConnectionKey     = CBMConnectPeripheralOptionNotifyOnConnectionKey
 public let CBConnectPeripheralOptionNotifyOnDisconnectionKey  = CBMConnectPeripheralOptionNotifyOnDisconnectionKey
 public let CBConnectPeripheralOptionNotifyOnNotificationKey   = CBMConnectPeripheralOptionNotifyOnNotificationKey
-
 #endif

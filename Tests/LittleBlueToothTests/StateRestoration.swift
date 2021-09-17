@@ -22,21 +22,21 @@ class StateRestoration: LittleBlueToothTests {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    
+
     func testStateRestore() {
         let discoveryExpectation = expectation(description: "Discovery expectation")
 
         blinky.simulateProximityChange(.immediate)
-        
+
         var littleBTConf = LittleBluetoothConfiguration()
         littleBTConf.isLogEnabled = true
         littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
         littleBT = LittleBlueTooth(with: littleBTConf)
-        
+
         var periph: [PeripheralIdentifier]?
         var scanOptions: [String : Any]?
         var scanServices: [CBUUID]?
-        
+
         var discoveredPeri: CBPeripheral?
         littleBT.startDiscovery(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : false])
             .sink(receiveCompletion: { completion in
@@ -52,12 +52,12 @@ class StateRestoration: LittleBlueToothTests {
                 .store(in: &self.disposeBag)
         }
         .store(in: &disposeBag)
-                
+
         waitForExpectations(timeout: 10)
-        
+
         let restoreExpectation = expectation(description: "State restoration")
 
-        CBMCentralManagerFactory.simulateStateRestoration = { (_) -> [String : Any]  in
+        CBMCentralManagerMock.simulateStateRestoration = { (_) -> [String : Any]  in
             return [
                 CBCentralManagerRestoredStatePeripheralsKey : [discoveredPeri],
                 CBCentralManagerRestoredStateScanOptionsKey : [CBCentralManagerScanOptionAllowDuplicatesKey : false],
@@ -72,7 +72,7 @@ class StateRestoration: LittleBlueToothTests {
         }
         littleBTConf.centralManagerOptions = [CBMCentralManagerOptionRestoreIdentifierKey : "myIdentifier"]
         littleBT = LittleBlueTooth(with: littleBTConf)
-        
+
         littleBT.restoreStatePublisher
             .sink { (restorer) in
                 print(restorer)
@@ -82,7 +82,7 @@ class StateRestoration: LittleBlueToothTests {
                 restoreExpectation.fulfill()
         }
         .store(in: &disposeBag)
-        
+
         waitForExpectations(timeout: 10)
 
         XCTAssertNotNil(periph)
