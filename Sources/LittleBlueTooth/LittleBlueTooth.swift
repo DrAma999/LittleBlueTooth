@@ -188,7 +188,7 @@ public class LittleBlueTooth: Identifiable {
             configuration.centralManagerOptions?[CBCentralManagerOptionRestoreIdentifierKey] != nil) ||
             (configuration.restoreHandler != nil &&
                 configuration.centralManagerOptions?[CBCentralManagerOptionRestoreIdentifierKey] == nil) {
-            print("If you want to use state preservation/restoration you should probablu want to implement the `restoreHandler`")
+            print("If you want to use state preservation/restoration you should probably want to implement the `restoreHandler`")
         }
         attachSubscribers(with: configuration.restoreHandler)
         self.isLogEnabled = configuration.isLogEnabled
