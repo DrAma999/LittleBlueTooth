@@ -32,15 +32,20 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "LittleBlueTooth",
-            dependencies: []),
+            dependencies: [],
+            exclude: ["Info.plist"]
+        ),
         .target(
             name: "LittleBlueToothForTest",
             dependencies: ["CoreBluetoothMock"],
+            exclude: ["Info.plist"],
             swiftSettings: [.define("TEST")]
         ),
         .testTarget(
             name: "LittleBlueToothTests",
-            dependencies: ["LittleBlueToothForTest","CoreBluetoothMock"])
+            dependencies: ["LittleBlueToothForTest","CoreBluetoothMock"],
+            exclude: ["Info.plist"]
+        )
     ],
     swiftLanguageVersions: [.v5]
 )
