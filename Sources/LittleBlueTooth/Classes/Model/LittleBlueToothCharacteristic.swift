@@ -48,8 +48,15 @@ public struct LittleBlueToothCharacteristic: Identifiable {
     /// - parameter characteristic: the `CBCharacteristic` instance that you want to use
     /// - returns: An instance of `LittleBlueToothCharacteristic`.
     public init(with characteristic: CBCharacteristic) {
+        #if TEST && swift(>=5.5)
+        guard let service = characteristic.service else {
+            fatalError("There must be a service associated to the characteristic")
+        }
+        #else
+        let service = characteristic.service
+        #endif
         self.id = characteristic.uuid
-        self.service = characteristic.service.uuid
+        self.service = service.uuid
         self.cbCharacteristic = characteristic
         self.properties = Properties(properties: characteristic.properties)
     }

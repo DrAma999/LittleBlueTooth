@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -25,21 +25,27 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         .package(name: "CoreBluetoothMock",
                  url: "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git",
-                 .upToNextMinor(from: "0.12.0")),
+                 .upToNextMinor(from: "0.13.0")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "LittleBlueTooth",
-            dependencies: []),
+            dependencies: [],
+            exclude: ["Info.plist"]
+        ),
         .target(
             name: "LittleBlueToothForTest",
             dependencies: ["CoreBluetoothMock"],
+            exclude: ["Info.plist"],
             swiftSettings: [.define("TEST")]
         ),
         .testTarget(
             name: "LittleBlueToothTests",
-            dependencies: ["LittleBlueToothForTest","CoreBluetoothMock"])
-    ]
+            dependencies: ["LittleBlueToothForTest","CoreBluetoothMock"],
+            exclude: ["Info.plist"]
+        )
+    ],
+    swiftLanguageVersions: [.v5]
 )

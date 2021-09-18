@@ -10,5 +10,5 @@ jobs:
     - name: Publish Jazzy Docs
       uses: steven0351/publish-jazzy-docs@v1
       with:
-        personal_access_token: ${{ secrets.GITHUBTOKEN }}
+        personal_access_token: ${{ secrets.JAZZY }}
         config: .jazzy.yaml
