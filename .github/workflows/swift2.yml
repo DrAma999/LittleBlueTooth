@@ -34,7 +34,7 @@ jobs:
   release:
     needs: test
     if: startsWith(github.ref, 'refs/tags/')
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
       - name: Check out LittleBlueTooth
         uses: actions/checkout@v2
