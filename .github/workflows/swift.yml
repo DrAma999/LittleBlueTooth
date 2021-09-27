@@ -16,7 +16,7 @@ jobs:
     - name: Build
       run: |
        swift package clean
-       swift packege reset
+       swift package reset
        swift build -v
     - name: Run tests
       run: |
