@@ -49,7 +49,7 @@ public struct LittleBlueToothCharacteristic: Identifiable {
     /// - returns: An instance of `LittleBlueToothCharacteristic`.
     public init(with characteristic: CBCharacteristic) {
         // Couldn't get rid of this orrible compiler flags but it is present to make work SPM build and Xcode build
-#if (TEST || Xcode) && swift(>=5.5) && !targetEnvironment(macCatalyst)
+#if (TEST || Xcode) && swift(>=5.5) && !targetEnvironment(macCatalyst) && !os(macOS)
         guard let service = characteristic.service else {
             fatalError("There must be a service associated to the characteristic")
         }
