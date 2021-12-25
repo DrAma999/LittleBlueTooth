@@ -443,5 +443,5 @@ class CustomOperator: LittleBlueToothTests {
         print("Timer counter: \(timerCounter) Event counter \(sub2Event.count) ")
         XCTAssert(contingencyRange.contains(sub2Event.count))
     }
-
+    
 }
