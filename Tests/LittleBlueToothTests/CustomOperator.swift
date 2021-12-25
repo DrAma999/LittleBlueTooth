@@ -443,5 +443,39 @@ class CustomOperator: LittleBlueToothTests {
         print("Timer counter: \(timerCounter) Event counter \(sub2Event.count) ")
         XCTAssert(contingencyRange.contains(sub2Event.count))
     }
+    
+    func testMultipleWriteLedOnReadLedONOperator() {
+        disposeBag.removeAll()
+        
+        blinky.simulateProximityChange(.immediate)
+        let charateristicOne = LittleBlueToothCharacteristic(characteristic: CBUUID.ledCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify, .write])
+        let charateristicTwo = LittleBlueToothCharacteristic(characteristic: CBUUID.buttonCharacteristic.uuidString, for: CBUUID.nordicBlinkyService.uuidString, properties: [.read, .notify])
+        let readExpectation = expectation(description: "Read expectation")
+        
+        var ledState: LedState?
+        
+        StartLittleBlueTooth
+            .startDiscovery(for: self.littleBT, withServices: nil)
+            .connect(for: self.littleBT)
+            .write(for: self.littleBT, to: charateristicOne, value: Data([0x01]))
+            .write(for: self.littleBT, to: charateristicTwo, value: Data([0x00]))
+            .read(for: self.littleBT, from: charateristicOne)
+            .sink(receiveCompletion: { completion in
+                print("Completion \(completion)")
+            }) { (answer: LedState) in
+                print("Answer \(answer)")
+                ledState = answer
+                self.littleBT.disconnect().sink(receiveCompletion: {_ in
+                }) { (_) in
+                    readExpectation.fulfill()
+                }
+                .store(in: &self.disposeBag)
+                
+        }
+        .store(in: &disposeBag)
+        waitForExpectations(timeout: 10)
+        XCTAssertNotNil(ledState)
+        XCTAssert(ledState!.isOn == true)
+    }
 
 }
