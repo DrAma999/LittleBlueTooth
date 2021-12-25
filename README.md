@@ -85,7 +85,7 @@ The library is still on development so use at own you risk.
 Add the following to your Cartfile:
 
 ```
-github "DrAma999/LittleBlueTooth" ~> 0.6.0
+github "DrAma999/LittleBlueTooth" ~> 0.7.1
 ```
 Since the framework supports most of the Apple devices, you probably want to to build for a specific platform by adding the option `--platform` after the `carthage update` command. For instance:
 ```
@@ -98,7 +98,7 @@ The library has a sub-dependency with Nordic library [Core Bluetooth Mock](https
 ### Swift Package Manager
 Add the following dependency to your Package.swift file:
 ```
-.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.6.0")
+.package(url: "https://github.com/DrAma999/LittleBlueTooth.git", from: "0.7.1")
 ```
 Or simply add the URL from XCode menu Swift packages.
 ### XCFramework
