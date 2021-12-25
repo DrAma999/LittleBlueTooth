@@ -95,8 +95,14 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor characteristic: CBMCharacteristic,
                     data: Data) -> Result<Void, Error> {
-        if !data.isEmpty {
-            ledEnabled = data[0] != 0x00
+        if characteristic.uuid == .ledCharacteristic {
+            if !data.isEmpty {
+                ledEnabled = data[0] != 0x00
+            }
+        } else {
+            if !data.isEmpty {
+                buttonPressed = data[0] != 0x00
+            }
         }
         return .success(())
     }
