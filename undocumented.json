@@ -1,0 +1,474 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 17,
+      "symbol": "LittleBluetoothError.bluetoothPoweredOff",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 18,
+      "symbol": "LittleBluetoothError.bluetoothUnauthorized",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 19,
+      "symbol": "LittleBluetoothError.bluetoothUnsupported",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 20,
+      "symbol": "LittleBluetoothError.alreadyScanning",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 21,
+      "symbol": "LittleBluetoothError.scanTimeout",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 22,
+      "symbol": "LittleBluetoothError.connectTimeout",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 23,
+      "symbol": "LittleBluetoothError.writeAndListenTimeout",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 24,
+      "symbol": "LittleBluetoothError.readTimeout",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 25,
+      "symbol": "LittleBluetoothError.writeTimeout",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 26,
+      "symbol": "LittleBluetoothError.operationTimeout",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 27,
+      "symbol": "LittleBluetoothError.invalidUUID(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 28,
+      "symbol": "LittleBluetoothError.serviceNotFound(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 29,
+      "symbol": "LittleBluetoothError.characteristicNotFound(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 30,
+      "symbol": "LittleBluetoothError.couldNotConnectToPeripheral(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 31,
+      "symbol": "LittleBluetoothError.couldNotReadRSSI(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 32,
+      "symbol": "LittleBluetoothError.couldNotReadFromCharacteristic(characteristic:error:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 33,
+      "symbol": "LittleBluetoothError.couldNotWriteFromCharacteristic(characteristic:error:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 34,
+      "symbol": "LittleBluetoothError.couldNotUpdateListenState(characteristic:error:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 35,
+      "symbol": "LittleBluetoothError.emptyData",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 36,
+      "symbol": "LittleBluetoothError.couldNotConvertDataToRead(data:type:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 37,
+      "symbol": "LittleBluetoothError.peripheralNotConnected(state:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 38,
+      "symbol": "LittleBluetoothError.peripheralAlreadyConnectedOrConnecting(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 39,
+      "symbol": "LittleBluetoothError.peripheralNotConnectedOrAlreadyDisconnected",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 40,
+      "symbol": "LittleBluetoothError.peripheralNotFound",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 41,
+      "symbol": "LittleBluetoothError.peripheralDisconnected(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 42,
+      "symbol": "LittleBluetoothError.fullfillConditionNotRespected",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Error/LittleBlueToothError.swift",
+      "line": 43,
+      "symbol": "LittleBluetoothError.deserializationFailedDataOfBounds(start:length:count:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Extension/Helper.swift",
+      "line": 39,
+      "symbol": "OSLog.Subsystem",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Extension/Helper.swift",
+      "line": 40,
+      "symbol": "OSLog.General",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Extension/Helper.swift",
+      "line": 41,
+      "symbol": "OSLog.CentralManager",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Extension/Helper.swift",
+      "line": 42,
+      "symbol": "OSLog.Peripheral",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Extension/Helper.swift",
+      "line": 43,
+      "symbol": "OSLog.Restore",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Extension/Helper.swift",
+      "line": 45,
+      "symbol": "OSLog.LittleBT_Log_General",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Extension/Helper.swift",
+      "line": 46,
+      "symbol": "OSLog.LittleBT_Log_CentralManager",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Extension/Helper.swift",
+      "line": 47,
+      "symbol": "OSLog.LittleBT_Log_Peripheral",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Extension/Helper.swift",
+      "line": 48,
+      "symbol": "OSLog.LittleBT_Log_Restore",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/AdvertisingData.swift",
+      "line": 18,
+      "symbol": "AdvertisingInfo.advertisementData",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/CentralRestorer.swift",
+      "line": 19,
+      "symbol": "CentralRestorer.centralManager",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/CentralRestorer.swift",
+      "line": 20,
+      "symbol": "CentralRestorer.restoredInfo",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 101,
+      "symbol": "LittleBlueToothCharacteristic.Properties.broadcast",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 102,
+      "symbol": "LittleBlueToothCharacteristic.Properties.read",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 103,
+      "symbol": "LittleBlueToothCharacteristic.Properties.writeWithoutResponse",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 104,
+      "symbol": "LittleBlueToothCharacteristic.Properties.write",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 105,
+      "symbol": "LittleBlueToothCharacteristic.Properties.notify",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 106,
+      "symbol": "LittleBlueToothCharacteristic.Properties.indicate",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 107,
+      "symbol": "LittleBlueToothCharacteristic.Properties.authenticatedSignedWrites",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 108,
+      "symbol": "LittleBlueToothCharacteristic.Properties.extendedProperties",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 109,
+      "symbol": "LittleBlueToothCharacteristic.Properties.notifyEncryptionRequired",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 110,
+      "symbol": "LittleBlueToothCharacteristic.Properties.indicateEncryptionRequired",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBlueToothCharacteristic.swift",
+      "line": 116,
+      "symbol": "LittleBlueToothCharacteristic.Properties.init(properties:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/LittleBluetoothConfiguration.swift",
+      "line": 35,
+      "symbol": "LittleBluetoothConfiguration.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/PeripheralDiscovery.swift",
+      "line": 17,
+      "symbol": "PeripheralIdentifiable",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/PeripheralDiscovery.swift",
+      "line": 18,
+      "symbol": "PeripheralIdentifiable.id",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Model/PeripheralDiscovery.swift",
+      "line": 19,
+      "symbol": "PeripheralIdentifiable.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Utilities/ShareAndReplayOperator/ReplaySubjectSubscription.swift",
+      "line": 10,
+      "symbol": "ReplaySubjectSubscription.init(downstream:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Utilities/Utilities.swift",
+      "line": 25,
+      "symbol": "Data.data",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Utilities/Utilities.swift",
+      "line": 28,
+      "symbol": "Data.init(from:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Utilities/Utilities.swift",
+      "line": 34,
+      "symbol": "UInt8.data",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/Classes/Utilities/Utilities.swift",
+      "line": 37,
+      "symbol": "UInt8.init(from:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/LittleBlueTooth.swift",
+      "line": 18,
+      "symbol": "Readable",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/LittleBlueTooth.swift",
+      "line": 19,
+      "symbol": "Readable.init(from:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/LittleBlueTooth.swift",
+      "line": 22,
+      "symbol": "Writable",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/LittleBlueTooth.swift",
+      "line": 23,
+      "symbol": "Writable.data",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/LittleBlueTooth.swift",
+      "line": 86,
+      "symbol": "LittleBlueTooth.restoreStatePublisher",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/LittleBlueTooth.swift",
+      "line": 180,
+      "symbol": "LittleBlueTooth.init(with:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/LittleBlueTooth.swift",
+      "line": 282,
+      "symbol": "LittleBlueTooth.readRSSI()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth/Sources/LittleBlueTooth/LittleBlueTooth.swift",
+      "line": 830,
+      "symbol": "LittleBlueTooth.restart(with:peripheral:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/runner/work/LittleBlueTooth/LittleBlueTooth"
+}

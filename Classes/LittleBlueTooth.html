@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>LittleBlueTooth Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/LittleBlueTooth" class="dashAnchor"></a>
+
+    <a title="LittleBlueTooth Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          LittleBlueTooth Docs
+        </a>
+         (70% documented)
+      </p>
+    
+      <div class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </div>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/DrAma999">
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">LittleBlueTooth Reference</a>
+      <img class="carat" src="../img/carat.png" alt=""/>
+      LittleBlueTooth Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/LittleBlueTooth.html">LittleBlueTooth</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Peripheral.html">Peripheral</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ReplaySubject.html">ReplaySubject</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ReplaySubjectSubscription.html">ReplaySubjectSubscription</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Global%20Variables.html">Global Variables</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBAdvertisementDataIsConnectable">CBAdvertisementDataIsConnectable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBAdvertisementDataLocalNameKey">CBAdvertisementDataLocalNameKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBAdvertisementDataManufacturerDataKey">CBAdvertisementDataManufacturerDataKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBAdvertisementDataOverflowServiceUUIDsKey">CBAdvertisementDataOverflowServiceUUIDsKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBAdvertisementDataServiceDataKey">CBAdvertisementDataServiceDataKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBAdvertisementDataServiceUUIDsKey">CBAdvertisementDataServiceUUIDsKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBAdvertisementDataSolicitedServiceUUIDsKey">CBAdvertisementDataSolicitedServiceUUIDsKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBAdvertisementDataTxPowerLevelKey">CBAdvertisementDataTxPowerLevelKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBCentralManagerOptionRestoreIdentifierKey">CBCentralManagerOptionRestoreIdentifierKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBCentralManagerOptionShowPowerAlertKey">CBCentralManagerOptionShowPowerAlertKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBCentralManagerRestoredStatePeripheralsKey">CBCentralManagerRestoredStatePeripheralsKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBCentralManagerRestoredStateScanOptionsKey">CBCentralManagerRestoredStateScanOptionsKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBCentralManagerRestoredStateScanServicesKey">CBCentralManagerRestoredStateScanServicesKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBCentralManagerScanOptionAllowDuplicatesKey">CBCentralManagerScanOptionAllowDuplicatesKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBCentralManagerScanOptionSolicitedServiceUUIDsKey">CBCentralManagerScanOptionSolicitedServiceUUIDsKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBConnectPeripheralOptionNotifyOnConnectionKey">CBConnectPeripheralOptionNotifyOnConnectionKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBConnectPeripheralOptionNotifyOnDisconnectionKey">CBConnectPeripheralOptionNotifyOnDisconnectionKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBConnectPeripheralOptionNotifyOnNotificationKey">CBConnectPeripheralOptionNotifyOnNotificationKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/CBConnectPeripheralOptionStartDelayKey">CBConnectPeripheralOptionStartDelayKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:15LittleBlueTooth05StartabC0s6ResultO7CombineE9PublisherVyytAA0A14BluetoothErrorO_Gvp">StartLittleBlueTooth</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/BluetoothState.html">BluetoothState</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/ConnectionEvent.html">ConnectionEvent</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/PeripheralChanges.html">PeripheralChanges</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/PeripheralState.html">PeripheralState</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/Restored.html">Restored</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/CBMPeripheral.html">CBMPeripheral</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Data.html">Data</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/OSLog.html">OSLog</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Publisher.html">Publisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/TimeInterval.html">TimeInterval</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/UInt8.html">UInt8</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/PeripheralIdentifiable.html">PeripheralIdentifiable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/Readable.html">Readable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/Writable.html">Writable</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AdvertisingInfo.html">AdvertisingInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/CentralRestorer.html">CentralRestorer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/LittleBlueToothCharacteristic/Properties.html">– Properties</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/LittleBluetoothConfiguration.html">LittleBluetoothConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PeripheralDiscovery.html">PeripheralDiscovery</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PeripheralIdentifier.html">PeripheralIdentifier</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:15LittleBlueTooth21AutoconnectionHandlera">AutoconnectionHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBATTError">CBATTError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBCentralManager">CBCentralManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBCentralManagerDelegate">CBCentralManagerDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBCentralManagerFactory">CBCentralManagerFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBCharacteristic">CBCharacteristic</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBCharacteristicProperties">CBCharacteristicProperties</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBCharacteristicWriteType">CBCharacteristicWriteType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBConnectionEvent">CBConnectionEvent</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBConnectionEventMatchingOption">CBConnectionEventMatchingOption</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBDescriptor">CBDescriptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBError">CBError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBManagerState">CBManagerState</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBPeripheral">CBPeripheral</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBPeripheralDelegate">CBPeripheralDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBPeripheralState">CBPeripheralState</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBService">CBService</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/CBUUID">CBUUID</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:15LittleBlueTooth0abC25CharacteristicIndentifiera">LittleBlueToothCharacteristicIndentifier</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:15LittleBlueTooth0abC18ServiceIndentifiera">LittleBlueToothServiceIndentifier</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>LittleBlueTooth</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LittleBlueTooth</span> <span class="p">:</span> <span class="kt">Identifiable</span></code></pre>
+
+                </div>
+              </div>
+            <p><code>LittleBlueTooth</code> can control only one peripheral at time. It has an <code>id</code> properties to identifiy different instances.
+Please note that Apple do not enacourage the use of more <code>CBCentralManger</code> instances, due to resurce hits.
+ <a href="https://developer.apple.com/forums/thread/20810">Link</a></p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Public%20variables"></a>
+                <a name="//apple_ref/swift/Section/Public variables" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Public%20variables"></a>
+                  <h3 class="section-name"><span>Public variables</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC2id10Foundation4UUIDVvp"></a>
+                    <a name="//apple_ref/swift/Property/id" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC2id10Foundation4UUIDVvp">id</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>LittleBlueTooth instance identifier</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">UUID</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC15connectionTasks7Combine12AnyPublisherVyytAA0A14BluetoothErrorOGSgvp"></a>
+                    <a name="//apple_ref/swift/Property/connectionTasks" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC15connectionTasks7Combine12AnyPublisherVyytAA0A14BluetoothErrorOGSgvp">connectionTasks</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>This is usefull when you have auto-reconnection and want to do some task right after a connection.
+All other tasks will be delayed until this one ends.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">connectionTasks</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Void</span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC21autoconnectionHandlerSbAA20PeripheralIdentifierV_AA0A14BluetoothErrorOSgtcSgvp"></a>
+                    <a name="//apple_ref/swift/Property/autoconnectionHandler" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC21autoconnectionHandlerSbAA20PeripheralIdentifierV_AA0A14BluetoothErrorOSgtcSgvp">autoconnectionHandler</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>This handler must be used to handle connection process after a disconnession.
+You can inspect the error and decide if an automatic connection is necessary.
+If you return <code>true</code> the connection process will start, once the peripheral has been found a connection will be established.
+If you return <code>false</code> iOS will not try to establish a connection
+Connection process will remain active also in background if the app has the right
+permission, to cancel just call <code>disconnect</code>.
+When a connection will be established an <code>.autoConnected(PeripheralIdentifier)</code> event will be streamed to
+the <code><a href="../Classes/LittleBlueTooth.html#/s:15LittleBlueToothAAC24connectionEventPublisher7Combine03AnyF0VyAA010ConnectionE0Os5NeverOGvp">connectionEventPublisher</a></code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">autoconnectionHandler</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:15LittleBlueTooth21AutoconnectionHandlera">AutoconnectionHandler</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC10peripheralAA10PeripheralCSgvp"></a>
+                    <a name="//apple_ref/swift/Property/peripheral" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC10peripheralAA10PeripheralCSgvp">peripheral</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Connected peripheral. <code>nil</code> if not connected or a connection is not requested</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">peripheral</span><span class="p">:</span> <span class="kt"><a href="../Classes/Peripheral.html">Peripheral</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC24peripheralStatePublisher7Combine03AnyF0VyAA010PeripheralE0Os5NeverOGvp"></a>
+                    <a name="//apple_ref/swift/Property/peripheralStatePublisher" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC24peripheralStatePublisher7Combine03AnyF0VyAA010PeripheralE0Os5NeverOGvp">peripheralStatePublisher</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Publisher that streams peripheral state  available only when a connection is requested for fine grained control</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">peripheralStatePublisher</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/PeripheralState.html">PeripheralState</a></span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC24connectionEventPublisher7Combine03AnyF0VyAA010ConnectionE0Os5NeverOGvp"></a>
+                    <a name="//apple_ref/swift/Property/connectionEventPublisher" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC24connectionEventPublisher7Combine03AnyF0VyAA010ConnectionE0Os5NeverOGvp">connectionEventPublisher</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Publisher that streams <code><a href="../Enums/ConnectionEvent.html">ConnectionEvent</a></code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">lazy</span> <span class="k">var</span> <span class="nv">connectionEventPublisher</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/ConnectionEvent.html">ConnectionEvent</a></span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC21changesStatePublisher7Combine03AnyF0VyAA17PeripheralChangesOs5NeverOGvp"></a>
+                    <a name="//apple_ref/swift/Property/changesStatePublisher" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC21changesStatePublisher7Combine03AnyF0VyAA17PeripheralChangesOs5NeverOGvp">changesStatePublisher</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Publish name and service changes</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">changesStatePublisher</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/PeripheralChanges.html">PeripheralChanges</a></span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC15listenPublisher7Combine03AnyE0VyAA0abC14CharacteristicVAA0A14BluetoothErrorOGvp"></a>
+                    <a name="//apple_ref/swift/Property/listenPublisher" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC15listenPublisher7Combine03AnyE0VyAA0abC14CharacteristicVAA0A14BluetoothErrorOGvp">listenPublisher</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Publish all values from <code><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></code> that you are already listening to.
+It&rsquo;s up to you to filter them and convert raw data to the <code><a href="../Protocols/Readable.html">Readable</a></code> object.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">listenPublisher</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC21restoreStatePublisher7Combine03AnyF0VyAA15CentralRestorerVs5NeverOGvp"></a>
+                    <a name="//apple_ref/swift/Property/restoreStatePublisher" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC21restoreStatePublisher7Combine03AnyF0VyAA15CentralRestorerVs5NeverOGvp">restoreStatePublisher</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">restoreStatePublisher</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/CentralRestorer.html">CentralRestorer</a></span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC12isLogEnabledSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isLogEnabled" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC12isLogEnabledSbvp">isLogEnabled</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Enable logging disabled by default
+Enable logging, log is made using os_log and it exposes some information even in release configuration</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isLogEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Init"></a>
+                <a name="//apple_ref/swift/Section/Init" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Init"></a>
+                  <h3 class="section-name"><span>Init</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC4withAbA0A22BluetoothConfigurationV_tcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(with:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC4withAbA0A22BluetoothConfigurationV_tcfc">init(with:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">with</span> <span class="nv">configuration</span><span class="p">:</span> <span class="kt"><a href="../Structs/LittleBluetoothConfiguration.html">LittleBluetoothConfiguration</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/RSSI"></a>
+                <a name="//apple_ref/swift/Section/RSSI" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/RSSI"></a>
+                  <h3 class="section-name"><span>RSSI</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC8readRSSI7Combine12AnyPublisherVySiAA0A14BluetoothErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/readRSSI()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC8readRSSI7Combine12AnyPublisherVySiAA0A14BluetoothErrorOGyF">readRSSI()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">readRSSI</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Listen"></a>
+                <a name="//apple_ref/swift/Section/Listen" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Listen"></a>
+                  <h3 class="section-name"><span>Listen</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC26connectableListenPublisher3for9valueType7Combine10PublishersO15MakeConnectableVy_AF03AnyF0VyxAA0A14BluetoothErrorOGGAA0abC14CharacteristicV_xmtAA8ReadableRzlF"></a>
+                    <a name="//apple_ref/swift/Method/connectableListenPublisher(for:valueType:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC26connectableListenPublisher3for9valueType7Combine10PublishersO15MakeConnectableVy_AF03AnyF0VyxAA0A14BluetoothErrorOGGAA0abC14CharacteristicV_xmtAA8ReadableRzlF">connectableListenPublisher(for:<wbr>valueType:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns a multicast publisher once you attached all the subscriber you must call <code>connect()</code></p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    The type of the value must be conform to <code><a href="../Protocols/Readable.html">Readable</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">connectableListenPublisher</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="k">for</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">,</span> <span class="nv">valueType</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Publishers</span><span class="o">.</span><span class="kt">MakeConnectable</span><span class="o">&lt;</span><span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;&gt;</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/Readable.html">Readable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>characteristic</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Characteristc you want to be notified.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>valueType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The type of the value you want the raw <code>Data</code> be converted</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A multicast publisher that will send out values of the type you choose.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC11startListen4from7Combine12AnyPublisherVyxAA0A14BluetoothErrorOGAA0abC14CharacteristicV_tAA8ReadableRzlF"></a>
+                    <a name="//apple_ref/swift/Method/startListen(from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC11startListen4from7Combine12AnyPublisherVyxAA0A14BluetoothErrorOGAA0abC14CharacteristicV_tAA8ReadableRzlF">startListen(from:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns a shared publisher for listening to a specific characteristic.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    The type of the value must be conform to <code><a href="../Protocols/Readable.html">Readable</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">startListen</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">from</span> <span class="nv">charact</span><span class="p">:</span> <span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/Readable.html">Readable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>characteristic</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Characteristc you want to be notified.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A shared publisher that will send out values of the type defined by the generic type.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC12enableListen4from7Combine12AnyPublisherVyAA0abC14CharacteristicVAA0A14BluetoothErrorOGAI_tF"></a>
+                    <a name="//apple_ref/swift/Method/enableListen(from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC12enableListen4from7Combine12AnyPublisherVyAA0abC14CharacteristicVAA0A14BluetoothErrorOGAI_tF">enableListen(from:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns a  publisher with the <code><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></code> where the notify command has been activated.
+After starting the listen command you should subscribe to the <code><a href="../Classes/LittleBlueTooth.html#/s:15LittleBlueToothAAC15listenPublisher7Combine03AnyE0VyAA0abC14CharacteristicVAA0A14BluetoothErrorOGvp">listenPublisher</a></code> to be notified.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    This publisher only activate the notification on a specific characteristic, it will not send notified values.
+After starting the listen command you should subscribe to the <code><a href="../Classes/LittleBlueTooth.html#/s:15LittleBlueToothAAC15listenPublisher7Combine03AnyE0VyAA0abC14CharacteristicVAA0A14BluetoothErrorOGvp">listenPublisher</a></code> to be notified.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">enableListen</span><span class="p">(</span><span class="n">from</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>characteristic</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Characteristc you want to be notified.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A  publisher with the <code><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></code> where the notify command has been activated.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC13disableListen4from7Combine12AnyPublisherVyAA0abC14CharacteristicVAA0A14BluetoothErrorOGAI_tF"></a>
+                    <a name="//apple_ref/swift/Method/disableListen(from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC13disableListen4from7Combine12AnyPublisherVyAA0abC14CharacteristicVAA0A14BluetoothErrorOGAI_tF">disableListen(from:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Disable listen from a specific characteristic</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">disableListen</span><span class="p">(</span><span class="n">from</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>characteristic</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>characteristic you want to stop listen</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher with that informs you about the successful or failed task</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Read"></a>
+                <a name="//apple_ref/swift/Section/Read" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Read"></a>
+                  <h3 class="section-name"><span>Read</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC4read4from7Combine12AnyPublisherVyxAA0A14BluetoothErrorOGAA0abC14CharacteristicV_tAA8ReadableRzlF"></a>
+                    <a name="//apple_ref/swift/Method/read(from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC4read4from7Combine12AnyPublisherVyxAA0A14BluetoothErrorOGAA0abC14CharacteristicV_tAA8ReadableRzlF">read(from:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Read a value from a specific charteristic</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    The type of the value must be conform to <code><a href="../Protocols/Readable.html">Readable</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">read</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">from</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/Readable.html">Readable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>characteristic</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>characteristic where you want to read</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher with the value you want to read.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Write"></a>
+                <a name="//apple_ref/swift/Section/Write" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Write"></a>
+                  <h3 class="section-name"><span>Write</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC5write2to5value8response7Combine12AnyPublisherVyytAA0A14BluetoothErrorOGAA0abC14CharacteristicV_xSbtAA8WritableRzlF"></a>
+                    <a name="//apple_ref/swift/Method/write(to:value:response:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC5write2to5value8response7Combine12AnyPublisherVyytAA0A14BluetoothErrorOGAA0abC14CharacteristicV_xSbtAA8WritableRzlF">write(to:<wbr>value:<wbr>response:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Write a value to a specific charteristic</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    The type of the value must be conform to <code><a href="../Protocols/Writable.html">Writable</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">write</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">to</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">T</span><span class="p">,</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Void</span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/Writable.html">Writable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>characteristic</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>characteristic where you want to write</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>value</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The value you want to write</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>response</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An optional <code>Bool</code> value that will look for error after write operation</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher with that informs you about eventual error</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC14writeAndListen4from5value7Combine12AnyPublisherVyq_AA0A14BluetoothErrorOGAA0abC14CharacteristicV_xtAA8WritableRzAA8ReadableR_r0_lF"></a>
+                    <a name="//apple_ref/swift/Method/writeAndListen(from:value:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC14writeAndListen4from5value7Combine12AnyPublisherVyq_AA0A14BluetoothErrorOGAA0abC14CharacteristicV_xtAA8WritableRzAA8ReadableR_r0_lF">writeAndListen(from:<wbr>value:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Write a value to a specific charteristic and wait for a response</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    Written value must conform to <code><a href="../Protocols/Writable.html">Writable</a></code>, response must conform to <code><a href="../Protocols/Readable.html">Readable</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">writeAndListen</span><span class="o">&lt;</span><span class="kt">W</span><span class="p">,</span> <span class="kt">R</span><span class="o">&gt;</span><span class="p">(</span><span class="n">from</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt"><a href="../Structs/LittleBlueToothCharacteristic.html">LittleBlueToothCharacteristic</a></span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">W</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">R</span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">W</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/Writable.html">Writable</a></span><span class="p">,</span> <span class="kt">R</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/Readable.html">Readable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>characteristic</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>characteristic where you want to write and listen</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>value</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The value you want to write must conform to <code><a href="../Protocols/Writable.html">Writable</a></code></p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher with that post and error or the response of the write requests.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Discover"></a>
+                <a name="//apple_ref/swift/Section/Discover" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Discover"></a>
+                  <h3 class="section-name"><span>Discover</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC14startDiscovery12withServices7options7Combine12AnyPublisherVyAA010PeripheralE0VAA0A14BluetoothErrorOGSaySo6CBUUIDCGSg_SDySSypGSgtF"></a>
+                    <a name="//apple_ref/swift/Method/startDiscovery(withServices:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC14startDiscovery12withServices7options7Combine12AnyPublisherVyAA010PeripheralE0VAA0A14BluetoothErrorOGSaySo6CBUUIDCGSg_SDySSypGSgtF">startDiscovery(withServices:<wbr>options:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Starts scanning for <code><a href="../Structs/PeripheralDiscovery.html">PeripheralDiscovery</a></code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">startDiscovery</span><span class="p">(</span><span class="n">withServices</span> <span class="nv">services</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Typealiases.html#/CBUUID">CBUUID</a></span><span class="p">]?,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/PeripheralDiscovery.html">PeripheralDiscovery</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>services</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Services for peripheral you are looking for</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Scanning options same as  CoreBluetooth  central manager option.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher with stream of disovered peripherals.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC13stopDiscovery7Combine12AnyPublisherVyytAA0A14BluetoothErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/stopDiscovery()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC13stopDiscovery7Combine12AnyPublisherVyytAA0A14BluetoothErrorOGyF">stopDiscovery()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Stops peripheral discovery</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">stopDiscovery</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Void</span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher when discovery has been stopped</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Connect"></a>
+                <a name="//apple_ref/swift/Section/Connect" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Connect"></a>
+                  <h3 class="section-name"><span>Connect</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC7connect2to7options7Combine12AnyPublisherVyAA10PeripheralCAA0A14BluetoothErrorOGAA0J10IdentifierV_SDySSypGSgtF"></a>
+                    <a name="//apple_ref/swift/Method/connect(to:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC7connect2to7options7Combine12AnyPublisherVyAA10PeripheralCAA0A14BluetoothErrorOGAA0J10IdentifierV_SDySSypGSgtF">connect(to:<wbr>options:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Starts connection for <code><a href="../Structs/PeripheralIdentifier.html">PeripheralIdentifier</a></code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">connect</span><span class="p">(</span><span class="n">to</span> <span class="nv">peripheralIdentifier</span><span class="p">:</span> <span class="kt"><a href="../Structs/PeripheralIdentifier.html">PeripheralIdentifier</a></span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/Peripheral.html">Peripheral</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Connecting options same as  CoreBluetooth  central manager option.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher with the just connected <code><a href="../Classes/Peripheral.html">Peripheral</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC7connect2to7options7Combine12AnyPublisherVyAA10PeripheralCAA0A14BluetoothErrorOGAA0J9DiscoveryV_SDySSypGSgtF"></a>
+                    <a name="//apple_ref/swift/Method/connect(to:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC7connect2to7options7Combine12AnyPublisherVyAA10PeripheralCAA0A14BluetoothErrorOGAA0J9DiscoveryV_SDySSypGSgtF">connect(to:<wbr>options:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Starts connection for <code><a href="../Structs/PeripheralDiscovery.html">PeripheralDiscovery</a></code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">connect</span><span class="p">(</span><span class="n">to</span> <span class="nv">discovery</span><span class="p">:</span> <span class="kt"><a href="../Structs/PeripheralDiscovery.html">PeripheralDiscovery</a></span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/Peripheral.html">Peripheral</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Connecting options same as  CoreBluetooth  central manager option.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher with the just connected <code><a href="../Classes/Peripheral.html">Peripheral</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Disconnect"></a>
+                <a name="//apple_ref/swift/Section/Disconnect" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Disconnect"></a>
+                  <h3 class="section-name"><span>Disconnect</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC10disconnect7Combine12AnyPublisherVyAA10PeripheralCAA0A14BluetoothErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/disconnect()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC10disconnect7Combine12AnyPublisherVyAA10PeripheralCAA0A14BluetoothErrorOGyF">disconnect()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Disconnect the connected <code><a href="../Classes/Peripheral.html">Peripheral</a></code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">disconnect</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/Peripheral.html">Peripheral</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher with the just disconnected <code><a href="../Classes/Peripheral.html">Peripheral</a></code> or a <code><a href="../Enums/LittleBluetoothError.html">LittleBluetoothError</a></code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Extraction%20and%20restart"></a>
+                <a name="//apple_ref/swift/Section/Extraction and restart" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Extraction%20and%20restart"></a>
+                  <h3 class="section-name"><span>Extraction and restart</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC7extractSo16CBCentralManagerC7central_So12CBPeripheralCSg10peripheraltyF"></a>
+                    <a name="//apple_ref/swift/Method/extract()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC7extractSo16CBCentralManagerC7central_So12CBPeripheralCSg10peripheraltyF">extract()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sometimes you may need to extract <code><a href="../Typealiases.html#/CBCentralManager">CBCentralManager</a></code> and <code><a href="../Typealiases.html#/CBPeripheral">CBPeripheral</a></code>
+During this operation everything is stopped, delegates are set to nil current operation cancelled</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">extract</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nv">central</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/CBCentralManager">CBCentralManager</a></span><span class="p">,</span> <span class="nv">peripheral</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/CBPeripheral">CBPeripheral</a></span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A tuple with the central and the peripheral if connected</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC7restart4with10peripheralySo16CBCentralManagerC_So12CBPeripheralCSgtF"></a>
+                    <a name="//apple_ref/swift/Method/restart(with:peripheral:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC7restart4with10peripheralySo16CBCentralManagerC_So12CBPeripheralCSgtF">restart(with:<wbr>peripheral:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">restart</span><span class="p">(</span><span class="n">with</span> <span class="nv">central</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/CBCentralManager">CBCentralManager</a></span><span class="p">,</span> <span class="nv">peripheral</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/CBPeripheral">CBPeripheral</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15LittleBlueToothAAC8assembley10Foundation4DataVSayAA8Writable_pGFZ"></a>
+                    <a name="//apple_ref/swift/Method/assemble(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15LittleBlueToothAAC8assembley10Foundation4DataVSayAA8Writable_pGFZ">assemble(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Function to create a <code>Data</code> object from an array of <code><a href="../Protocols/Writable.html">Writable</a></code> objects</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">assemble</span><span class="p">(</span><span class="n">_</span> <span class="nv">writables</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Writable.html">Writable</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">Data</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2022 <a class="link" href="https://www.facebook.com/CloudInTouchLabs" target="_blank" rel="external noopener">Andrea Finollo</a>. All rights reserved. (Last updated: 2022-07-08)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+    </section>
+  </body>
+</html>
