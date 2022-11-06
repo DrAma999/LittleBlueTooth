@@ -82,6 +82,80 @@ class ReadWriteTest: LittleBlueToothTests {
         XCTAssert(isWrong)
     }
     
+    func testDiscoverServices() {
+        blinky.simulateReset()
+        disposeBag.removeAll()
+        
+        blinky.simulateProximityChange(.immediate)
+        
+        let discoverExpectation = expectation(description: "Discover services expectation")
+        var servicesCount: Int?
+        littleBT.startDiscovery(withServices: nil, options: [CBMCentralManagerScanOptionAllowDuplicatesKey : false])
+        .map { disc -> PeripheralDiscovery in
+                   print("Discovery discovery \(disc)")
+                   return disc
+        }
+        .flatMap { discovery in
+            self.littleBT.connect(to: discovery)
+        }
+        .flatMap { _ in
+            self.littleBT.discover(nil)
+        }
+        .sink(receiveCompletion: { completion in
+            print("Completion \(completion)")
+        }) { (answer) in
+            print("Answer \(answer)")
+            servicesCount = answer?.count ?? 0
+            self.littleBT.disconnect().sink(receiveCompletion: {_ in
+            }) { (_) in
+                discoverExpectation.fulfill()
+            }
+            .store(in: &self.disposeBag)
+        }
+        .store(in: &disposeBag)
+        
+        waitForExpectations(timeout: 100)
+        XCTAssertNotNil(servicesCount)
+        XCTAssert(servicesCount! == 1)
+    }
+    
+    func testDiscoverCharacteristics() {
+        blinky.simulateReset()
+        disposeBag.removeAll()
+        
+        blinky.simulateProximityChange(.immediate)
+        
+        let discoverExpectation = expectation(description: "Discover characteristics expectation")
+        var characteristicsCount: Int?
+        littleBT.startDiscovery(withServices: nil, options: [CBMCentralManagerScanOptionAllowDuplicatesKey : false])
+        .map { disc -> PeripheralDiscovery in
+                   print("Discovery discovery \(disc)")
+                   return disc
+        }
+        .flatMap { discovery in
+            self.littleBT.connect(to: discovery)
+        }
+        .flatMap { _ in
+            self.littleBT.discover(nil, from: CBMServiceMock.blinkyService)
+        }
+        .sink(receiveCompletion: { completion in
+            print("Completion \(completion)")
+        }) { (answer) in
+            print("Answer \(answer)")
+            characteristicsCount = answer?.count ?? 0
+            self.littleBT.disconnect().sink(receiveCompletion: {_ in
+            }) { (_) in
+                discoverExpectation.fulfill()
+            }
+            .store(in: &self.disposeBag)
+        }
+        .store(in: &disposeBag)
+        
+        waitForExpectations(timeout: 100)
+        XCTAssertNotNil(characteristicsCount)
+        XCTAssert(characteristicsCount! == 2)
+    }
+    
     func testReadLedOFF() {
         blinky.simulateReset()
         disposeBag.removeAll()
