@@ -20,11 +20,11 @@ class CBPeripheralDelegateProxy: NSObject {
     let peripheralChangesPublisher = PassthroughSubject<PeripheralChanges, Never>()
     let peripheralRSSIPublisher = PassthroughSubject<(Int, LittleBluetoothError?), Never>()
     
-    lazy var  peripheralDiscoveredServicesPublisher = { _peripheralDiscoveredServicesPublisher.share().eraseToAnyPublisher()
+    lazy var peripheralDiscoveredServicesPublisher = { _peripheralDiscoveredServicesPublisher.share().eraseToAnyPublisher()
     }()
     let _peripheralDiscoveredServicesPublisher = PassthroughSubject<([CBService]?, LittleBluetoothError?), Never>()
     
-    lazy var  peripheralDiscoveredIncludedServicesPublisher = { _peripheralDiscoveredIncludedServicesPublisher.share().eraseToAnyPublisher()
+    lazy var peripheralDiscoveredIncludedServicesPublisher = { _peripheralDiscoveredIncludedServicesPublisher.share().eraseToAnyPublisher()
     }()
     let _peripheralDiscoveredIncludedServicesPublisher = PassthroughSubject<(CBService, Error?), Never>()
     
