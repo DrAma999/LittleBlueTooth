@@ -600,7 +600,7 @@ public class LittleBlueTooth: Identifiable {
         return writeListenSubject.eraseToAnyPublisher()
     }
     
-    // MARK: - Discover
+    // MARK: - Discover devices
 
     /// Starts scanning for `PeripheralDiscovery`
     /// - parameter services: Services for peripheral you are looking for
@@ -837,6 +837,68 @@ public class LittleBlueTooth: Identifiable {
             peripheralChangesPublisherCancellable = _peripheralChangesPublisher.connect()
         }
         
+    }
+    
+    // MARK: - Discover Services and characteristics
+    
+    /// Discover services exposed from a connected `peripheral`
+    /// - Parameter service: A service identifier. If `nil` a full scan of services exposed is made
+    /// - Returns: And array of `CBService`
+    public func discover(_ service: LittleBlueToothServiceIndentifier?) -> AnyPublisher<[CBService]?, LittleBluetoothError> {
+        let discoverSubject = PassthroughSubject<[CBService]?, LittleBluetoothError>()
+        let futKey = UUID()
+        ensureBluetoothState()
+            .customPrint("[LBT] Discovering services", isEnabled: isLogEnabled)
+            .flatMap { [unowned self] _ in
+                self.peripheral!.getService(serviceUUID: service !=  nil ? CBUUID(string: service!) : nil )
+            }
+            .sink(receiveCompletion: { [unowned self, futKey] (completion) in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    discoverSubject.send(completion: .failure(error))
+                    self.removeAndCancelSubscriber(for: futKey)
+                }
+            }) { [unowned self, futKey] (readvalue) in
+                discoverSubject.send(readvalue)
+                discoverSubject.send(completion: .finished)
+                self.removeAndCancelSubscriber(for: futKey)
+            }
+            .store(in: &disposeBag, for: futKey)
+        return discoverSubject.eraseToAnyPublisher()
+    }
+    
+    
+    /// Discover  characteristics from a specific service
+    /// - Parameters:
+    ///   - characteristic: A characteristic identifier. If `nil` a full scan of characteristic exposed by that service is made
+    ///   - service: the `CBService` instance of the characteristic searched
+    /// - Returns: A an array of  `CBCharacteristic`
+    public func discover(_ characteristic: LittleBlueToothCharacteristicIndentifier?,
+                         from service: CBService) -> AnyPublisher<[CBCharacteristic]?, LittleBluetoothError> {
+        let discoverSubject = PassthroughSubject<[CBCharacteristic]?, LittleBluetoothError>()
+        let futKey = UUID()
+        ensureBluetoothState()
+            .customPrint("[LBT] Discovering characteristics", isEnabled: isLogEnabled)
+            .flatMap { [unowned self] _ in
+                self.peripheral!.discoverCharacteristics(characteristic != nil ? [CBUUID(string: characteristic!)] : nil, fromService: service.uuid)
+            }
+            .sink(receiveCompletion: { [unowned self, futKey] (completion) in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    discoverSubject.send(completion: .failure(error))
+                    self.removeAndCancelSubscriber(for: futKey)
+                }
+            }) { [unowned self, futKey] (characteristics) in
+                discoverSubject.send(characteristics)
+                discoverSubject.send(completion: .finished)
+                self.removeAndCancelSubscriber(for: futKey)
+            }
+            .store(in: &disposeBag, for: futKey)
+        return discoverSubject.eraseToAnyPublisher()
     }
     
     
