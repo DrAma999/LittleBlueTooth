@@ -105,7 +105,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Completion \(completion)")
         }) { (answer) in
             print("Answer \(answer)")
-            servicesCount = answer?.count ?? nil
+            servicesCount = answer?.count ?? 0
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
             }) { (_) in
                 discoverExpectation.fulfill()
@@ -142,7 +142,7 @@ class ReadWriteTest: LittleBlueToothTests {
             print("Completion \(completion)")
         }) { (answer) in
             print("Answer \(answer)")
-            characteristicsCount = answer?.count ?? nil
+            characteristicsCount = answer?.count ?? 0
             self.littleBT.disconnect().sink(receiveCompletion: {_ in
             }) { (_) in
                 discoverExpectation.fulfill()
