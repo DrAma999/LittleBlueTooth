@@ -20,7 +20,7 @@ public protocol PeripheralIdentifiable: Identifiable {
     var name: String? {get set}
 }
 /// An object that contains the unique identifier of the `CBPeripheral` and the name of it (if present)
-public struct PeripheralIdentifier: PeripheralIdentifiable, Sendable {
+public struct PeripheralIdentifier: PeripheralIdentifiable {
     /// The `UUID`of the peripheral
     public var id: UUID
     /// The name of the peripheral

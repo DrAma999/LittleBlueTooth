@@ -46,5 +46,6 @@ let package = Package(
             dependencies: ["LittleBlueToothForTest","CoreBluetoothMock"],
             exclude: ["Info.plist"]
         )
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )

@@ -28,7 +28,7 @@ public protocol Writable {
 Please note that Apple do not enacourage the use of more `CBCentralManger` instances, due to resurce hits.
  [Link](https://developer.apple.com/forums/thread/20810)
  */
-public final class LittleBlueTooth: Identifiable, @unchecked Sendable {
+public final class LittleBlueTooth: Identifiable {
     
     // MARK: - Public variables
     /// LittleBlueTooth instance identifier

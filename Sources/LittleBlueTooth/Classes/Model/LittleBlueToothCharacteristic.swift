@@ -95,7 +95,7 @@ extension LittleBlueToothCharacteristic: Equatable, Hashable {
 
 public extension LittleBlueToothCharacteristic {
     /// Permitted operations on the characteristic they already exist in CBCharacteristic need to remap when initialized from CBCharacteristic
-    struct Properties: OptionSet, Sendable {
+    struct Properties: OptionSet {
         public let rawValue: UInt8
         
         public static let broadcast                     = Properties(rawValue: 1 << 0)

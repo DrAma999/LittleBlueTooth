@@ -25,7 +25,7 @@ public enum PeripheralChanges {
 }
 
 /// The state of the peripheral
-public enum PeripheralState: Sendable {
+public enum PeripheralState {
     /// Peripheral is disconnected
     case disconnected
     /// Peripheral is connecting
@@ -55,7 +55,7 @@ public enum PeripheralState: Sendable {
 }
 
 /// It represents a peripheral along with its properties
-public final class Peripheral: Identifiable, @unchecked Sendable {
+public final class Peripheral: Identifiable {
     /// An identifier for the peripheral it is the same as the wrapped `CBPeripheral`
     public var id: UUID {
         cbPeripheral.identifier
