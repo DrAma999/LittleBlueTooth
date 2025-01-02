@@ -9,9 +9,9 @@ import Foundation
 import Combine
 import os.log
 #if TEST
-@preconcurrency import CoreBluetoothMock
+import CoreBluetoothMock
 #else
-@preconcurrency import CoreBluetooth
+import CoreBluetooth
 #endif
 
 // MARK: - Discover

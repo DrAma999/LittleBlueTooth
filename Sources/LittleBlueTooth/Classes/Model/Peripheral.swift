@@ -10,9 +10,9 @@ import Foundation
 import Combine
 
 #if TEST
-@preconcurrency import CoreBluetoothMock
+import CoreBluetoothMock
 #else
-@preconcurrency import CoreBluetooth
+import CoreBluetooth
 #endif
 
 
@@ -25,7 +25,7 @@ public enum PeripheralChanges {
 }
 
 /// The state of the peripheral
-public enum PeripheralState {
+public enum PeripheralState: Sendable {
     /// Peripheral is disconnected
     case disconnected
     /// Peripheral is connecting
@@ -55,7 +55,7 @@ public enum PeripheralState {
 }
 
 /// It represents a peripheral along with its properties
-public final class Peripheral: Identifiable {
+public final class Peripheral: Identifiable, @unchecked Sendable {
     /// An identifier for the peripheral it is the same as the wrapped `CBPeripheral`
     public var id: UUID {
         cbPeripheral.identifier

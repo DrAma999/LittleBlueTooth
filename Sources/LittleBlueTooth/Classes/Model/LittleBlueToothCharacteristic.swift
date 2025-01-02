@@ -8,9 +8,9 @@
 
 import Foundation
 #if TEST
-@preconcurrency import CoreBluetoothMock
+import CoreBluetoothMock
 #else
-@preconcurrency import CoreBluetooth
+import CoreBluetooth
 #endif
 
 /// Type alias for a CBUUID string used to identify services
@@ -95,7 +95,7 @@ extension LittleBlueToothCharacteristic: Equatable, Hashable {
 
 public extension LittleBlueToothCharacteristic {
     /// Permitted operations on the characteristic they already exist in CBCharacteristic need to remap when initialized from CBCharacteristic
-    struct Properties: OptionSet {
+    struct Properties: OptionSet, Sendable {
         public let rawValue: UInt8
         
         public static let broadcast                     = Properties(rawValue: 1 << 0)

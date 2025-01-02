@@ -8,9 +8,9 @@
 import Foundation
 import Combine
 #if TEST
-@preconcurrency import CoreBluetoothMock
+import CoreBluetoothMock
 #else
-@preconcurrency import CoreBluetooth
+import CoreBluetooth
 #endif
 /**
  This object contains parsed information passed from the `centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any])` method of `CBCentralManagerDelegate` dictionary

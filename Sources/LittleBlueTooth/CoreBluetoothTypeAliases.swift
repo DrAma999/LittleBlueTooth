@@ -28,7 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 #if TEST
-@preconcurrency import CoreBluetoothMock
+import CoreBluetoothMock
 import Combine
 import Foundation
 // Copy this file to your project to start using CoreBluetoothMock classes

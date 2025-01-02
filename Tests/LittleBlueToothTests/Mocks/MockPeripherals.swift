@@ -29,7 +29,7 @@
 */
 
 import Foundation
-@preconcurrency import CoreBluetoothMock
+import CoreBluetoothMock
 
 // MARK: - Mock nRF Blinky
 

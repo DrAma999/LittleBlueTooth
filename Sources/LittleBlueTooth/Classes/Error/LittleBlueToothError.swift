@@ -8,7 +8,7 @@
 
 import Foundation
 #if TEST
-@preconcurrency import CoreBluetoothMock
+@preconcurrency import  CoreBluetoothMock
 #else
 @preconcurrency import CoreBluetooth
 #endif
@@ -40,7 +40,7 @@ public enum LittleBluetoothError: Error {
     case peripheralAlreadyConnectedOrConnecting(Peripheral)
     case peripheralNotConnectedOrAlreadyDisconnected
     case peripheralNotFound
-    case peripheralDisconnected(PeripheralIdentifier,Error?)
+    case peripheralDisconnected(PeripheralIdentifier, Error?)
     case fullfillConditionNotRespected
     case deserializationFailedDataOfBounds(start: Int, length: Int, count: Int)
 }

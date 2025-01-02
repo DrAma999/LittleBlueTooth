@@ -8,7 +8,7 @@
 
 import XCTest
 import Combine
-@preconcurrency import CoreBluetoothMock
+import CoreBluetoothMock
 @testable import LittleBlueToothForTest
 
 struct LedState: Readable {
