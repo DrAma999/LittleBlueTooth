@@ -25,7 +25,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         .package(name: "CoreBluetoothMock",
                  url: "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git",
-                 .upToNextMinor(from: "0.14.0")),
+                 .upToNextMinor(from: "0.18.0")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
