@@ -8,9 +8,9 @@
 
 import Foundation
 #if TEST
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 #else
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 #endif
 
 /// A wrapper around the advertisement data returned from a BLE device.

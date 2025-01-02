@@ -9,9 +9,9 @@ import Foundation
 import Combine
 import os.log
 #if TEST
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 #else
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 #endif
 
 // MARK: - Discover
@@ -129,7 +129,7 @@ extension Publisher where Self.Failure == LittleBluetoothError {
     ///   - error: An error to be returned if the publisher times out, by default `LittleBluetoothError.connectionTimeout`
     /// - Returns: A publisher that terminates if the specified interval elapses with no events received from the upstream publisher.
     public func timeout<S>(_ interval: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil, error: LittleBluetoothError = .operationTimeout) -> AnyPublisher<Self.Output, LittleBluetoothError> where S: Scheduler {
-        func timeout<Upstream: Publisher, S>(upsstream: Upstream,_ interval: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil, error: LittleBluetoothError = .operationTimeout) -> AnyPublisher<Upstream.Output, LittleBluetoothError> where S: Scheduler, Upstream.Failure == LittleBluetoothError {
+        func timeout<Upstream: Publisher>(upsstream: Upstream,_ interval: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil, error: LittleBluetoothError = .operationTimeout) -> AnyPublisher<Upstream.Output, LittleBluetoothError> where S: Scheduler, Upstream.Failure == LittleBluetoothError {
             return upsstream
                 .timeout(interval, scheduler: scheduler, options: options, customError: {error})
                 .eraseToAnyPublisher()

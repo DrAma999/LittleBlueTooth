@@ -10,12 +10,12 @@ import Foundation
 import Combine
 import os.log
 #if TEST
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 #else
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 #endif
 
-class CBPeripheralDelegateProxy: NSObject {
+final class CBPeripheralDelegateProxy: NSObject {
     
     let peripheralChangesPublisher = PassthroughSubject<PeripheralChanges, Never>()
     let peripheralRSSIPublisher = PassthroughSubject<(Int, LittleBluetoothError?), Never>()

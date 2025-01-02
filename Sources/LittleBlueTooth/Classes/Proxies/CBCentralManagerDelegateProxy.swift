@@ -10,9 +10,9 @@ import Foundation
 import Combine
 import os.log
 #if TEST
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 #else
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 #endif
 /// An enum representing the connection event that has occurred
 public enum ConnectionEvent {
@@ -68,7 +68,7 @@ public enum BluetoothState {
     }
 }
 
-class CBCentralManagerDelegateProxy: NSObject {
+final class CBCentralManagerDelegateProxy: NSObject {
     
     let centralDiscoveriesPublisher = PassthroughSubject<PeripheralDiscovery, Never>()
     let connectionEventPublisher = PassthroughSubject<ConnectionEvent, Never>()

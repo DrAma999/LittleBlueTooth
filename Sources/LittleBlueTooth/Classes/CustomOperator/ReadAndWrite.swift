@@ -9,9 +9,9 @@ import Foundation
 import Combine
 import os.log
 #if TEST
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 #else
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 #endif
 
 extension Publisher where Self.Failure == LittleBluetoothError {
@@ -42,7 +42,7 @@ extension Publisher where Self.Failure == LittleBluetoothError {
     public func read<T: Readable>(for littleBluetooth: LittleBlueTooth,
                                   from characteristic: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
         
-        func read<T: Readable, Upstream: Publisher>(upstream: Upstream,
+        func read<Upstream: Publisher>(upstream: Upstream,
                                                     for littleBluetooth: LittleBlueTooth,
                                                     from characteristic: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> where Upstream.Failure == LittleBluetoothError {
             return upstream
@@ -70,7 +70,7 @@ extension Publisher where Self.Failure == LittleBluetoothError {
                                    value: T,
                                    response: Bool = true) -> AnyPublisher<Void, LittleBluetoothError> {
         
-        func write<T: Writable, Upstream: Publisher>(upstream: Upstream,
+        func write<Upstream: Publisher>(upstream: Upstream,
                                                      for littleBluetooth: LittleBlueTooth,
                                                      to characteristic: LittleBlueToothCharacteristic,
                                                      value: T,
@@ -97,7 +97,7 @@ extension Publisher where Self.Failure == LittleBluetoothError {
     public func writeAndListen<W: Writable, R: Readable>(for littleBluetooth: LittleBlueTooth,
                                                          from characteristic: LittleBlueToothCharacteristic,
                                                          value: W) -> AnyPublisher<R, LittleBluetoothError> {
-        func writeAndListen<W: Writable, R: Readable, Upstream: Publisher>(upstream: Upstream,
+        func writeAndListen<Upstream: Publisher>(upstream: Upstream,
                                                                            for littleBluetooth: LittleBlueTooth,
                                                                            from characteristic: LittleBlueToothCharacteristic,
                                                                            value: W) -> AnyPublisher<R, LittleBluetoothError> where  Upstream.Failure == LittleBluetoothError {

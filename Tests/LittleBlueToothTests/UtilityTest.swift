@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 import Combine
 import os.log
 @testable import LittleBlueToothForTest

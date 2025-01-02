@@ -10,9 +10,9 @@ import Foundation
 import Combine
 import os.log
 #if TEST
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 #else
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 #endif
 
 public protocol Readable {
@@ -28,7 +28,7 @@ public protocol Writable {
 Please note that Apple do not enacourage the use of more `CBCentralManger` instances, due to resurce hits.
  [Link](https://developer.apple.com/forums/thread/20810)
  */
-public class LittleBlueTooth: Identifiable {
+public final class LittleBlueTooth: Identifiable, @unchecked Sendable {
     
     // MARK: - Public variables
     /// LittleBlueTooth instance identifier

@@ -8,10 +8,11 @@
 
 import Foundation
 #if TEST
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 #else
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 #endif
+
 
 
 public protocol PeripheralIdentifiable: Identifiable {
@@ -19,7 +20,7 @@ public protocol PeripheralIdentifiable: Identifiable {
     var name: String? {get set}
 }
 /// An object that contains the unique identifier of the `CBPeripheral` and the name of it (if present)
-public struct PeripheralIdentifier: PeripheralIdentifiable {
+public struct PeripheralIdentifier: PeripheralIdentifiable, Sendable {
     /// The `UUID`of the peripheral
     public var id: UUID
     /// The name of the peripheral

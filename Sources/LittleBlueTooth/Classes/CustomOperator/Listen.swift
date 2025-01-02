@@ -9,9 +9,9 @@ import Foundation
 import Combine
 import os.log
 #if TEST
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 #else
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 #endif
 
 
@@ -51,7 +51,7 @@ extension Publisher where Self.Failure == LittleBluetoothError {
     public func startListen<T: Readable>(for littleBluetooth: LittleBlueTooth,
                                          from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> {
         
-        func startListen<T: Readable, Upstream: Publisher>(upstream: Upstream,
+        func startListen<Upstream: Publisher>(upstream: Upstream,
                                                            for littleBluetooth: LittleBlueTooth,
                                                            from charact: LittleBlueToothCharacteristic) -> AnyPublisher<T, LittleBluetoothError> where Upstream.Failure == LittleBluetoothError {
             return upstream

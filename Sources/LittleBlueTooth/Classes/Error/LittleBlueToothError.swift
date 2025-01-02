@@ -8,10 +8,12 @@
 
 import Foundation
 #if TEST
-import CoreBluetoothMock
+@preconcurrency import CoreBluetoothMock
 #else
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 #endif
+
+
 /// Collection of errors that can be returned by LittleBlueTooth
 public enum LittleBluetoothError: Error {
     case bluetoothPoweredOff
