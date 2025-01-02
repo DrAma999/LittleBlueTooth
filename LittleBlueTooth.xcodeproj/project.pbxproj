@@ -6,20 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		"LittleBlueTooth::LittleBlueToothPackageTests::ProductTarget" /* LittleBlueToothPackageTests */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = OBJ_73 /* Build configuration list for PBXAggregateTarget "LittleBlueToothPackageTests" */;
-			buildPhases = (
-			);
-			dependencies = (
-				OBJ_76 /* PBXTargetDependency */,
-			);
-			name = LittleBlueToothPackageTests;
-			productName = LittleBlueToothPackageTests;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		650F378924F6B9B600C35395 /* ReadAndWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650F378824F6B9B600C35395 /* ReadAndWrite.swift */; };
 		650F378C24F6BEF100C35395 /* ReadAndWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650F378824F6B9B600C35395 /* ReadAndWrite.swift */; };
@@ -74,7 +60,6 @@
 		OBJ_62 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_27 /* Utilities.swift */; };
 		OBJ_63 /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* CoreBluetoothTypeAliases.swift */; };
 		OBJ_64 /* LittleBlueTooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_29 /* LittleBlueTooth.swift */; };
-		OBJ_71 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
 		OBJ_82 /* ConnectionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* ConnectionTest.swift */; };
 		OBJ_83 /* ListenTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_34 /* ListenTest.swift */; };
 		OBJ_84 /* LittleBlueToothTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_35 /* LittleBlueToothTests.swift */; };
@@ -85,13 +70,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		658A75BE24BB71AE00F874EF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = OBJ_1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = "LittleBlueTooth::LittleBlueToothTests";
-			remoteInfo = LittleBlueToothTests;
-		};
 		65AD4BED24D438A000C0CBE6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = OBJ_1 /* Project object */;
@@ -425,20 +403,6 @@
 			productReference = "LittleBlueTooth::LittleBlueToothTests::Product" /* LittleBlueToothTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		"LittleBlueTooth::SwiftPMPackageDescription" /* LittleBlueToothPackageDescription */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = OBJ_67 /* Build configuration list for PBXNativeTarget "LittleBlueToothPackageDescription" */;
-			buildPhases = (
-				OBJ_70 /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = LittleBlueToothPackageDescription;
-			productName = LittleBlueToothPackageDescription;
-			productType = "com.apple.product-type.framework";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -472,8 +436,6 @@
 			targets = (
 				"LittleBlueTooth::LittleBlueTooth" /* LittleBlueTooth */,
 				65AD4BD024D437B700C0CBE6 /* LittleBlueToothForTest */,
-				"LittleBlueTooth::SwiftPMPackageDescription" /* LittleBlueToothPackageDescription */,
-				"LittleBlueTooth::LittleBlueToothPackageTests::ProductTarget" /* LittleBlueToothPackageTests */,
 				"LittleBlueTooth::LittleBlueToothTests" /* LittleBlueToothTests */,
 			);
 		};
@@ -538,14 +500,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		OBJ_70 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 0;
-			files = (
-				OBJ_71 /* Package.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		OBJ_81 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
@@ -572,11 +526,6 @@
 			isa = PBXTargetDependency;
 			target = 65AD4BD024D437B700C0CBE6 /* LittleBlueToothForTest */;
 			targetProxy = 65AD4BED24D438A000C0CBE6 /* PBXContainerItemProxy */;
-		};
-		OBJ_76 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = "LittleBlueTooth::LittleBlueToothTests" /* LittleBlueToothTests */;
-			targetProxy = 658A75BE24BB71AE00F874EF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -675,32 +624,6 @@
 				TARGET_NAME = LittleBlueTooth;
 				TVOS_DEPLOYMENT_TARGET = 17.6;
 				WATCHOS_DEPLOYMENT_TARGET = 11.0;
-			};
-			name = "Debug-test";
-		};
-		658A75C824BB772700F874EF /* Debug-test */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD = /usr/bin/true;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				OTHER_SWIFT_FLAGS = "-swift-version 6 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk -package-description-version 5.2.0";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 6.0;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				WATCHOS_DEPLOYMENT_TARGET = 6.0;
-			};
-			name = "Debug-test";
-		};
-		658A75C924BB772700F874EF /* Debug-test */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				WATCHOS_DEPLOYMENT_TARGET = 6.0;
 			};
 			name = "Debug-test";
 		};
@@ -1031,58 +954,6 @@
 			};
 			name = Release;
 		};
-		OBJ_68 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD = /usr/bin/true;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				OTHER_SWIFT_FLAGS = "-swift-version 6 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk -package-description-version 5.2.0";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 6.0;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				WATCHOS_DEPLOYMENT_TARGET = 6.0;
-			};
-			name = Debug;
-		};
-		OBJ_69 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD = /usr/bin/true;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				OTHER_SWIFT_FLAGS = "-swift-version 6 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk -package-description-version 5.2.0";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 6.0;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				WATCHOS_DEPLOYMENT_TARGET = 6.0;
-			};
-			name = Release;
-		};
-		OBJ_74 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				WATCHOS_DEPLOYMENT_TARGET = 6.0;
-			};
-			name = Debug;
-		};
-		OBJ_75 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				WATCHOS_DEPLOYMENT_TARGET = 6.0;
-			};
-			name = Release;
-		};
 		OBJ_79 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1174,26 +1045,6 @@
 				OBJ_49 /* Debug */,
 				658A75C724BB772700F874EF /* Debug-test */,
 				OBJ_50 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		OBJ_67 /* Build configuration list for PBXNativeTarget "LittleBlueToothPackageDescription" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				OBJ_68 /* Debug */,
-				658A75C824BB772700F874EF /* Debug-test */,
-				OBJ_69 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		OBJ_73 /* Build configuration list for PBXAggregateTarget "LittleBlueToothPackageTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				OBJ_74 /* Debug */,
-				658A75C924BB772700F874EF /* Debug-test */,
-				OBJ_75 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
