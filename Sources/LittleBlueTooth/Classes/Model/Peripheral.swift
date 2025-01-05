@@ -15,6 +15,7 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
+
 /// An enumeration that represent the changes in peripheral services or name
 public enum PeripheralChanges {
     /// The name has been changed
@@ -24,7 +25,7 @@ public enum PeripheralChanges {
 }
 
 /// The state of the peripheral
-public enum PeripheralState {
+public enum PeripheralState: Sendable {
     /// Peripheral is disconnected
     case disconnected
     /// Peripheral is connecting
@@ -54,7 +55,7 @@ public enum PeripheralState {
 }
 
 /// It represents a peripheral along with its properties
-public class Peripheral: Identifiable {
+public final class Peripheral: Identifiable, @unchecked Sendable {
     /// An identifier for the peripheral it is the same as the wrapped `CBPeripheral`
     public var id: UUID {
         cbPeripheral.identifier
@@ -70,8 +71,6 @@ public class Peripheral: Identifiable {
     
     /// The wrapped `CBPeripheral`
     public let cbPeripheral: CBPeripheral
-    /// The rssi value of the peripheral
-    public var rssi: Int?
     
     /// Logging on the peripheral can be disable or enabled acting of that property
     var isLogEnabled: Bool {
@@ -115,6 +114,7 @@ public class Peripheral: Identifiable {
     init(_ peripheral: CBPeripheral) {
         self.cbPeripheral = peripheral
         self.cbPeripheral.delegate = self.peripheralProxy
+        
         #if !TEST
         self.peripheralStatePublisher = self.cbPeripheral.publisher(for: \.state)
             .map{ (state) -> PeripheralState in
@@ -591,7 +591,6 @@ extension Peripheral: CustomDebugStringConvertible {
         Id: \(id)
         Name: \(name ?? "Not available")
         CBPeripheral: \(cbPeripheral)
-        RSSI: \(rssi?.description ?? "Not available")
         """
     }
 }

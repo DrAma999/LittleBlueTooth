@@ -15,7 +15,7 @@ import CoreBluetoothMock
 import CoreBluetooth
 #endif
 
-class CBPeripheralDelegateProxy: NSObject {
+final class CBPeripheralDelegateProxy: NSObject {
     
     let peripheralChangesPublisher = PassthroughSubject<PeripheralChanges, Never>()
     let peripheralRSSIPublisher = PassthroughSubject<(Int, LittleBluetoothError?), Never>()

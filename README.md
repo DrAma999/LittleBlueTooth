@@ -40,6 +40,9 @@ An instance of LittleBluetooth can control only one peripheral, you can use more
 
 The library is still on development so use at own you risk.
 
+[!NOTE]  
+While the 1.0.0 compile fine on swift 6 even with complete concurrency check, it doesn't mean is thread safe. CoreBluetooth is not yet and is very difficult to make it fully compliant. That is why exposed classes arre marked as `@unchecked Sendable`. For previous swift version is possible to resolve versione `0.8.0`.
+
 ## TOC
 [Features](#features)
 
@@ -85,7 +88,7 @@ The library is still on development so use at own you risk.
 Add the following to your Cartfile:
 
 ```
-github "DrAma999/LittleBlueTooth" ~> 0.7.1
+github "DrAma999/LittleBlueTooth" ~> 1.0.0
 ```
 Since the framework supports most of the Apple devices, you probably want to to build for a specific platform by adding the option `--platform` after the `carthage update` command. For instance:
 ```
