@@ -36,11 +36,11 @@ extension TimeInterval {
 }
 
 extension OSLog {
-    public static var Subsystem = "it.vanillagorilla.LittleBlueTooth"
-    public static var General = "General"
-    public static var CentralManager = "CentralManager"
-    public static var Peripheral = "Peripheral"
-    public static var Restore = "Restore"
+    public static let Subsystem = "it.vanillagorilla.LittleBlueTooth"
+    public static let General = "General"
+    public static let CentralManager = "CentralManager"
+    public static let Peripheral = "Peripheral"
+    public static let Restore = "Restore"
 
     public static let LittleBT_Log_General = OSLog(subsystem: Subsystem, category: General)
     public static let LittleBT_Log_CentralManager = OSLog(subsystem: Subsystem, category: CentralManager)

@@ -95,19 +95,19 @@ extension LittleBlueToothCharacteristic: Equatable, Hashable {
 
 public extension LittleBlueToothCharacteristic {
     /// Permitted operations on the characteristic they already exist in CBCharacteristic need to remap when initialized from CBCharacteristic
-    struct Properties: OptionSet {
+    struct Properties: OptionSet, Sendable {
         public let rawValue: UInt8
         
-        public static var broadcast                     = Properties(rawValue: 1 << 0)
-        public static var read                          = Properties(rawValue: 1 << 1)
-        public static var writeWithoutResponse          = Properties(rawValue: 1 << 2)
-        public static var write                         = Properties(rawValue: 1 << 3)
-        public static var notify                        = Properties(rawValue: 1 << 4)
-        public static var indicate                      = Properties(rawValue: 1 << 5)
-        public static var authenticatedSignedWrites     = Properties(rawValue: 1 << 6)
-        public static var extendedProperties            = Properties(rawValue: 1 << 7)
-        public static var notifyEncryptionRequired      = Properties(rawValue: 1 << 8)
-        public static var indicateEncryptionRequired    = Properties(rawValue: 1 << 9)
+        public static let broadcast                     = Properties(rawValue: 1 << 0)
+        public static let read                          = Properties(rawValue: 1 << 1)
+        public static let writeWithoutResponse          = Properties(rawValue: 1 << 2)
+        public static let write                         = Properties(rawValue: 1 << 3)
+        public static let notify                        = Properties(rawValue: 1 << 4)
+        public static let indicate                      = Properties(rawValue: 1 << 5)
+        public static let authenticatedSignedWrites     = Properties(rawValue: 1 << 6)
+        public static let extendedProperties            = Properties(rawValue: 1 << 7)
+        public static let notifyEncryptionRequired      = Properties(rawValue: 1 << 8)
+        public static let indicateEncryptionRequired    = Properties(rawValue: 1 << 9)
         
         public init(rawValue: UInt8) {
             self.rawValue = rawValue
