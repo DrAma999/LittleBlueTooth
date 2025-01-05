@@ -41,7 +41,7 @@ An instance of LittleBluetooth can control only one peripheral, you can use more
 The library is still on development so use at own you risk.
 
 [!NOTE]  
-While the 1.0.0 compile fine on swift 6 even with complete concurrency check, it doesn't mean is thread safe. CoreBluetooth is not yet and is very difficult to make it fully compliant. That is why exposed classes arre marked as `@unchecked Sendable`.
+While the 1.0.0 compile fine on swift 6 even with complete concurrency check, it doesn't mean is thread safe. CoreBluetooth is not yet and is very difficult to make it fully compliant. That is why exposed classes arre marked as `@unchecked Sendable`. For previous swift version is possible to resolve versione `0.8.0`.
 
 ## TOC
 [Features](#features)
