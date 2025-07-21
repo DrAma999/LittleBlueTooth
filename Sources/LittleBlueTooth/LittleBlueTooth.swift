@@ -68,6 +68,11 @@ public final class LittleBlueTooth: Identifiable, @unchecked Sendable {
         return self.centralProxy.connectionEventPublisher.share().eraseToAnyPublisher()
     }()
     
+    /// Publisher that streams CBCentralManager state changes
+    public var centralStatePublisher: AnyPublisher<BluetoothState, Never> {
+        centralProxy.centralStatePublisher.eraseToAnyPublisher()
+    }
+    
     /// Publish name and service changes
     public var changesStatePublisher: AnyPublisher<PeripheralChanges, Never> {
         _peripheralChangesPublisher.eraseToAnyPublisher()
